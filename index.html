@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#8f6aa4" />
+    <meta name="application-name" content="LunaPlate" />
+    <meta name="apple-mobile-web-app-title" content="LunaPlate" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>LunaPlate</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/pwa/icon-192.png" />
+    <link rel="stylesheet" href="styles.css?v=20260603-profile-drawer2" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-live="polite">
+        <header class="mobile-topbar">
+          <div class="brand-lockup">
+            <button type="button" class="profile-dot profile-trigger" id="profile-trigger" data-i18n-aria="aria.checkIn" data-i18n-title="aria.checkIn" aria-label="Daily check-in" title="Daily check-in" aria-controls="intake-panel" aria-expanded="false">
+              <img src="assets/lunaplate-logo.png" alt="" />
+            </button>
+            <div>
+              <h1>LunaPlate</h1>
+              <p data-i18n="brand.tagline">Nourish your cycle</p>
+            </div>
+          </div>
+          <div class="lang-switch" role="group" data-i18n-aria="lang.choose" aria-label="Language">
+            <button type="button" data-lang="en" data-i18n="lang.en" aria-pressed="true">EN</button>
+            <button type="button" data-lang="zh" data-i18n="lang.zh" aria-pressed="false">ZH</button>
+            <button type="button" data-lang="ru" data-i18n="lang.ru" aria-pressed="false">RU</button>
+          </div>
+        </header>
+
+        <section class="app-view active" data-view="today" aria-label="Today">
+          <div class="screen-heading">
+            <span class="section-dot primary-dot"></span>
+            <div>
+              <h2 data-i18n="form.cycle">Cycle</h2>
+              <p id="today-cycle-summary" data-i18n-skip>Today is Day --</p>
+            </div>
+          </div>
+
+          <section class="status-band">
+            <div>
+              <p class="eyebrow" data-i18n="status.cyclePhase">Cycle phase</p>
+              <h2 id="phase-title" data-i18n-skip>Set your cycle details</h2>
+              <p id="phase-description" data-i18n-skip>Meal ideas will adapt to your estimated phase, symptoms, preferences, and pantry.</p>
+            </div>
+            <div class="day-pill" id="day-pill">Day --</div>
+          </section>
+
+          <section class="cycle-calendar" aria-label="Cycle calendar preview">
+            <div class="calendar-heading">
+              <h3 id="calendar-month" data-i18n-skip>Calendar</h3>
+            </div>
+            <div class="calendar-weekdays">
+              <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            </div>
+            <div class="calendar-grid" id="cycle-calendar-grid"></div>
+            <div class="calendar-legend">
+              <span><i class="legend menstrual"></i>M</span>
+              <span><i class="legend follicular"></i>F</span>
+              <span><i class="legend ovulation"></i>O</span>
+              <span><i class="legend luteal"></i>L</span>
+            </div>
+          </section>
+
+          <section class="insight-grid" data-i18n-aria="aria.nutrition" aria-label="Nutrition focus">
+            <article>
+              <span class="dot iron"></span>
+              <h3 id="focus-one" data-i18n-skip>Comfort</h3>
+              <p id="focus-one-copy" data-i18n-skip>Warm, steady meals tend to feel better on demanding days.</p>
+            </article>
+            <article>
+              <span class="dot fiber"></span>
+              <h3 id="focus-two" data-i18n-skip>Balance</h3>
+              <p id="focus-two-copy" data-i18n-skip>Protein, fiber, and complex carbs help keep energy more even.</p>
+            </article>
+            <article>
+              <span class="dot hydration"></span>
+              <h3 id="focus-three" data-i18n-skip>Hydration</h3>
+              <p id="focus-three-copy" data-i18n-skip>Hydrating foods and simple drinks can support general comfort.</p>
+            </article>
+          </section>
+
+          <article class="panel safety-panel">
+            <p class="eyebrow" data-i18n="safety.eyebrow">Care note</p>
+            <h2 data-i18n="safety.title">Supportive, not diagnostic</h2>
+            <p data-i18n="safety.body">
+              LunaPlate gives general wellness ideas. Severe pain, very heavy bleeding,
+              dizziness, missed periods, pregnancy concerns, or a history of disordered
+              eating deserve care from a qualified clinician.
+            </p>
+          </article>
+        </section>
+
+        <section class="app-view" data-view="food" aria-label="Food">
+          <div class="screen-heading">
+            <span class="section-dot coral-dot"></span>
+            <div>
+              <h2 data-i18n="nav.meals">Meals</h2>
+              <p data-i18n="screen.foodSubheading">Today's meal plan for cycle support</p>
+            </div>
+          </div>
+
+          <section class="best-pick" data-i18n-aria="aria.bestPick" aria-label="Best meal recommendation">
+            <div class="best-copy">
+              <p class="eyebrow" data-i18n="best.eyebrow">Best for today</p>
+              <h2 id="best-pick-title" data-i18n-skip>Choose your check-in</h2>
+              <p id="best-pick-reason" data-i18n-skip>Your strongest meal match will appear here.</p>
+              <div class="tag-row" id="best-pick-tags"></div>
+            </div>
+            <div class="best-card">
+              <div class="best-art" id="best-pick-art" aria-hidden="true">
+                <img id="best-pick-image" alt="" loading="lazy" />
+              </div>
+              <div>
+                <p id="best-pick-meta">-- min</p>
+                <button type="button" class="primary-button" id="best-pick-grocery" data-i18n="best.addGroceries">Add groceries</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="toolbar" data-i18n-aria="aria.mealFilters" aria-label="Meal filters">
+            <div class="tabs" role="tablist" data-i18n-aria="aria.mealType" aria-label="Meal type">
+              <button type="button" class="tab active" data-meal-type="all" data-i18n="toolbar.all">All</button>
+              <button type="button" class="tab" data-meal-type="breakfast" data-i18n="toolbar.breakfast">Breakfast</button>
+              <button type="button" class="tab" data-meal-type="lunch" data-i18n="toolbar.lunch">Lunch</button>
+              <button type="button" class="tab" data-meal-type="dinner" data-i18n="toolbar.dinner">Dinner</button>
+              <button type="button" class="tab" data-meal-type="snack" data-i18n="toolbar.snack">Snack</button>
+            </div>
+            <button type="button" class="secondary-button" id="surprise-button" data-i18n="toolbar.shuffle">Shuffle</button>
+          </div>
+
+          <section class="panel food-controls">
+            <div class="slider-row">
+              <label for="cook-time" data-i18n="form.maxCook">Max cook time</label>
+              <output id="cook-time-output">35 min</output>
+            </div>
+            <input id="cook-time" type="range" min="5" max="60" value="35" step="5" />
+
+            <label class="field">
+              <span data-i18n="form.pantry">Pantry ingredients</span>
+              <textarea id="pantry" rows="3" data-i18n-placeholder="form.pantryPlaceholder" placeholder="spinach, rice, yogurt, lentils"></textarea>
+            </label>
+          </section>
+
+          <section>
+            <div class="section-heading results-heading">
+              <div>
+                <p class="eyebrow" data-i18n="results.matched">Matched meals</p>
+                <h2 id="results-count" data-i18n-skip>0 ideas</h2>
+              </div>
+              <p id="match-note" data-i18n-skip>Add your check-in to improve the ranking.</p>
+            </div>
+            <div class="meal-grid" id="meal-results"></div>
+          </section>
+
+          <article class="panel grocery-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow" data-i18n="grocery.plan">Plan</p>
+                <h2 data-i18n="grocery.title">Grocery list</h2>
+              </div>
+              <button type="button" class="secondary-button" id="clear-grocery" data-i18n="grocery.clear">Clear</button>
+            </div>
+            <ul id="grocery-list" class="grocery-list"></ul>
+          </article>
+        </section>
+
+        <section class="app-view" data-view="move-api" aria-label="Move">
+          <div class="screen-heading">
+            <span class="section-dot green-dot"></span>
+            <div>
+              <h2 data-i18n="movement.heading">Movement</h2>
+              <p data-i18n="movement.subheading">Gentle movement matched to your cycle</p>
+            </div>
+          </div>
+
+          <section class="feature-card">
+            <p class="eyebrow" data-i18n="movement.best">Best for today</p>
+            <h2 id="move-best-title" data-i18n="movement.defaultTitle">Cycle-aware gentle movement</h2>
+            <p id="move-best-meta">15 min &middot; matched to your current phase</p>
+          </section>
+
+          <section class="movement-progress">
+            <div class="section-heading">
+              <h3 data-i18n="movement.recent">Recent movement time</h3>
+              <span id="move-total-minutes">150 min</span>
+            </div>
+            <div class="progress-track"><span id="move-progress-fill"></span></div>
+            <div class="countdown-row">
+              <span data-i18n="movement.countdown">Practice countdown</span>
+              <strong id="move-countdown-time">--:--</strong>
+            </div>
+            <div class="countdown-track"><span id="move-countdown-fill"></span></div>
+          </section>
+
+          <section class="movement-hero">
+            <button type="button" class="movement-nav-button movement-nav-prev" id="move-prev" data-i18n-aria="movement.previous" data-i18n-title="movement.previous" aria-label="Previous movement" title="Previous movement">‹</button>
+            <div class="movement-media">
+              <div class="movement-orb" id="move-placeholder" aria-hidden="true"></div>
+              <video id="move-video" muted loop playsinline controls hidden></video>
+              <img id="move-gif" alt="" hidden />
+            </div>
+            <button type="button" class="movement-nav-button movement-nav-next" id="move-next" data-i18n-aria="movement.next" data-i18n-title="movement.next" aria-label="Next movement" title="Next movement">›</button>
+            <p class="eyebrow" id="move-source" data-i18n="movement.sourceApi">Female movement API</p>
+            <h2 id="move-title" data-i18n="movement.defaultTitle">Cycle-aware gentle movement</h2>
+            <p id="move-summary" data-i18n="movement.loadingSummary">Matching movement guidance to your current cycle phase.</p>
+            <p class="movement-swipe-hint" data-i18n="movement.swipeHint">Swipe to switch</p>
+          </section>
+
+          <section class="move-grid">
+            <article>
+              <h3 data-i18n="movement.focusTitle">Movement focus</h3>
+              <p id="move-focus" data-i18n="movement.defaultFocus">Move slowly, breathe steadily, and keep the range comfortable.</p>
+            </article>
+            <article>
+              <h3 data-i18n="movement.safetyTitle">Safety boundary</h3>
+              <p id="move-safety" data-i18n="movement.defaultSafety">Stop and rest if you feel clear abdominal pain, dizziness, or any sharp pain.</p>
+            </article>
+          </section>
+
+          <section class="exercise-steps">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow" data-i18n="movement.stepsEyebrow">Movement steps</p>
+                <h2 id="move-step-title" data-i18n="movement.stepTitle">Follow-along guide</h2>
+              </div>
+              <button type="button" class="secondary-button" id="move-refresh" data-i18n="movement.refresh">Refresh</button>
+            </div>
+            <ol id="move-steps"></ol>
+          </section>
+
+          <section class="exercise-list">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow" data-i18n="movement.more">More recommendations</p>
+                <h2 id="move-count">0 movements</h2>
+              </div>
+              <p id="move-note" data-i18n="movement.note">Filtered by the Python backend for your cycle phase and symptoms.</p>
+            </div>
+            <div id="move-results" class="exercise-results"></div>
+          </section>
+
+          <button type="button" class="primary-button full-width" id="move-start-button">Start 25 min practice</button>
+        </section>
+
+        <section class="app-view" data-view="care" aria-label="Care">
+          <div class="screen-heading">
+            <span class="section-dot primary-dot"></span>
+            <div>
+              <h2 data-i18n="care.title">Care plan</h2>
+              <p data-i18n="care.subheading">Self-care suggestions for today</p>
+            </div>
+          </div>
+
+          <section class="care-summary">
+            <p class="eyebrow" data-i18n="care.sourceToday">Today</p>
+            <ul>
+              <li>Rest more</li>
+              <li>Gentle movement</li>
+              <li>Avoid overheating</li>
+              <li>Stay warm</li>
+            </ul>
+          </section>
+
+          <section class="care-card">
+            <p class="eyebrow" data-i18n="care.recipeEyebrow">Care meal idea</p>
+            <h2>Gentle care meal</h2>
+            <p>Ingredients and steps</p>
+          </section>
+
+          <section class="care-card">
+            <p class="eyebrow" data-i18n="care.noteEyebrow">Care note</p>
+            <p>Adapt ideas to your body, ingredients, and allergies.</p>
+          </section>
+
+          <section class="care-card">
+            <p class="eyebrow" data-i18n="care.massageEyebrow">Massage idea</p>
+            <p>Today favors gentle support, less caffeine, and earlier rest.</p>
+          </section>
+        </section>
+
+        <nav class="bottom-nav" data-i18n-aria="aria.nav" aria-label="App navigation preview">
+          <a href="#" class="active" data-view-target="today" data-i18n="nav.today">Today</a>
+          <a href="#" data-view-target="food" data-i18n="nav.meals">Meals</a>
+          <a href="#" data-view-target="move-api" data-i18n="movement.heading">Movement</a>
+          <a href="#" data-view-target="care" data-i18n="care.title">Care plan</a>
+        </nav>
+      </section>
+
+      <div class="profile-scrim" id="profile-scrim" hidden></div>
+      <aside class="panel intake-panel" id="intake-panel" data-i18n-aria="aria.checkIn" aria-label="Daily check-in" aria-modal="true">
+        <div class="brand-row">
+          <div class="brand-mark" aria-hidden="true">
+            <img src="assets/lunaplate-logo.png" alt="" />
+          </div>
+          <div class="brand-copy">
+            <h1>LunaPlate</h1>
+            <p data-i18n="brand.tagline">Nourish your cycle</p>
+          </div>
+          <div class="lang-switch" role="group" data-i18n-aria="lang.choose" aria-label="Language">
+            <button type="button" data-lang="en" data-i18n="lang.en" aria-pressed="true">EN</button>
+            <button type="button" data-lang="zh" data-i18n="lang.zh" aria-pressed="false">ZH</button>
+            <button type="button" data-lang="ru" data-i18n="lang.ru" aria-pressed="false">RU</button>
+          </div>
+          <button class="icon-button profile-close" type="button" id="profile-close" data-i18n-aria="aria.closeProfile" data-i18n-title="aria.closeProfile" aria-label="Close profile" title="Close profile">×</button>
+        </div>
+
+        <form id="meal-form" class="intake-form">
+          <section>
+            <div class="section-heading">
+              <h2 data-i18n="form.cycle">Cycle</h2>
+              <button class="icon-button" type="button" id="reset-button" data-i18n-aria="aria.reset" data-i18n-title="aria.reset" aria-label="Reset check-in" title="Reset check-in">
+                <span aria-hidden="true" data-i18n="form.reset">Reset</span>
+              </button>
+            </div>
+
+            <label class="field">
+              <span data-i18n="form.lastPeriod">First day of last period</span>
+              <input id="last-period" type="date" />
+            </label>
+
+            <label class="field compact">
+              <span data-i18n="form.cycleLength">Average cycle length</span>
+              <input id="cycle-length" type="number" min="21" max="45" value="28" />
+            </label>
+
+            <div class="field">
+              <span data-i18n="form.manualPhase">Or choose phase manually</span>
+              <div class="segmented" role="radiogroup" data-i18n-aria="aria.cyclePhase" aria-label="Cycle phase">
+                <label><input type="radio" name="phase" value="auto" checked /><span data-i18n="form.auto">Auto</span></label>
+                <label><input type="radio" name="phase" value="menstrual" /><span data-i18n="phases.menstrual.title">Menstrual</span></label>
+                <label><input type="radio" name="phase" value="follicular" /><span data-i18n="phases.follicular.title">Follicular</span></label>
+                <label><input type="radio" name="phase" value="ovulation" /><span data-i18n="phases.ovulation.title">Ovulation</span></label>
+                <label><input type="radio" name="phase" value="luteal" /><span data-i18n="phases.luteal.title">Luteal</span></label>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 data-i18n="form.howFeel">How do you feel?</h2>
+            <div class="chip-grid" id="symptom-list"></div>
+          </section>
+
+          <section>
+            <h2 data-i18n="form.preferences">Preferences</h2>
+            <div class="switch-grid">
+              <label class="switch"><input type="checkbox" id="vegetarian" /><span data-i18n="form.vegetarian">Vegetarian</span></label>
+              <label class="switch"><input type="checkbox" id="vegan" /><span data-i18n="form.vegan">Vegan</span></label>
+              <label class="switch"><input type="checkbox" id="gluten-free" /><span data-i18n="form.glutenFree">Gluten-free</span></label>
+              <label class="switch"><input type="checkbox" id="dairy-free" /><span data-i18n="form.dairyFree">Dairy-free</span></label>
+            </div>
+
+            <div class="field">
+              <span data-i18n="form.cuisineStyle">Cuisine style</span>
+              <div class="segmented" role="radiogroup" data-i18n-aria="aria.cuisineStyle" aria-label="Cuisine style">
+                <label><input type="radio" name="cuisine-style" value="balanced" checked /><span data-i18n="cuisineStyles.balanced">Balanced</span></label>
+                <label><input type="radio" name="cuisine-style" value="asian" /><span data-i18n="cuisineStyles.asian">Asian</span></label>
+                <label><input type="radio" name="cuisine-style" value="mediterranean" /><span data-i18n="cuisineStyles.mediterranean">Mediterranean</span></label>
+                <label><input type="radio" name="cuisine-style" value="mexican" /><span data-i18n="cuisineStyles.mexican">Mexican</span></label>
+              </div>
+            </div>
+          </section>
+        </form>
+      </aside>
+    </main>
+
+    <template id="meal-card-template">
+      <article class="meal-card">
+        <div class="meal-art" aria-hidden="true">
+          <img class="meal-image" alt="" loading="lazy" />
+        </div>
+        <div class="meal-body">
+          <div class="meal-meta">
+            <span class="meal-type"></span>
+            <span class="meal-time"></span>
+          </div>
+          <h3></h3>
+          <p class="meal-summary"></p>
+          <div class="tag-row"></div>
+          <details>
+            <summary data-i18n="form.ingredientsSteps">Ingredients and steps</summary>
+            <ul class="ingredient-list"></ul>
+            <ol class="step-list"></ol>
+          </details>
+          <div class="card-actions">
+            <button type="button" class="primary-button add-button" data-i18n="best.addGroceries">Add groceries</button>
+            <button type="button" class="secondary-button swap-button" data-i18n="form.swap">Swap</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="i18n.js?v=20260603-profile-drawer2"></script>
+    <script src="app.js?v=20260603-profile-drawer2"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch((error) => {
+            console.warn("LunaPlate service worker registration failed:", error);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

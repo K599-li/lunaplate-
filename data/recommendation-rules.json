@@ -1,0 +1,277 @@
+{
+  "mealPhaseProfiles": {
+    "menstrual": {
+      "tags": [
+        "iron",
+        "magnesium",
+        "comfort",
+        "hydrating"
+      ],
+      "ingredients": [
+        "lentils",
+        "spinach",
+        "chickpeas",
+        "salmon",
+        "beef"
+      ],
+      "searches": [
+        "soup",
+        "stew"
+      ]
+    },
+    "follicular": {
+      "tags": [
+        "protein",
+        "fiber",
+        "fresh",
+        "prep"
+      ],
+      "ingredients": [
+        "chicken",
+        "eggs",
+        "beans",
+        "broccoli",
+        "avocado"
+      ],
+      "searches": [
+        "salad",
+        "rice"
+      ]
+    },
+    "ovulation": {
+      "tags": [
+        "antioxidants",
+        "healthy fat",
+        "protein",
+        "fresh"
+      ],
+      "ingredients": [
+        "salmon",
+        "avocado",
+        "tomato",
+        "spinach",
+        "tuna"
+      ],
+      "searches": [
+        "fish",
+        "salad"
+      ]
+    },
+    "luteal": {
+      "tags": [
+        "magnesium",
+        "calcium",
+        "protein",
+        "fiber",
+        "craving-friendly"
+      ],
+      "ingredients": [
+        "chickpeas",
+        "beans",
+        "sweet potato",
+        "almonds",
+        "yogurt"
+      ],
+      "searches": [
+        "curry",
+        "chocolate"
+      ]
+    }
+  },
+  "symptomMealTags": {
+    "cramps": [
+      "magnesium",
+      "comfort",
+      "hydrating"
+    ],
+    "fatigue": [
+      "iron",
+      "protein",
+      "fiber"
+    ],
+    "bloating": [
+      "hydrating",
+      "fresh"
+    ],
+    "cravings": [
+      "craving-friendly"
+    ],
+    "low_mood": [
+      "comfort",
+      "magnesium",
+      "protein"
+    ],
+    "high_energy": [
+      "fresh",
+      "protein"
+    ]
+  },
+  "dietWords": {
+    "animal": [
+      "beef",
+      "chicken",
+      "pork",
+      "lamb",
+      "turkey",
+      "fish",
+      "salmon",
+      "tuna",
+      "shrimp",
+      "bacon",
+      "ham",
+      "egg",
+      "eggs",
+      "cheese",
+      "milk",
+      "cream",
+      "yogurt",
+      "butter"
+    ],
+    "dairy": [
+      "milk",
+      "cheese",
+      "cream",
+      "yogurt",
+      "butter",
+      "parmesan",
+      "mozzarella"
+    ],
+    "gluten": [
+      "flour",
+      "bread",
+      "pasta",
+      "noodle",
+      "noodles",
+      "spaghetti",
+      "wheat",
+      "tortilla"
+    ],
+    "nonVeganExceptions": [
+      "egg",
+      "eggs",
+      "cheese",
+      "milk",
+      "cream",
+      "yogurt",
+      "butter"
+    ]
+  },
+  "dietaryQueryFallbacks": {
+    "vegan": [
+      {
+        "type": "ingredient",
+        "value": "lentils"
+      },
+      {
+        "type": "ingredient",
+        "value": "chickpeas"
+      }
+    ],
+    "vegetarian": [
+      {
+        "type": "category",
+        "value": "Vegetarian"
+      }
+    ]
+  },
+  "cuisineProfiles": {
+    "balanced": {
+      "queries": [],
+      "words": []
+    },
+    "asian": {
+      "queries": [
+        {
+          "type": "area",
+          "value": "Chinese"
+        },
+        {
+          "type": "area",
+          "value": "Japanese"
+        },
+        {
+          "type": "area",
+          "value": "Thai"
+        },
+        {
+          "type": "search",
+          "value": "rice"
+        }
+      ],
+      "words": [
+        "asian",
+        "chinese",
+        "japanese",
+        "thai",
+        "korean",
+        "rice",
+        "noodle",
+        "soy",
+        "ginger",
+        "sesame",
+        "miso",
+        "sushi",
+        "teriyaki",
+        "wonton"
+      ]
+    },
+    "mediterranean": {
+      "queries": [
+        {
+          "type": "area",
+          "value": "Greek"
+        },
+        {
+          "type": "area",
+          "value": "Italian"
+        },
+        {
+          "type": "search",
+          "value": "olive"
+        }
+      ],
+      "words": [
+        "mediterranean",
+        "greek",
+        "italian",
+        "olive oil",
+        "feta",
+        "lemon",
+        "tomato",
+        "chickpea",
+        "pasta",
+        "basil",
+        "oregano"
+      ]
+    },
+    "mexican": {
+      "queries": [
+        {
+          "type": "area",
+          "value": "Mexican"
+        },
+        {
+          "type": "search",
+          "value": "taco"
+        },
+        {
+          "type": "ingredient",
+          "value": "black beans"
+        }
+      ],
+      "words": [
+        "mexican",
+        "taco",
+        "tortilla",
+        "quesadilla",
+        "enchilada",
+        "chili",
+        "lime",
+        "avocado",
+        "corn",
+        "black bean",
+        "jalapeno"
+      ]
+    }
+  }
+}

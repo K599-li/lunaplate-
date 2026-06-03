@@ -1,0 +1,512 @@
+[
+  {
+    "id": "cat-cow",
+    "name": "Cat Cow Stretch",
+    "visualType": "cat-cow",
+    "image": "cat-cow.webp",
+    "bodyParts": [
+      "back",
+      "waist"
+    ],
+    "targetMuscles": [
+      "spine"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 15,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 22,
+      "follicular": 12,
+      "ovulation": 10,
+      "luteal": 18
+    },
+    "symptomScore": {
+      "cramps": 18,
+      "bloating": 10,
+      "fatigue": 8,
+      "low_mood": 5
+    },
+    "instructions": [
+      "Start on hands and knees with wrists under shoulders.",
+      "Inhale and gently arch your back, lifting chest and tailbone.",
+      "Exhale and round your spine, letting your head relax.",
+      "Move slowly for 6 to 8 breaths."
+    ],
+    "summary": "Inhale to open the chest, then exhale to gently round the back. Keep wrists under shoulders, use a small range, and move with the breath.",
+    "focus": "spine flow ? back release ? low intensity",
+    "safety": "Reduce the range if wrists or lower back feel uncomfortable. Avoid collapsing the low back or holding your breath."
+  },
+  {
+    "id": "child-pose",
+    "name": "Child Pose Breathing",
+    "visualType": "child-pose",
+    "image": "child-pose.webp",
+    "bodyParts": [
+      "back",
+      "shoulders"
+    ],
+    "targetMuscles": [
+      "spine",
+      "lower back"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 10,
+      "ovulation": 10,
+      "luteal": 8
+    },
+    "phaseScore": {
+      "menstrual": 24,
+      "follicular": 8,
+      "ovulation": 8,
+      "luteal": 18
+    },
+    "symptomScore": {
+      "cramps": 20,
+      "fatigue": 12,
+      "low_mood": 8
+    },
+    "instructions": [
+      "Kneel and sit hips toward heels.",
+      "Fold forward and rest your arms comfortably.",
+      "Breathe into your ribs and back.",
+      "Stay for 30 to 60 seconds."
+    ],
+    "summary": "Let the back soften slowly with each exhale. Lower the forehead, relax neck and shoulders, and stay for about 6 breaths.",
+    "focus": "breath release ? lower back comfort ? recovery",
+    "safety": "Place a towel under the knees if needed. Widen the knees if the abdomen feels compressed."
+  },
+  {
+    "id": "neck-release",
+    "name": "Neck Release",
+    "visualType": "neck-release",
+    "image": "neck-release.webp",
+    "bodyParts": [
+      "neck",
+      "shoulders"
+    ],
+    "targetMuscles": [
+      "neck",
+      "traps"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 10,
+      "ovulation": 10,
+      "luteal": 8
+    },
+    "phaseScore": {
+      "menstrual": 18,
+      "follicular": 12,
+      "ovulation": 10,
+      "luteal": 18
+    },
+    "symptomScore": {
+      "fatigue": 8,
+      "low_mood": 10,
+      "cramps": 6
+    },
+    "instructions": [
+      "Sit tall and relax your shoulders.",
+      "Tilt one ear toward the shoulder without forcing.",
+      "Hold for a few breaths, then switch sides."
+    ],
+    "summary": "Keep the chin slightly tucked and let the shoulders soften as you exhale. Pause on both sides without pulling.",
+    "focus": "neck and shoulder release ? seated option ? very low intensity",
+    "safety": "Do not pull the head with your hand. Stop if you feel dizziness, numbness, tingling, or sharp pain."
+  },
+  {
+    "id": "hip-rock",
+    "name": "Gentle Hip Rock",
+    "visualType": "hip-rock",
+    "image": "hip-rock.webp",
+    "bodyParts": [
+      "upper legs",
+      "waist"
+    ],
+    "targetMuscles": [
+      "hips",
+      "lower back"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 15,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 16,
+      "follicular": 12,
+      "ovulation": 12,
+      "luteal": 20
+    },
+    "symptomScore": {
+      "cramps": 10,
+      "bloating": 16,
+      "fatigue": 6
+    },
+    "instructions": [
+      "Lie on your back with knees bent.",
+      "Let knees rock slowly side to side.",
+      "Keep the range small and comfortable."
+    ],
+    "summary": "Exhale as the knees slowly fall to one side. Keep the range comfortable, the low back grounded, and alternate sides.",
+    "focus": "hip release ? bloating-friendly ? lower back comfort",
+    "safety": "Keep the movement small. Stop if lower back pain or abdominal pressure becomes noticeable."
+  },
+  {
+    "id": "twist",
+    "name": "Seated Spinal Twist",
+    "visualType": "twist",
+    "image": "twist.webp",
+    "bodyParts": [
+      "waist",
+      "back"
+    ],
+    "targetMuscles": [
+      "spine",
+      "obliques"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 12,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 8,
+      "follicular": 14,
+      "ovulation": 12,
+      "luteal": 18
+    },
+    "symptomScore": {
+      "bloating": 18,
+      "low_mood": 6
+    },
+    "instructions": [
+      "Sit tall with legs crossed or extended comfortably.",
+      "Inhale to lengthen your spine.",
+      "Exhale and rotate gently from the ribs.",
+      "Return to center and switch sides."
+    ],
+    "summary": "Inhale to lengthen the spine, then exhale into a gentle rotation. Keep the sitting bones grounded and avoid chasing range.",
+    "focus": "trunk rotation ? bloating support ? posture reset",
+    "safety": "Avoid fast twisting. Skip during pregnancy, acute low back pain, or clear abdominal pain."
+  },
+  {
+    "id": "breath",
+    "name": "Belly Breathing",
+    "visualType": "breath",
+    "image": "breath.webp",
+    "bodyParts": [
+      "chest",
+      "waist"
+    ],
+    "targetMuscles": [
+      "diaphragm"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 5,
+      "follicular": 6,
+      "ovulation": 6,
+      "luteal": 5
+    },
+    "phaseScore": {
+      "menstrual": 20,
+      "follicular": 10,
+      "ovulation": 10,
+      "luteal": 20
+    },
+    "symptomScore": {
+      "fatigue": 12,
+      "low_mood": 18,
+      "cramps": 8
+    },
+    "instructions": [
+      "Sit or lie down comfortably.",
+      "Place one hand on chest and one on belly.",
+      "Inhale slowly and let the belly soften.",
+      "Exhale longer than the inhale."
+    ],
+    "summary": "Let the belly rise naturally on the inhale, then make the exhale slightly longer. Relax the shoulders and keep the rhythm slow.",
+    "focus": "breath regulation ? emotional steadiness ? bedtime-friendly",
+    "safety": "If deeper breathing makes you dizzy, return to natural breathing without forcing depth."
+  },
+  {
+    "id": "side-stretch",
+    "name": "Standing Side Stretch",
+    "visualType": "side-stretch",
+    "image": "side-stretch.webp",
+    "bodyParts": [
+      "waist",
+      "shoulders"
+    ],
+    "targetMuscles": [
+      "obliques",
+      "lats"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 12,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 8,
+      "follicular": 18,
+      "ovulation": 16,
+      "luteal": 12
+    },
+    "symptomScore": {
+      "bloating": 10,
+      "low_mood": 8,
+      "high_energy": 8
+    },
+    "instructions": [
+      "Stand with feet grounded and knees soft.",
+      "Reach one arm overhead.",
+      "Lean gently to the opposite side.",
+      "Breathe into the side ribs, then switch sides."
+    ],
+    "summary": "Inhale to lengthen the side body, then exhale into a gentle side bend. Keep knees soft and shoulders away from ears.",
+    "focus": "side-body stretch ? light standing movement ? body wake-up",
+    "safety": "Do not compress the low back or lean backward. Sit down and do the same stretch if you feel dizzy."
+  },
+  {
+    "id": "forward-fold",
+    "name": "Seated Forward Fold",
+    "visualType": "forward-fold",
+    "image": "forward-fold.webp",
+    "bodyParts": [
+      "back",
+      "upper legs"
+    ],
+    "targetMuscles": [
+      "hamstrings",
+      "lower back"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 12,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 10,
+      "follicular": 14,
+      "ovulation": 12,
+      "luteal": 16
+    },
+    "symptomScore": {
+      "fatigue": 8,
+      "low_mood": 6
+    },
+    "instructions": [
+      "Sit with legs extended and knees slightly soft.",
+      "Inhale to lengthen your spine.",
+      "Exhale and fold only as far as comfortable.",
+      "Rest hands on legs or the floor."
+    ],
+    "summary": "Inhale to lengthen the back, then fold only as far as comfortable. Bend the knees and stop at an easy range.",
+    "focus": "hamstring stretch ? lower back release ? quiet finish",
+    "safety": "Do not force toward the feet. Reduce the range or skip if low back or sciatic discomfort appears."
+  },
+  {
+    "id": "butterfly",
+    "name": "Butterfly Stretch",
+    "visualType": "butterfly",
+    "image": "butterfly.webp",
+    "bodyParts": [
+      "upper legs",
+      "waist"
+    ],
+    "targetMuscles": [
+      "hips",
+      "inner thighs"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 12,
+      "ovulation": 12,
+      "luteal": 10
+    },
+    "phaseScore": {
+      "menstrual": 8,
+      "follicular": 16,
+      "ovulation": 14,
+      "luteal": 12
+    },
+    "symptomScore": {
+      "bloating": 8,
+      "cramps": 6
+    },
+    "instructions": [
+      "Sit tall and bring soles of feet together.",
+      "Let knees open without pushing them down.",
+      "Hold ankles or rest hands on thighs.",
+      "Breathe calmly for 30 to 60 seconds."
+    ],
+    "summary": "Sit tall and let the hips open naturally. Keep the knees relaxed, the back long, and the breath even.",
+    "focus": "hip opening ? pelvic-area release ? gentle hold",
+    "safety": "Support the thighs with pillows if knees or hips feel uncomfortable. Avoid bouncing."
+  },
+  {
+    "id": "legs-wall",
+    "name": "Legs Up The Wall",
+    "visualType": "legs-wall",
+    "image": "legs-wall.webp",
+    "bodyParts": [
+      "upper legs",
+      "back"
+    ],
+    "targetMuscles": [
+      "legs",
+      "lower back"
+    ],
+    "equipments": [
+      "wall"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 10,
+      "ovulation": 10,
+      "luteal": 8
+    },
+    "phaseScore": {
+      "menstrual": 16,
+      "follicular": 8,
+      "ovulation": 8,
+      "luteal": 20
+    },
+    "symptomScore": {
+      "fatigue": 14,
+      "bloating": 8,
+      "low_mood": 8
+    },
+    "instructions": [
+      "Lie on your back near a wall.",
+      "Rest legs upward against the wall.",
+      "Relax arms by your sides.",
+      "Breathe naturally for 1 to 3 minutes."
+    ],
+    "summary": "Rest the legs against the wall and breathe naturally. Keep shoulders relaxed and the low back supported.",
+    "focus": "restorative pause ? leg release ? luteal-friendly",
+    "safety": "Skip if dizziness, eye-pressure concerns, or strong discomfort appear. Roll to one side before sitting up."
+  },
+  {
+    "id": "shoulder-rolls",
+    "name": "Shoulder Rolls",
+    "visualType": "shoulder-rolls",
+    "image": "shoulder-rolls.webp",
+    "bodyParts": [
+      "shoulders",
+      "neck"
+    ],
+    "targetMuscles": [
+      "shoulders",
+      "traps"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 6,
+      "follicular": 8,
+      "ovulation": 8,
+      "luteal": 6
+    },
+    "phaseScore": {
+      "menstrual": 14,
+      "follicular": 14,
+      "ovulation": 12,
+      "luteal": 16
+    },
+    "symptomScore": {
+      "fatigue": 8,
+      "low_mood": 8,
+      "cramps": 4
+    },
+    "instructions": [
+      "Sit or stand tall with arms relaxed.",
+      "Roll shoulders slowly up, back, and down.",
+      "Keep jaw and neck soft.",
+      "Repeat 6 to 10 circles, then reverse."
+    ],
+    "summary": "Roll the shoulders slowly back and down. Keep the chin lightly tucked and let the neck stay soft.",
+    "focus": "neck and shoulder ease ? seated or standing ? work-break friendly",
+    "safety": "Do not shrug with force. Reduce the range or stop if shoulder pain appears."
+  },
+  {
+    "id": "mindful-walk",
+    "name": "Slow Mindful Walk",
+    "visualType": "mindful-walk",
+    "image": "mindful-walk.webp",
+    "bodyParts": [
+      "cardio",
+      "upper legs"
+    ],
+    "targetMuscles": [
+      "legs"
+    ],
+    "equipments": [
+      "body weight"
+    ],
+    "duration": {
+      "menstrual": 8,
+      "follicular": 18,
+      "ovulation": 18,
+      "luteal": 12
+    },
+    "phaseScore": {
+      "menstrual": 6,
+      "follicular": 20,
+      "ovulation": 18,
+      "luteal": 12
+    },
+    "symptomScore": {
+      "low_mood": 14,
+      "cravings": 10,
+      "high_energy": 10,
+      "bloating": 6
+    },
+    "instructions": [
+      "Walk slowly indoors or outdoors at an easy pace.",
+      "Let arms swing naturally.",
+      "Keep breathing steady.",
+      "Stop before fatigue builds."
+    ],
+    "summary": "Walk slowly and let breath and steps settle into a steady rhythm. Keep shoulders relaxed and stop before fatigue builds.",
+    "focus": "light cardio ? mood support ? craving-friendly",
+    "safety": "Shorten the time if menstrual fatigue or dizziness appears. Keep it easy, not a training push."
+  }
+]
