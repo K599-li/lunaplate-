@@ -1,11 +1,12 @@
-const CACHE_NAME = "lunaplate-static-20260630-health-polish4";
+const CACHE_NAME = "lunaplate-static-20260703-p1-1";
 
 const STATIC_ASSETS = [
   "/",
   "/index.html",
-  "/styles.css?v=20260630-health-polish4",
-  "/app.js?v=20260630-health-polish4",
-  "/i18n.js?v=20260630-health-polish4",
+  "/styles.css?v=20260630-profile-serene-local2",
+  "/cycle-store.js?v=20260703-p1-1",
+  "/app.js?v=20260703-p1-1b",
+  "/i18n.js?v=20260630-profile-serene-local2",
   "/manifest.webmanifest",
   "/assets/lunaplate-logo.png",
   "/assets/pwa/icon-192.png",

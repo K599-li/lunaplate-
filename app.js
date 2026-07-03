@@ -16,6 +16,20 @@ function storageSet(key, value) {
   }
 }
 
+function cycleStore() {
+  return window.CycleStore;
+}
+
+function loadCycleState() {
+  const store = cycleStore();
+  if (store) return store.load();
+  return {
+    schemaVersion: 1,
+    cycles: [],
+    settings: { avgCycleLength: 28, avgPeriodLength: 5, manualOverride: null },
+  };
+}
+
 function loadGrocery() {
   try {
     return JSON.parse(storageGet("lunaPlateGrocery") || "[]");
@@ -149,9 +163,17 @@ function localizeMealCard(node) {
 }
 
 function setDefaultCycleStart() {
-  const saved = storageGet(LAST_PERIOD_KEY);
-  if (saved) {
-    document.querySelector("#last-period").value = saved;
+  const cycleState = loadCycleState();
+  const latestCycle = cycleStore()?.latestCycle(cycleState);
+  const cycleLengthInput = document.querySelector("#cycle-length");
+  const manualPhase = cycleState.settings.manualOverride || "auto";
+  const manualPhaseInput = document.querySelector(`input[name='phase'][value='${manualPhase}']`);
+
+  if (cycleLengthInput) cycleLengthInput.value = cycleState.settings.avgCycleLength || 28;
+  if (manualPhaseInput) manualPhaseInput.checked = true;
+
+  if (latestCycle?.startDate) {
+    document.querySelector("#last-period").value = latestCycle.startDate;
     return;
   }
 
@@ -161,7 +183,25 @@ function setDefaultCycleStart() {
 
 function saveLastPeriod() {
   const value = document.querySelector("#last-period").value;
-  if (value) storageSet(LAST_PERIOD_KEY, value);
+  if (!value) return;
+  const store = cycleStore();
+  if (store) {
+    const cycleState = store.load();
+    if (cycleState.cycles.length) {
+      store.updateCycle(cycleState.cycles.length - 1, { startDate: value, endDate: null });
+    } else {
+      store.addCycle({ startDate: value, endDate: null });
+    }
+  }
+  saveCycleSettingsFromForm();
+}
+
+function saveCycleSettingsFromForm() {
+  const manualPhase = document.querySelector("input[name='phase']:checked")?.value || "auto";
+  cycleStore()?.updateSettings({
+    avgCycleLength: Number(document.querySelector("#cycle-length")?.value || 28),
+    manualOverride: manualPhase === "auto" ? null : manualPhase,
+  });
 }
 
 function init() {
@@ -184,7 +224,13 @@ function init() {
 
   const debouncedRender = debounce(render, 350);
   form.addEventListener("input", debouncedRender);
-  document.querySelector("#last-period").addEventListener("input", saveLastPeriod);
+  ["input", "change"].forEach((eventName) => {
+    document.querySelector("#last-period").addEventListener(eventName, saveLastPeriod);
+    document.querySelector("#cycle-length").addEventListener(eventName, saveCycleSettingsFromForm);
+  });
+  document.querySelectorAll("input[name='phase']").forEach((input) => {
+    input.addEventListener("change", saveCycleSettingsFromForm);
+  });
   document.querySelector("#cook-time-output").textContent = formatMinutes(document.querySelector("#cook-time").value);
   document.querySelector("#cook-time").addEventListener("input", (event) => {
     document.querySelector("#cook-time-output").textContent = formatMinutes(event.target.value);
