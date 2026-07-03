@@ -17,7 +17,7 @@ To install on a phone, serve the app from an HTTPS origin, open it in the mobile
 - Android Chrome: install prompt or `Add to Home screen`
 - iOS Safari: Share -> `Add to Home Screen`
 
-The Python backend still needs to be reachable from the phone because meal and movement recommendations call `/api/meals` and `/api/female-exercises`. For production, deploy `server.py` behind the same HTTPS domain or update the app to call a hosted API base URL.
+The Python backend still needs to be reachable from the phone because meal and movement recommendations call `/api/meals`, `/api/today-meal`, and `/api/female-exercises`. For production, deploy `server.py` behind the same HTTPS domain or update the app to call a hosted API base URL.
 
 ## HTTPS deployment
 
@@ -40,23 +40,37 @@ For a custom domain, add the domain in the Render dashboard and follow Render's 
 
 - Frontend: `https://app.example.com/index.html`
 - Backend: `https://app.example.com/api/meals`
+- Today meal API: `https://app.example.com/api/today-meal`
 - Movement API: `https://app.example.com/api/female-exercises`
 
 ## Project structure
 
-- `index.html`: page structure
-- `styles.css`: visual styling
-- `app.js`: frontend state, rendering, and API calls
-- `server.py`: backend API and recommendation logic
-- `render.yaml`: Render HTTPS deployment blueprint
-- `requirements.txt`: Python dependency marker
-- `manifest.webmanifest`: mobile install metadata
-- `sw.js`: PWA service worker cache
-- `data/exercises.json`: generated movement recommendation data
-- `data/recommendation-rules.json`: meal query, scoring, cuisine, and diet rules
-- `assets/movement`: generated movement images
-- `assets/pwa`: mobile install icons
-- `i18n.js`: multilingual UI copy
+Core runtime:
+
+- `index.html`: app shell and page structure for Today, Insights, Health/Food, Movement, profile drawer, and cart drawer
+- `styles.css`: all visual styling, responsive mobile layout, card designs, icons, bottom nav, and PWA-safe polish
+- `app.js`: frontend state, local storage, rendering, locale refresh, cart behavior, and API calls
+- `i18n.js`: English, Chinese, and Russian UI copy plus phase/tag/meal-type translation helpers
+- `server.py`: static file server plus backend APIs for meal ranking, today meal selection, movement recommendations, and care-plan generation
+
+Backend data:
+
+- `data/exercises.json`: local women-centered movement recommendation catalog and generated image mapping
+- `data/recommendation-rules.json`: meal phase profiles, symptom-to-food tags, diet filters, cuisine rules, and query/scoring inputs
+
+Visual assets:
+
+- `assets/lunaplate-logo.png`: brand/profile logo used in the top bar and profile drawer
+- `assets/movement/*.webp`: generated movement guide images referenced by `data/exercises.json`
+- `assets/pwa/*.png`: install icons referenced by `manifest.webmanifest` and pre-cached by `sw.js`
+
+PWA and deployment:
+
+- `manifest.webmanifest`: mobile install metadata, app icons, theme color, and standalone display settings
+- `sw.js`: service worker cache for app shell, install icons, and movement images; API requests stay network-first
+- `render.yaml`: Render HTTPS deployment blueprint for running `python server.py`
+- `requirements.txt`: intentionally empty dependency marker; LunaPlate currently uses only the Python standard library
+- `.gitignore`: ignores generated Python cache files, compiled bytecode, and local `.env`
 
 ## Current scope
 
@@ -67,6 +81,7 @@ For a custom domain, add the domain in the Render dashboard and follow Render's 
 - Cook-time slider
 - Pantry matching
 - Python-backed TheMealDB integration
+- Time-aware `/api/today-meal` recommendation for the Today screen
 - Backend ranking over API recipes
 - Python-backed generated movement recommendations
 - Ranked meal cards with API ingredients, inferred cook time, and steps

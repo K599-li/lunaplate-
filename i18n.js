@@ -27,9 +27,16 @@ const messages = {
       reset: "Reset check-in",
       closeProfile: "Close profile",
     },
-    nav: { today: "Today", meals: "Meals", plan: "Plan", profile: "Profile" },
+    nav: { today: "Home", insights: "Insights", health: "Health", meals: "Meals", plan: "Plan", profile: "Profile" },
     screen: {
       foodSubheading: "Today's meal plan for cycle support",
+    },
+    health: {
+      searchPlaceholder: "Search recipes or ingredients...",
+      prepTime: "Prep time:",
+      coreIngredient: "Core ingredient:",
+      ingredientPlaceholder: "Type ingredients to match...",
+      recipeTitle: "Cycle-custom recipes",
     },
     status: {
       cyclePhase: "Cycle phase",
@@ -37,6 +44,48 @@ const messages = {
       phaseHint: "Meal ideas will adapt to your estimated phase, symptoms, preferences, and pantry.",
       day: "Day {day}",
       manual: "Manual",
+    },
+    today: {
+      planTitle: "Today's plan",
+      viewAll: "View all",
+      warmCare: "Warm care",
+      warmCareCopy: "Lower-abdomen warmth · 15 min",
+      gentleMovement: "Gentle movement",
+      gentleMovementCopy: "8 min breathing stretch",
+      cycleMeal: "Cycle meal",
+      cycleMealCopy: "Warm bowl · protein · hydration",
+      nutritionEyebrow: "Daily nutrition overview",
+      kcal: "kcal",
+      kcalLeft: "650 kcal remaining today",
+      protein: "Protein 72g",
+      carbs: "Carbs 145g",
+      fat: "Fat 52g",
+      recipeTitle: "Cycle-custom meal",
+      recipeName: "Nourishing oatmeal pancakes",
+      recipeMeta: "15 min · steady energy",
+    },
+    insights: {
+      subheading: "Understand your current cycle rhythm",
+      currentCycle: "Current cycle: Day {day}",
+      cycleTitle: "Cycle insights",
+      energyTitle: "Energy and focus",
+      energyCopy: "Use today for steady, comfortable tasks and keep meals simple.",
+      socialTitle: "Body rhythm",
+      socialCopy: "Your current phase can shape appetite, movement tolerance, and rest needs.",
+      statusTitle: "Cycle status",
+      habitTitle: "Habit consistency",
+      habitCopy: "You kept a steady cycle-support routine this week.",
+      stabilityTitle: "Cycle stability",
+      stabilityValue: "Excellent",
+      stabilityCopy: "Your phase transitions look more predictable.",
+      movementTitle: "Restorative movement",
+      movementValue: "12 h",
+      movementCopy: "Low-intensity movement logged during the last month.",
+      predictionTitle: "Three-month prediction",
+      periodStart: "Period starts",
+      ovulation: "Estimated ovulation",
+      lifestyleEyebrow: "Nutrition focus",
+      lifestyleTitle: "Meals that support hormonal rhythm",
     },
     best: {
       eyebrow: "Best for today",
@@ -96,6 +145,14 @@ const messages = {
       title: "Grocery list",
       clear: "Clear",
       empty: "Add groceries from a meal card.",
+      close: "Close cart",
+      customPlaceholder: "Add a custom ingredient...",
+      addCustom: "Add",
+      selected: "Selected",
+      generate: "Generate list",
+      generatedGroup: "Generated meal list",
+      itemCount: "{n} items",
+      asNeeded: "as needed",
     },
     safety: {
       eyebrow: "Care note",
@@ -1134,6 +1191,533 @@ const messages = {
     },
   },
 };
+
+Object.assign(messages.zh, {
+  today: {
+    planTitle: "今日计划",
+    viewAll: "查看全部",
+    warmCare: "温暖养护",
+    warmCareCopy: "小腹热敷 · 15 分钟",
+    gentleMovement: "舒缓运动",
+    gentleMovementCopy: "8 分钟呼吸伸展",
+    cycleMeal: "周期餐食",
+    cycleMealCopy: "温热碗餐 · 蛋白质 · 补水",
+    nutritionEyebrow: "每日营养概览",
+    kcal: "千卡",
+    kcalLeft: "今日还可摄入 650 千卡",
+    protein: "蛋白质 72g",
+    carbs: "碳水 145g",
+    fat: "脂肪 52g",
+    recipeTitle: "周期定制食谱",
+    recipeName: "滋养燕麦松饼",
+    recipeMeta: "15 分钟 · 稳定能量",
+  },
+});
+
+Object.assign(messages.ru, {
+  today: {
+    planTitle: "План на сегодня",
+    viewAll: "Все",
+    warmCare: "Теплый уход",
+    warmCareCopy: "Тепло на низ живота · 15 мин",
+    gentleMovement: "Мягкое движение",
+    gentleMovementCopy: "8 мин дыхательной растяжки",
+    cycleMeal: "Блюдо для цикла",
+    cycleMealCopy: "Теплая миска · белок · гидратация",
+    nutritionEyebrow: "Обзор питания за день",
+    kcal: "ккал",
+    kcalLeft: "Осталось 650 ккал на сегодня",
+    protein: "Белок 72 г",
+    carbs: "Углеводы 145 г",
+    fat: "Жиры 52 г",
+    recipeTitle: "Рецепт под цикл",
+    recipeName: "Питательные овсяные панкейки",
+    recipeMeta: "15 мин · ровная энергия",
+  },
+});
+
+Object.assign(messages.zh.nav, {
+  today: "主页",
+  insights: "洞察",
+  health: "健康",
+});
+
+Object.assign(messages.ru.nav, {
+  today: "Главная",
+  insights: "Обзор",
+  health: "Здоровье",
+});
+
+Object.assign(messages.zh, {
+  insights: {
+    subheading: "了解你当前的周期节奏",
+    currentCycle: "当前周期：第 {day} 天",
+    cycleTitle: "周期洞察",
+    energyTitle: "能量与专注",
+    energyCopy: "今天适合稳定舒适的安排，餐食保持简单温和。",
+    socialTitle: "身体节律",
+    socialCopy: "当前阶段会影响食欲、运动耐受度和休息需求。",
+    statusTitle: "周期状态",
+    habitTitle: "习惯养成",
+    habitCopy: "本周持续记录了支持周期的健康习惯。",
+    stabilityTitle: "周期稳定性",
+    stabilityValue: "极佳",
+    stabilityCopy: "你的生理阶段切换变得更规律且可预测。",
+    movementTitle: "舒缓运动",
+    movementValue: "12 小时",
+    movementCopy: "上个月累计的低强度修复性活动时长。",
+    predictionTitle: "三个月预测",
+    periodStart: "经期开始",
+    ovulation: "预计排卵",
+    lifestyleEyebrow: "营养重点",
+    lifestyleTitle: "支持激素节律的餐食",
+  },
+});
+
+Object.assign(messages.ru, {
+  insights: {
+    subheading: "Понимайте текущий ритм цикла",
+    currentCycle: "Текущий цикл: день {day}",
+    cycleTitle: "Обзор цикла",
+    energyTitle: "Энергия и фокус",
+    energyCopy: "Сегодня подойдут спокойные задачи и простая теплая еда.",
+    socialTitle: "Ритм тела",
+    socialCopy: "Текущая фаза может влиять на аппетит, движение и потребность в отдыхе.",
+    statusTitle: "Состояние цикла",
+    habitTitle: "Устойчивость привычек",
+    habitCopy: "На этой неделе вы поддерживали стабильный ритм заботы.",
+    stabilityTitle: "Стабильность цикла",
+    stabilityValue: "Отлично",
+    stabilityCopy: "Переходы между фазами выглядят более предсказуемыми.",
+    movementTitle: "Восстановительное движение",
+    movementValue: "12 ч",
+    movementCopy: "Мягкая активность за последний месяц.",
+    predictionTitle: "Прогноз на три месяца",
+    periodStart: "Начало менструации",
+    ovulation: "Ожидаемая овуляция",
+    lifestyleEyebrow: "Фокус питания",
+    lifestyleTitle: "Блюда для поддержки ритма цикла",
+  },
+});
+
+Object.assign(messages.zh, {
+  ...messages.zh,
+  health: {
+    searchPlaceholder: "搜索食谱或食材...",
+    prepTime: "准备时间：",
+    coreIngredient: "核心食材：",
+    ingredientPlaceholder: "输入食材关键词...",
+    recipeTitle: "周期定制食谱",
+  },
+});
+
+Object.assign(messages.zh.grocery, {
+  close: "关闭购物车",
+  customPlaceholder: "添加自定义食材...",
+  addCustom: "添加",
+  selected: "已选食材",
+  generate: "生成清单",
+  generatedGroup: "周期餐食清单",
+  itemCount: "{n} 件",
+  asNeeded: "适量",
+});
+
+Object.assign(messages.ru, {
+  ...messages.ru,
+  health: {
+    searchPlaceholder: "Поиск рецептов или ингредиентов...",
+    prepTime: "Время:",
+    coreIngredient: "Основной ингредиент:",
+    ingredientPlaceholder: "Введите ингредиенты...",
+    recipeTitle: "Рецепты под цикл",
+  },
+});
+
+Object.assign(messages.ru.grocery, {
+  close: "Закрыть корзину",
+  customPlaceholder: "Добавить ингредиент...",
+  addCustom: "Добавить",
+  selected: "Выбрано",
+  generate: "Сформировать список",
+  generatedGroup: "Список для блюд",
+  itemCount: "{n} шт.",
+  asNeeded: "по вкусу",
+});
+
+Object.assign(messages.en, {
+  week: {
+    mon: "Mon",
+    tue: "Tue",
+    wed: "Wed",
+    thu: "Thu",
+    fri: "Fri",
+    sat: "Sat",
+    sun: "Sun",
+  },
+});
+
+Object.assign(messages.en.movement, {
+  todayRhythm: "Today's rhythm",
+  rhythmCopy: "Your energy is rising. This is a good time for strength and power training.",
+  activeGoal: "/ 60 minutes active time",
+  caloriesBurned: "Calories burned",
+  avgHeartRate: "Average heart rate",
+  recordTitle: "Movement record",
+  recordCopy: "Your body journey in this cycle",
+  syncTitle: "Sync suggestions",
+  syncCopy: "Work with your physiology, not against it.",
+  cardio: "Efficient cardio",
+  minutes35: "35 min",
+  featureProgram: "Follicular high-intensity training",
+  featureCopy: "Use the estrogen peak for metabolic training that builds lean muscle.",
+  recovery: "Recovery",
+  yogaProgram: "Hormone-soothing yoga",
+  yogaMeta: "20 min \u00b7 low intensity",
+  strength: "Strength",
+  strengthProgram: "Power sculpt",
+  strengthMeta: "45 min \u00b7 high intensity",
+  startTraining: "Start training",
+  scienceTitle: "Cycle science",
+  scienceCopy: "During the follicular phase, your body can use carbohydrates more efficiently for energy. Today is a good day to challenge yourself.",
+});
+
+Object.assign(messages.zh, {
+  week: {
+    mon: "\u4e00",
+    tue: "\u4e8c",
+    wed: "\u4e09",
+    thu: "\u56db",
+    fri: "\u4e94",
+    sat: "\u516d",
+    sun: "\u65e5",
+  },
+});
+
+Object.assign(messages.zh.movement, {
+  todayRhythm: "\u4eca\u65e5\u5f8b\u52a8",
+  rhythmCopy: "\u60a8\u7684\u80fd\u91cf\u6b63\u5904\u4e8e\u9ad8\u5cf0\u3002\u73b0\u5728\u662f\u8fdb\u884c\u529b\u91cf\u4e0e\u7206\u53d1\u529b\u8bad\u7ec3\u7684\u6700\u4f73\u65f6\u673a\u3002",
+  activeGoal: "/ 60 \u5206\u949f\u6d3b\u8dc3\u65f6\u95f4",
+  caloriesBurned: "\u6d88\u8017\u70ed\u91cf",
+  avgHeartRate: "\u5e73\u5747\u5fc3\u7387",
+  recordTitle: "\u8fd0\u52a8\u8bb0\u5f55",
+  recordCopy: "\u672c\u5468\u671f\u7684\u8eab\u4f53\u65c5\u7a0b",
+  syncTitle: "\u540c\u6b65\u5efa\u8bae",
+  syncCopy: "\u987a\u5e94\u751f\u7406\u673a\u80fd\uff0c\u800c\u975e\u4e0e\u4e4b\u5bf9\u6297\u3002",
+  cardio: "\u9ad8\u6548\u6709\u6c27",
+  minutes35: "35 \u5206\u949f",
+  featureProgram: "\u5375\u6ce1\u671f\u9ad8\u5f3a\u5ea6\u8bad\u7ec3",
+  featureCopy: "\u5229\u7528\u96cc\u6fc0\u7d20\u6c34\u5e73\u9ad8\u5cf0\u671f\u8fdb\u884c\u4ee3\u8c22\u8c03\u8282\u8bad\u7ec3\uff0c\u65e8\u5728\u5851\u9020\u7cbe\u5b9e\u808c\u8089\u3002",
+  recovery: "\u6062\u590d",
+  yogaProgram: "\u8377\u5c14\u8499\u8212\u7f13\u745c\u4f3d",
+  yogaMeta: "20 \u5206\u949f \u00b7 \u4f4e\u5f3a\u5ea6",
+  strength: "\u529b\u91cf",
+  strengthProgram: "\u5f3a\u529b\u5851\u5f62",
+  strengthMeta: "45 \u5206\u949f \u00b7 \u9ad8\u5f3a\u5ea6",
+  startTraining: "\u5f00\u59cb\u8bad\u7ec3",
+  scienceTitle: "\u5468\u671f\u79d1\u666e",
+  scienceCopy: "\u5728\u5375\u6ce1\u671f\uff0c\u60a8\u7684\u8eab\u4f53\u5229\u7528\u78b3\u6c34\u5316\u5408\u7269\u63d0\u4f9b\u80fd\u91cf\u7684\u6548\u7387\u66f4\u9ad8\u3002\u4eca\u5929\u662f\u6311\u6218\u81ea\u6211\u5427\uff0c\u60a8\u6709\u5145\u8db3\u7684\u80fd\u91cf\uff01",
+});
+
+Object.assign(messages.ru, {
+  week: {
+    mon: "\u041f\u043d",
+    tue: "\u0412\u0442",
+    wed: "\u0421\u0440",
+    thu: "\u0427\u0442",
+    fri: "\u041f\u0442",
+    sat: "\u0421\u0431",
+    sun: "\u0412\u0441",
+  },
+});
+
+Object.assign(messages.ru.movement, {
+  todayRhythm: "\u0420\u0438\u0442\u043c \u043d\u0430 \u0441\u0435\u0433\u043e\u0434\u043d\u044f",
+  rhythmCopy: "\u042d\u043d\u0435\u0440\u0433\u0438\u044f \u0440\u0430\u0441\u0442\u0435\u0442. \u0421\u0435\u0439\u0447\u0430\u0441 \u0445\u043e\u0440\u043e\u0448\u0435\u0435 \u0432\u0440\u0435\u043c\u044f \u0434\u043b\u044f \u0441\u0438\u043b\u044b \u0438 \u043c\u043e\u0449\u043d\u043e\u0441\u0442\u0438.",
+  activeGoal: "/ 60 \u043c\u0438\u043d \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u0438",
+  caloriesBurned: "\u0421\u043e\u0436\u0436\u0435\u043d\u043e",
+  avgHeartRate: "\u0421\u0440\u0435\u0434\u043d\u0438\u0439 \u043f\u0443\u043b\u044c\u0441",
+  recordTitle: "\u0416\u0443\u0440\u043d\u0430\u043b \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u044f",
+  recordCopy: "\u041f\u0443\u0442\u044c \u0442\u0435\u043b\u0430 \u0432 \u044d\u0442\u043e\u043c \u0446\u0438\u043a\u043b\u0435",
+  syncTitle: "\u0421\u0438\u043d\u0445\u0440\u043e-\u0441\u043e\u0432\u0435\u0442\u044b",
+  syncCopy: "\u0414\u0432\u0438\u0433\u0430\u0439\u0442\u0435\u0441\u044c \u0432 \u0440\u0438\u0442\u043c\u0435 \u0442\u0435\u043b\u0430.",
+  cardio: "\u041a\u0430\u0440\u0434\u0438\u043e",
+  minutes35: "35 \u043c\u0438\u043d",
+  featureProgram: "\u0418\u043d\u0442\u0435\u043d\u0441\u0438\u0432 \u0434\u043b\u044f \u0444\u043e\u043b\u043b\u0438\u043a\u0443\u043b\u044f\u0440\u043d\u043e\u0439 \u0444\u0430\u0437\u044b",
+  featureCopy: "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u043f\u0438\u043a \u044d\u0441\u0442\u0440\u043e\u0433\u0435\u043d\u0430 \u0434\u043b\u044f \u043c\u0435\u0442\u0430\u0431\u043e\u043b\u0438\u0447\u0435\u0441\u043a\u043e\u0439 \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438.",
+  recovery: "\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435",
+  yogaProgram: "\u0419\u043e\u0433\u0430 \u0434\u043b\u044f \u0433\u043e\u0440\u043c\u043e\u043d\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0440\u0438\u0442\u043c\u0430",
+  yogaMeta: "20 \u043c\u0438\u043d \u00b7 \u043d\u0438\u0437\u043a\u0430\u044f \u0438\u043d\u0442\u0435\u043d\u0441\u0438\u0432\u043d\u043e\u0441\u0442\u044c",
+  strength: "\u0421\u0438\u043b\u0430",
+  strengthProgram: "\u0421\u0438\u043b\u043e\u0432\u043e\u0439 \u0442\u043e\u043d\u0443\u0441",
+  strengthMeta: "45 \u043c\u0438\u043d \u00b7 \u0432\u044b\u0441\u043e\u043a\u0430\u044f \u0438\u043d\u0442\u0435\u043d\u0441\u0438\u0432\u043d\u043e\u0441\u0442\u044c",
+  startTraining: "\u041d\u0430\u0447\u0430\u0442\u044c",
+  scienceTitle: "\u041d\u0430\u0443\u043a\u0430 \u0446\u0438\u043a\u043b\u0430",
+  scienceCopy: "\u0412 \u0444\u043e\u043b\u043b\u0438\u043a\u0443\u043b\u044f\u0440\u043d\u043e\u0439 \u0444\u0430\u0437\u0435 \u0442\u0435\u043b\u043e \u044d\u0444\u0444\u0435\u043a\u0442\u0438\u0432\u043d\u0435\u0435 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442 \u0443\u0433\u043b\u0435\u0432\u043e\u0434\u044b \u0434\u043b\u044f \u044d\u043d\u0435\u0440\u0433\u0438\u0438. \u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043c\u043e\u0436\u043d\u043e \u043c\u044f\u0433\u043a\u043e \u0443\u0441\u0438\u043b\u0438\u0442\u044c \u043d\u0430\u0433\u0440\u0443\u0437\u043a\u0443.",
+});
+
+Object.assign(messages.en.today, {
+  heroTitle: "Let body and mind bloom softly through your cycle",
+  heroCopy: "Today is a good moment to soothe your body and replenish natural energy.",
+  warmCare: "Folate support",
+  warmCareCopy: "09:00 \u2022 400mcg",
+  gentleMovement: "15 min morning meditation",
+  gentleMovementCopy: "Helps settle mood waves",
+  cycleMeal: "Hydration",
+  cycleMealCopy: "Goal 2000ml \u2022 now 800ml",
+  recipeName: "Nourishing blueberry oat bowl",
+  recipeMeta: "15 min \u2022 zinc-rich nutrition",
+});
+
+Object.assign(messages.zh.today, {
+  heroTitle: "\u8ba9\u8eab\u5fc3\u5728\u5468\u671f\u4e2d\u6e29\u67d4\u7efd\u653e",
+  heroCopy: "\u4eca\u5929\u662f\u8212\u7f13\u8eab\u5fc3\u7684\u597d\u65f6\u673a\uff0c\u8bb0\u5f97\u591a\u8865\u5145\u5929\u7136\u80fd\u91cf\u3002",
+  warmCare: "\u8865\u5145\u53f6\u9178",
+  warmCareCopy: "\u65e9\u4e0a 09:00 \u2022 400mcg",
+  gentleMovement: "15\u5206\u949f\u6668\u95f4\u51a5\u60f3",
+  gentleMovementCopy: "\u5e2e\u52a9\u5e73\u590d\u60c5\u7eea\u6ce2\u52a8",
+  cycleMeal: "\u8865\u5145\u6c34\u5206",
+  cycleMealCopy: "\u76ee\u6807 2000ml \u2022 \u5f53\u524d 800ml",
+  recipeName: "\u8425\u517b\u84dd\u8393\u71d5\u9ea6\u7897",
+  recipeMeta: "15 \u5206\u949f \u2022 \u9ad8\u950c\u8425\u517b",
+});
+
+Object.assign(messages.ru.today, {
+  heroTitle: "\u041f\u0443\u0441\u0442\u044c \u0442\u0435\u043b\u043e \u0438 \u0443\u043c \u043c\u044f\u0433\u043a\u043e \u0440\u0430\u0441\u043a\u0440\u044b\u0432\u0430\u044e\u0442\u0441\u044f \u0432 \u0440\u0438\u0442\u043c\u0435 \u0446\u0438\u043a\u043b\u0430",
+  heroCopy: "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u0445\u043e\u0440\u043e\u0448\u0438\u0439 \u043c\u043e\u043c\u0435\u043d\u0442 \u0434\u043b\u044f \u043c\u044f\u0433\u043a\u043e\u0433\u043e \u0443\u0445\u043e\u0434\u0430 \u0438 \u043f\u043e\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f \u044d\u043d\u0435\u0440\u0433\u0438\u0438.",
+  warmCare: "\u0424\u043e\u043b\u0438\u0435\u0432\u0430\u044f \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430",
+  warmCareCopy: "09:00 \u2022 400mcg",
+  gentleMovement: "15 \u043c\u0438\u043d \u0443\u0442\u0440\u0435\u043d\u043d\u0435\u0439 \u043c\u0435\u0434\u0438\u0442\u0430\u0446\u0438\u0438",
+  gentleMovementCopy: "\u041f\u043e\u043c\u043e\u0433\u0430\u0435\u0442 \u0441\u043c\u044f\u0433\u0447\u0438\u0442\u044c \u043a\u043e\u043b\u0435\u0431\u0430\u043d\u0438\u044f \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d\u0438\u044f",
+  cycleMeal: "\u0412\u043e\u0434\u0430",
+  cycleMealCopy: "\u0426\u0435\u043b\u044c 2000ml \u2022 \u0441\u0435\u0439\u0447\u0430\u0441 800ml",
+  recipeName: "\u041f\u0438\u0442\u0430\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u043e\u0432\u0441\u044f\u043d\u043a\u0430 \u0441 \u0447\u0435\u0440\u043d\u0438\u043a\u043e\u0439",
+  recipeMeta: "15 \u043c\u0438\u043d \u2022 \u0431\u043e\u0433\u0430\u0442\u043e \u0446\u0438\u043d\u043a\u043e\u043c",
+});
+
+messages.en.todayPlan = {
+  markDone: "Mark done",
+  markUndone: "Mark not done",
+  hydrationTitle: "Hydration",
+  hydrationCopy: "Goal {goal}ml · now {current}ml · {percent}% · {cue}",
+  phases: {
+    menstrual: {
+      supplementTitle: "Magnesium + iron support",
+      supplementCopy: "09:00 · pair with a warm iron-rich meal",
+      movementTitle: "8 min belly-softening breath",
+      movementCopy: "Gentle breathing or slow cat-cow for comfort",
+      hydrationCue: "warm sips work well today",
+    },
+    follicular: {
+      supplementTitle: "Folate + B-vitamin support",
+      supplementCopy: "09:00 · steady energy support for a rising phase",
+      movementTitle: "15 min light strength flow",
+      movementCopy: "Mobility plus easy strength while energy rises",
+      hydrationCue: "add water before activity",
+    },
+    ovulation: {
+      supplementTitle: "Antioxidant support",
+      supplementCopy: "09:00 · vitamin C foods pair well with iron",
+      movementTitle: "20 min energizing walk",
+      movementCopy: "A brisk walk or upbeat yoga flow suits this phase",
+      hydrationCue: "keep fluids steady",
+    },
+    luteal: {
+      supplementTitle: "Magnesium + B6 support",
+      supplementCopy: "09:00 · gentle support for cravings and tension",
+      movementTitle: "12 min calming meditation",
+      movementCopy: "Breath-led movement to downshift stress",
+      hydrationCue: "small steady drinks help",
+    },
+  },
+};
+
+messages.zh.todayPlan = {
+  markDone: "标记完成",
+  markUndone: "取消完成",
+  hydrationTitle: "补充水分",
+  hydrationCopy: "目标 {goal}ml · 当前 {current}ml · {percent}% · {cue}",
+  phases: {
+    menstrual: {
+      supplementTitle: "镁 + 铁支持",
+      supplementCopy: "09:00 · 搭配温热、富含铁的餐食",
+      movementTitle: "8 分钟小腹放松呼吸",
+      movementCopy: "轻柔呼吸或慢节奏猫牛式，保持舒适",
+      hydrationCue: "今天适合温水小口补充",
+    },
+    follicular: {
+      supplementTitle: "叶酸 + B 族支持",
+      supplementCopy: "09:00 · 支持能量逐渐回升",
+      movementTitle: "15 分钟轻力量流动",
+      movementCopy: "活动关节，加一点轻力量训练",
+      hydrationCue: "运动前先补一点水",
+    },
+    ovulation: {
+      supplementTitle: "抗氧化支持",
+      supplementCopy: "09:00 · 维 C 食物可搭配铁来源",
+      movementTitle: "20 分钟活力步行",
+      movementCopy: "快走或明快瑜伽流，顺着高能量",
+      hydrationCue: "保持水分稳定",
+    },
+    luteal: {
+      supplementTitle: "镁 + B6 支持",
+      supplementCopy: "09:00 · 温和支持紧绷和食欲波动",
+      movementTitle: "12 分钟安定冥想",
+      movementCopy: "以呼吸带动放松，帮助身体降速",
+      hydrationCue: "少量多次更容易坚持",
+    },
+  },
+};
+
+messages.ru.todayPlan = {
+  markDone: "Отметить",
+  markUndone: "Снять отметку",
+  hydrationTitle: "Вода",
+  hydrationCopy: "Цель {goal}ml · сейчас {current}ml · {percent}% · {cue}",
+  phases: {
+    menstrual: {
+      supplementTitle: "Магний + железо",
+      supplementCopy: "09:00 · сочетайте с теплой пищей, богатой железом",
+      movementTitle: "8 мин мягкого дыхания",
+      movementCopy: "Спокойное дыхание или медленная cat-cow практика",
+      hydrationCue: "теплые небольшие глотки",
+    },
+    follicular: {
+      supplementTitle: "Фолат + витамины B",
+      supplementCopy: "09:00 · поддержка растущей энергии",
+      movementTitle: "15 мин легкой силы",
+      movementCopy: "Мобилизация и мягкая силовая работа",
+      hydrationCue: "пейте до активности",
+    },
+    ovulation: {
+      supplementTitle: "Антиоксидантная поддержка",
+      supplementCopy: "09:00 · витамин C хорошо сочетается с железом",
+      movementTitle: "20 мин бодрой ходьбы",
+      movementCopy: "Быстрая прогулка или энергичная йога",
+      hydrationCue: "держите воду рядом",
+    },
+    luteal: {
+      supplementTitle: "Магний + B6",
+      supplementCopy: "09:00 · мягкая поддержка при напряжении",
+      movementTitle: "12 мин спокойной медитации",
+      movementCopy: "Дыхательное движение для снижения стресса",
+      hydrationCue: "частые небольшие глотки",
+    },
+  },
+};
+
+Object.assign(messages.en.todayPlan, {
+  hydrationCopy: "Goal {goal}ml \u00b7 now {current}ml \u00b7 {percent}% \u00b7 {cue}",
+});
+Object.assign(messages.en.todayPlan.phases.menstrual, {
+  supplementCopy: "09:00 \u00b7 pair with a warm iron-rich meal",
+});
+Object.assign(messages.en.todayPlan.phases.follicular, {
+  supplementCopy: "09:00 \u00b7 steady energy support for a rising phase",
+});
+Object.assign(messages.en.todayPlan.phases.ovulation, {
+  supplementCopy: "09:00 \u00b7 vitamin C foods pair well with iron",
+});
+Object.assign(messages.en.todayPlan.phases.luteal, {
+  supplementCopy: "09:00 \u00b7 gentle support for cravings and tension",
+});
+
+messages.zh.todayPlan = {
+  markDone: "\u6807\u8bb0\u5b8c\u6210",
+  markUndone: "\u53d6\u6d88\u5b8c\u6210",
+  hydrationTitle: "\u8865\u5145\u6c34\u5206",
+  hydrationCopy: "\u76ee\u6807 {goal}ml \u00b7 \u5f53\u524d {current}ml \u00b7 {percent}% \u00b7 {cue}",
+  phases: {
+    menstrual: {
+      supplementTitle: "\u9541 + \u94c1\u652f\u6301",
+      supplementCopy: "09:00 \u00b7 \u642d\u914d\u6e29\u70ed\u3001\u5bcc\u542b\u94c1\u7684\u9910\u98df",
+      movementTitle: "8 \u5206\u949f\u5c0f\u8179\u653e\u677e\u547c\u5438",
+      movementCopy: "\u8f7b\u67d4\u547c\u5438\u6216\u6162\u8282\u594f\u732b\u725b\u5f0f\uff0c\u4fdd\u6301\u8212\u9002",
+      hydrationCue: "\u4eca\u5929\u9002\u5408\u6e29\u6c34\u5c0f\u53e3\u8865\u5145",
+    },
+    follicular: {
+      supplementTitle: "\u53f6\u9178 + B \u65cf\u652f\u6301",
+      supplementCopy: "09:00 \u00b7 \u652f\u6301\u80fd\u91cf\u9010\u6e10\u56de\u5347",
+      movementTitle: "15 \u5206\u949f\u8f7b\u529b\u91cf\u6d41\u52a8",
+      movementCopy: "\u6d3b\u52a8\u5173\u8282\uff0c\u52a0\u4e00\u70b9\u8f7b\u529b\u91cf\u8bad\u7ec3",
+      hydrationCue: "\u8fd0\u52a8\u524d\u5148\u8865\u4e00\u70b9\u6c34",
+    },
+    ovulation: {
+      supplementTitle: "\u6297\u6c27\u5316\u652f\u6301",
+      supplementCopy: "09:00 \u00b7 \u7ef4 C \u98df\u7269\u53ef\u642d\u914d\u94c1\u6765\u6e90",
+      movementTitle: "20 \u5206\u949f\u6d3b\u529b\u6b65\u884c",
+      movementCopy: "\u5feb\u8d70\u6216\u660e\u5feb\u745c\u4f3d\u6d41\uff0c\u987a\u7740\u9ad8\u80fd\u91cf",
+      hydrationCue: "\u4fdd\u6301\u6c34\u5206\u7a33\u5b9a",
+    },
+    luteal: {
+      supplementTitle: "\u9541 + B6 \u652f\u6301",
+      supplementCopy: "09:00 \u00b7 \u6e29\u548c\u652f\u6301\u7d27\u7ef7\u548c\u98df\u6b32\u6ce2\u52a8",
+      movementTitle: "12 \u5206\u949f\u5b89\u5b9a\u51a5\u60f3",
+      movementCopy: "\u4ee5\u547c\u5438\u5e26\u52a8\u653e\u677e\uff0c\u5e2e\u52a9\u8eab\u4f53\u964d\u901f",
+      hydrationCue: "\u5c11\u91cf\u591a\u6b21\u66f4\u5bb9\u6613\u575a\u6301",
+    },
+  },
+};
+
+messages.ru.todayPlan = {
+  markDone: "\u041e\u0442\u043c\u0435\u0442\u0438\u0442\u044c",
+  markUndone: "\u0421\u043d\u044f\u0442\u044c \u043e\u0442\u043c\u0435\u0442\u043a\u0443",
+  hydrationTitle: "\u0412\u043e\u0434\u0430",
+  hydrationCopy: "\u0426\u0435\u043b\u044c {goal}ml \u00b7 \u0441\u0435\u0439\u0447\u0430\u0441 {current}ml \u00b7 {percent}% \u00b7 {cue}",
+  phases: {
+    menstrual: {
+      supplementTitle: "\u041c\u0430\u0433\u043d\u0438\u0439 + \u0436\u0435\u043b\u0435\u0437\u043e",
+      supplementCopy: "09:00 \u00b7 \u0441 \u0442\u0435\u043f\u043b\u043e\u0439 \u043f\u0438\u0449\u0435\u0439, \u0431\u043e\u0433\u0430\u0442\u043e\u0439 \u0436\u0435\u043b\u0435\u0437\u043e\u043c",
+      movementTitle: "8 \u043c\u0438\u043d \u043c\u044f\u0433\u043a\u043e\u0433\u043e \u0434\u044b\u0445\u0430\u043d\u0438\u044f",
+      movementCopy: "\u0421\u043f\u043e\u043a\u043e\u0439\u043d\u043e\u0435 \u0434\u044b\u0445\u0430\u043d\u0438\u0435 \u0438\u043b\u0438 \u043c\u0435\u0434\u043b\u0435\u043d\u043d\u0430\u044f cat-cow \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0430",
+      hydrationCue: "\u0442\u0435\u043f\u043b\u044b\u0435 \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u0438\u0435 \u0433\u043b\u043e\u0442\u043a\u0438",
+    },
+    follicular: {
+      supplementTitle: "\u0424\u043e\u043b\u0430\u0442 + \u0432\u0438\u0442\u0430\u043c\u0438\u043d\u044b B",
+      supplementCopy: "09:00 \u00b7 \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430 \u0440\u0430\u0441\u0442\u0443\u0449\u0435\u0439 \u044d\u043d\u0435\u0440\u0433\u0438\u0438",
+      movementTitle: "15 \u043c\u0438\u043d \u043b\u0435\u0433\u043a\u043e\u0439 \u0441\u0438\u043b\u044b",
+      movementCopy: "\u041c\u043e\u0431\u0438\u043b\u0438\u0437\u0430\u0446\u0438\u044f \u0438 \u043c\u044f\u0433\u043a\u0430\u044f \u0441\u0438\u043b\u043e\u0432\u0430\u044f \u0440\u0430\u0431\u043e\u0442\u0430",
+      hydrationCue: "\u043f\u0435\u0439\u0442\u0435 \u0434\u043e \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u0438",
+    },
+    ovulation: {
+      supplementTitle: "\u0410\u043d\u0442\u0438\u043e\u043a\u0441\u0438\u0434\u0430\u043d\u0442\u043d\u0430\u044f \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430",
+      supplementCopy: "09:00 \u00b7 \u0432\u0438\u0442\u0430\u043c\u0438\u043d C \u0445\u043e\u0440\u043e\u0448\u043e \u0441\u043e\u0447\u0435\u0442\u0430\u0435\u0442\u0441\u044f \u0441 \u0436\u0435\u043b\u0435\u0437\u043e\u043c",
+      movementTitle: "20 \u043c\u0438\u043d \u0431\u043e\u0434\u0440\u043e\u0439 \u0445\u043e\u0434\u044c\u0431\u044b",
+      movementCopy: "\u0411\u044b\u0441\u0442\u0440\u0430\u044f \u043f\u0440\u043e\u0433\u0443\u043b\u043a\u0430 \u0438\u043b\u0438 \u044d\u043d\u0435\u0440\u0433\u0438\u0447\u043d\u0430\u044f \u0439\u043e\u0433\u0430",
+      hydrationCue: "\u0434\u0435\u0440\u0436\u0438\u0442\u0435 \u0432\u043e\u0434\u0443 \u0440\u044f\u0434\u043e\u043c",
+    },
+    luteal: {
+      supplementTitle: "\u041c\u0430\u0433\u043d\u0438\u0439 + B6",
+      supplementCopy: "09:00 \u00b7 \u043c\u044f\u0433\u043a\u0430\u044f \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430 \u043f\u0440\u0438 \u043d\u0430\u043f\u0440\u044f\u0436\u0435\u043d\u0438\u0438",
+      movementTitle: "12 \u043c\u0438\u043d \u0441\u043f\u043e\u043a\u043e\u0439\u043d\u043e\u0439 \u043c\u0435\u0434\u0438\u0442\u0430\u0446\u0438\u0438",
+      movementCopy: "\u0414\u044b\u0445\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0434\u043b\u044f \u0441\u043d\u0438\u0436\u0435\u043d\u0438\u044f \u0441\u0442\u0440\u0435\u0441\u0441\u0430",
+      hydrationCue: "\u0447\u0430\u0441\u0442\u044b\u0435 \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u0438\u0435 \u0433\u043b\u043e\u0442\u043a\u0438",
+    },
+  },
+};
+
+Object.assign(messages.en.health, {
+  heroEyebrow: "",
+  heroTitle: "Meals tuned to your rhythm",
+  heroCopy: "Search by dish, ingredient, prep time, and phase support.",
+});
+Object.assign(messages.en.toolbar, { shuffle: "Refresh picks" });
+Object.assign(messages.en.recipe, { kcal: "{n} kcal" });
+
+Object.assign(messages.zh.health, {
+  heroEyebrow: "",
+  heroTitle: "\u6309\u4f60\u7684\u8282\u5f8b\u63a8\u8350\u9910\u98df",
+  heroCopy: "\u6309\u83dc\u540d\u3001\u98df\u6750\u3001\u65f6\u95f4\u548c\u5468\u671f\u652f\u6301\u7b5b\u9009\u3002",
+});
+Object.assign(messages.zh.toolbar, { shuffle: "\u6362\u4e00\u6279" });
+Object.assign(messages.zh.recipe, { kcal: "{n} \u5343\u5361" });
+
+Object.assign(messages.ru.health, {
+  heroEyebrow: "",
+  heroTitle: "\u0415\u0434\u0430 \u0432 \u0440\u0438\u0442\u043c\u0435 \u0442\u0435\u043b\u0430",
+  heroCopy: "\u0418\u0449\u0438\u0442\u0435 \u043f\u043e \u0431\u043b\u044e\u0434\u0443, \u0438\u043d\u0433\u0440\u0435\u0434\u0438\u0435\u043d\u0442\u0443, \u0432\u0440\u0435\u043c\u0435\u043d\u0438 \u0438 \u0444\u0430\u0437\u0435.",
+});
+Object.assign(messages.ru.toolbar, { shuffle: "\u0415\u0449\u0435 \u0432\u0430\u0440\u0438\u0430\u043d\u0442\u044b" });
+Object.assign(messages.ru.recipe, { kcal: "{n} \u043a\u043a\u0430\u043b" });
 
 let currentLocale = "en";
 const listeners = new Set();

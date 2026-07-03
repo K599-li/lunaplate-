@@ -1,11 +1,11 @@
-const CACHE_NAME = "lunaplate-static-20260603-profile-drawer2";
+const CACHE_NAME = "lunaplate-static-20260630-health-polish4";
 
 const STATIC_ASSETS = [
   "/",
   "/index.html",
-  "/styles.css?v=20260603-profile-drawer2",
-  "/app.js?v=20260603-profile-drawer2",
-  "/i18n.js?v=20260603-profile-drawer2",
+  "/styles.css?v=20260630-health-polish4",
+  "/app.js?v=20260630-health-polish4",
+  "/i18n.js?v=20260630-health-polish4",
   "/manifest.webmanifest",
   "/assets/lunaplate-logo.png",
   "/assets/pwa/icon-192.png",

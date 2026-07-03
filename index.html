@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#8f6aa4" />
+    <meta name="theme-color" content="#f6f1e7" />
     <meta name="application-name" content="LunaPlate" />
     <meta name="apple-mobile-web-app-title" content="LunaPlate" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -11,7 +11,7 @@
     <title>LunaPlate</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/pwa/icon-192.png" />
-    <link rel="stylesheet" href="styles.css?v=20260603-profile-drawer2" />
+    <link rel="stylesheet" href="styles.css?v=20260630-profile-serene-local2" />
   </head>
   <body>
     <main class="app-shell">
@@ -26,86 +26,248 @@
               <p data-i18n="brand.tagline">Nourish your cycle</p>
             </div>
           </div>
-          <div class="lang-switch" role="group" data-i18n-aria="lang.choose" aria-label="Language">
-            <button type="button" data-lang="en" data-i18n="lang.en" aria-pressed="true">EN</button>
-            <button type="button" data-lang="zh" data-i18n="lang.zh" aria-pressed="false">ZH</button>
-            <button type="button" data-lang="ru" data-i18n="lang.ru" aria-pressed="false">RU</button>
+          <div class="mobile-topbar-actions">
+            <button type="button" class="cart-button topbar-cart" id="cart-trigger" data-i18n-aria="grocery.title" data-i18n-title="grocery.title" aria-label="Grocery list" title="Grocery list">
+              <span class="cart-icon" aria-hidden="true"></span>
+              <strong id="cart-count">0</strong>
+            </button>
+            <button type="button" class="topbar-icon" aria-label="Notifications" title="Notifications">
+              <span aria-hidden="true"></span>
+            </button>
           </div>
         </header>
 
-        <section class="app-view active" data-view="today" aria-label="Today">
+        <section class="app-view active today-screen" data-view="today" aria-label="Today">
+          <section class="today-cycle-hero">
+            <div class="today-ring" aria-hidden="true">
+              <span class="today-ring-phase" id="today-ring-phase">Cycle phase</span>
+              <div class="day-pill" id="day-pill">Day --</div>
+            </div>
+            <p class="today-phase-label" data-i18n="status.cyclePhase">Cycle phase</p>
+            <h2 id="phase-title" data-i18n-skip>Set your cycle details</h2>
+            <p id="phase-description" data-i18n-skip>Meal ideas will adapt to your estimated phase, symptoms, preferences, and pantry.</p>
+            <p id="today-cycle-summary" data-i18n-skip hidden>Today is Day --</p>
+          </section>
+
+          <section class="today-plan-panel" aria-label="Today's plan">
+            <div class="today-section-heading">
+              <h2 data-i18n="today.planTitle">Today's plan</h2>
+              <button type="button" data-open-view="insights" data-i18n="today.viewAll">View all</button>
+            </div>
+            <div class="today-plan-list">
+              <article class="today-plan-row" data-plan-item="supplement">
+                <span class="today-plan-icon supplement" aria-hidden="true"></span>
+                <span>
+                  <strong id="today-supplement-title">Folate support</strong>
+                  <small id="today-supplement-copy">09:00 &middot; 400mcg</small>
+                </span>
+                <button type="button" class="today-plan-check" data-plan-check="supplement" aria-pressed="false" aria-label="Mark supplement done">
+                  <span aria-hidden="true"></span>
+                </button>
+              </article>
+              <article class="today-plan-row" data-plan-item="movement">
+                <span class="today-plan-icon movement" aria-hidden="true"></span>
+                <span>
+                  <strong id="today-movement-title">15 min morning meditation</strong>
+                  <small id="today-movement-copy">Helps settle mood waves</small>
+                </span>
+                <button type="button" class="today-plan-check" data-plan-check="movement" aria-pressed="false" aria-label="Mark movement done">
+                  <span aria-hidden="true"></span>
+                </button>
+              </article>
+              <article class="today-plan-row hydration-row" data-plan-item="hydration">
+                <span class="today-plan-icon hydration" aria-hidden="true"></span>
+                <span>
+                  <strong id="today-hydration-title">Hydration</strong>
+                  <small id="today-hydration-copy">Goal 2000ml &middot; now 800ml</small>
+                </span>
+                <div class="hydration-control">
+                  <div class="hydration-step-row">
+                    <button type="button" data-water-step="-250" aria-label="Drink 250ml less">-</button>
+                    <output id="today-water-output">800ml</output>
+                    <button type="button" data-water-step="250" aria-label="Add 250ml water">+</button>
+                  </div>
+                  <input id="today-water-range" type="range" min="0" max="2500" value="800" step="50" aria-label="Water today" />
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="today-nutrition-panel" aria-label="Daily nutrition overview">
+            <p data-i18n="today.nutritionEyebrow">Daily nutrition overview</p>
+            <div class="today-calorie-line">
+              <strong id="nutrition-kcal" data-i18n-skip>0</strong>
+              <span data-i18n="today.kcal">kcal</span>
+            </div>
+            <small id="nutrition-kcal-left" data-i18n-skip>2,000 kcal remaining today</small>
+            <div class="today-macro-grid">
+              <article>
+                <span id="nutrition-protein-label" data-i18n-skip>Protein 0g</span>
+                <i id="nutrition-protein-bar"></i>
+                <strong id="nutrition-protein-percent" data-i18n-skip>0%</strong>
+              </article>
+              <article>
+                <span id="nutrition-carbs-label" data-i18n-skip>Carbs 0g</span>
+                <i id="nutrition-carbs-bar"></i>
+                <strong id="nutrition-carbs-percent" data-i18n-skip>0%</strong>
+              </article>
+              <article>
+                <span id="nutrition-fat-label" data-i18n-skip>Fat 0g</span>
+                <i id="nutrition-fat-bar"></i>
+                <strong id="nutrition-fat-percent" data-i18n-skip>0%</strong>
+              </article>
+            </div>
+          </section>
+
+          <section class="today-recipe-section" aria-label="Cycle recipe recommendation">
+            <div class="today-section-heading">
+              <h2 data-i18n="today.recipeTitle">Cycle-custom meal</h2>
+              <button type="button" data-open-view="food" data-i18n="today.viewAll">View all</button>
+            </div>
+            <button type="button" class="today-recipe-card" data-open-view="food">
+              <img id="today-recipe-image" src="https://www.figma.com/api/mcp/asset/3b816d13-bcd7-4ef4-8273-220ad2bce30f" alt="" loading="lazy" />
+              <span class="today-recipe-overlay" aria-hidden="true"></span>
+              <span class="today-recipe-copy">
+                <small id="today-recipe-phase" data-i18n-skip>Luteal phase</small>
+                <strong id="today-recipe-name" data-i18n-skip>Nourishing blueberry oat bowl</strong>
+                <em id="today-recipe-meta" data-i18n-skip>15 min &middot; zinc-rich nutrition</em>
+              </span>
+            </button>
+            <button type="button" id="today-recipe-log" class="today-recipe-log" data-i18n-skip hidden>Log this meal</button>
+          </section>
+        </section>
+
+        <section class="app-view insights-screen" data-view="insights" aria-label="Insights">
           <div class="screen-heading">
             <span class="section-dot primary-dot"></span>
             <div>
-              <h2 data-i18n="form.cycle">Cycle</h2>
-              <p id="today-cycle-summary" data-i18n-skip>Today is Day --</p>
+              <h2 data-i18n="nav.insights">Insights</h2>
+              <p data-i18n="insights.subheading">Understand your current cycle rhythm</p>
             </div>
           </div>
 
-          <section class="status-band">
-            <div>
-              <p class="eyebrow" data-i18n="status.cyclePhase">Cycle phase</p>
-              <h2 id="phase-title" data-i18n-skip>Set your cycle details</h2>
-              <p id="phase-description" data-i18n-skip>Meal ideas will adapt to your estimated phase, symptoms, preferences, and pantry.</p>
-            </div>
-            <div class="day-pill" id="day-pill">Day --</div>
-          </section>
-
-          <section class="cycle-calendar" aria-label="Cycle calendar preview">
+          <section class="cycle-calendar insight-calendar" aria-label="Cycle calendar preview">
             <div class="calendar-heading">
-              <h3 id="calendar-month" data-i18n-skip>Calendar</h3>
+              <div>
+                <h3 id="calendar-month" data-i18n-skip>Calendar</h3>
+                <p id="insight-cycle-day" data-i18n-skip>Current cycle: Day --</p>
+              </div>
+              <div class="calendar-controls" aria-hidden="true">
+                <span></span>
+                <span></span>
+              </div>
             </div>
             <div class="calendar-weekdays">
-              <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+              <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
             </div>
             <div class="calendar-grid" id="cycle-calendar-grid"></div>
             <div class="calendar-legend">
-              <span><i class="legend menstrual"></i>M</span>
-              <span><i class="legend follicular"></i>F</span>
-              <span><i class="legend ovulation"></i>O</span>
-              <span><i class="legend luteal"></i>L</span>
+              <span><i class="legend menstrual"></i><b data-i18n="phases.menstrual.title">Menstrual</b></span>
+              <span><i class="legend follicular"></i><b data-i18n="phases.follicular.title">Follicular</b></span>
+              <span><i class="legend ovulation"></i><b data-i18n="phases.ovulation.title">Ovulation</b></span>
+              <span><i class="legend luteal"></i><b data-i18n="phases.luteal.title">Luteal</b></span>
             </div>
           </section>
 
-          <section class="insight-grid" data-i18n-aria="aria.nutrition" aria-label="Nutrition focus">
-            <article>
-              <span class="dot iron"></span>
-              <h3 id="focus-one" data-i18n-skip>Comfort</h3>
-              <p id="focus-one-copy" data-i18n-skip>Warm, steady meals tend to feel better on demanding days.</p>
-            </article>
-            <article>
-              <span class="dot fiber"></span>
-              <h3 id="focus-two" data-i18n-skip>Balance</h3>
-              <p id="focus-two-copy" data-i18n-skip>Protein, fiber, and complex carbs help keep energy more even.</p>
-            </article>
-            <article>
-              <span class="dot hydration"></span>
-              <h3 id="focus-three" data-i18n-skip>Hydration</h3>
-              <p id="focus-three-copy" data-i18n-skip>Hydrating foods and simple drinks can support general comfort.</p>
-            </article>
+          <section class="insight-section">
+            <h2 data-i18n="insights.cycleTitle">Cycle insights</h2>
+            <div class="insight-card-grid">
+              <article class="insight-card">
+                <span class="insight-icon energy" aria-hidden="true"></span>
+                <h3 id="insight-energy-title" data-i18n="insights.energyTitle">Energy and focus</h3>
+                <p id="insight-energy-copy" data-i18n="insights.energyCopy">Use today for steady, comfortable tasks and keep meals simple.</p>
+              </article>
+              <article class="insight-card">
+                <span class="insight-icon social" aria-hidden="true"></span>
+                <h3 id="insight-social-title" data-i18n="insights.socialTitle">Body rhythm</h3>
+                <p id="insight-social-copy" data-i18n="insights.socialCopy">Your current phase can shape appetite, movement tolerance, and rest needs.</p>
+              </article>
+            </div>
           </section>
 
-          <article class="panel safety-panel">
-            <p class="eyebrow" data-i18n="safety.eyebrow">Care note</p>
-            <h2 data-i18n="safety.title">Supportive, not diagnostic</h2>
-            <p data-i18n="safety.body">
-              LunaPlate gives general wellness ideas. Severe pain, very heavy bleeding,
-              dizziness, missed periods, pregnancy concerns, or a history of disordered
-              eating deserve care from a qualified clinician.
-            </p>
-          </article>
+          <section class="insight-section">
+            <h2 data-i18n="insights.statusTitle">Cycle status</h2>
+            <div class="insight-metric-grid">
+              <article>
+                <span class="insight-icon nutrition" aria-hidden="true"></span>
+                <small data-i18n="insights.habitTitle">Habit consistency</small>
+                <strong>80%</strong>
+                <p data-i18n="insights.habitCopy">You kept a steady cycle-support routine this week.</p>
+              </article>
+              <article>
+                <span class="insight-icon stable" aria-hidden="true"></span>
+                <small data-i18n="insights.stabilityTitle">Cycle stability</small>
+                <strong data-i18n="insights.stabilityValue">Excellent</strong>
+                <p data-i18n="insights.stabilityCopy">Your phase transitions look more predictable.</p>
+              </article>
+              <article>
+                <span class="insight-icon movement" aria-hidden="true"></span>
+                <small data-i18n="insights.movementTitle">Restorative movement</small>
+                <strong data-i18n="insights.movementValue">12 h</strong>
+                <p data-i18n="insights.movementCopy">Low-intensity movement logged during the last month.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="insight-section">
+            <div class="section-heading">
+              <h2 data-i18n="insights.predictionTitle">Three-month prediction</h2>
+              <span class="calendar-mini-icon" aria-hidden="true"></span>
+            </div>
+            <div class="prediction-row">
+              <article class="prediction-card active">
+                <small id="prediction-month-one">Next month</small>
+                <p><span data-i18n="insights.periodStart">Period starts</span><strong id="prediction-period-one">--</strong></p>
+                <p><span data-i18n="insights.ovulation">Estimated ovulation</span><strong id="prediction-ovulation-one">--</strong></p>
+              </article>
+              <article class="prediction-card">
+                <small id="prediction-month-two">Month two</small>
+                <p><span data-i18n="insights.periodStart">Period starts</span><strong id="prediction-period-two">--</strong></p>
+                <p><span data-i18n="insights.ovulation">Estimated ovulation</span><strong id="prediction-ovulation-two">--</strong></p>
+              </article>
+              <article class="prediction-card">
+                <small id="prediction-month-three">Month three</small>
+                <p><span data-i18n="insights.periodStart">Period starts</span><strong id="prediction-period-three">--</strong></p>
+                <p><span data-i18n="insights.ovulation">Estimated ovulation</span><strong id="prediction-ovulation-three">--</strong></p>
+              </article>
+            </div>
+          </section>
+
+          <section class="lifestyle-card" data-open-view="food" aria-label="Lifestyle planning">
+            <img src="https://www.figma.com/api/mcp/asset/3b816d13-bcd7-4ef4-8273-220ad2bce30f" alt="" loading="lazy" />
+            <span aria-hidden="true"></span>
+            <div>
+              <small data-i18n="insights.lifestyleEyebrow">Nutrition focus</small>
+              <h2 data-i18n="insights.lifestyleTitle">Meals that support hormonal rhythm</h2>
+            </div>
+          </section>
         </section>
 
-        <section class="app-view" data-view="food" aria-label="Food">
-          <div class="screen-heading">
-            <span class="section-dot coral-dot"></span>
-            <div>
-              <h2 data-i18n="nav.meals">Meals</h2>
-              <p data-i18n="screen.foodSubheading">Today's meal plan for cycle support</p>
-            </div>
-          </div>
+        <section class="app-view health-screen" data-view="food" aria-label="Food">
+          <section class="health-filter-panel" data-i18n-aria="aria.mealFilters" aria-label="Meal filters">
+            <label class="health-search">
+              <span aria-hidden="true"></span>
+              <input id="recipe-search" type="search" data-i18n-placeholder="health.searchPlaceholder" placeholder="Search recipes or ingredients..." />
+            </label>
 
-          <section class="best-pick" data-i18n-aria="aria.bestPick" aria-label="Best meal recommendation">
+            <div class="health-filter-row">
+              <span data-i18n="health.prepTime">Prep time:</span>
+              <button type="button" class="time-chip active" data-time-min="0" data-time-filter="60" data-i18n="toolbar.all">All</button>
+              <button type="button" class="time-chip" data-time-min="0" data-time-filter="15">&lt;15 min</button>
+              <button type="button" class="time-chip" data-time-min="15" data-time-filter="30">15-30 min</button>
+              <button type="button" class="time-chip" data-time-min="30" data-time-filter="60">30+ min</button>
+            </div>
+
+            <label class="health-ingredient-field">
+              <span data-i18n="health.coreIngredient">Core ingredient:</span>
+              <textarea id="pantry" rows="1" data-i18n-placeholder="health.ingredientPlaceholder" placeholder="Type ingredients to match..." ></textarea>
+            </label>
+
+            <input id="cook-time" class="sr-only-control" type="range" min="5" max="60" value="35" step="5" />
+            <output id="cook-time-output" class="sr-only-control">35 min</output>
+          </section>
+
+          <section class="best-pick best-pick-hidden" data-i18n-aria="aria.bestPick" aria-label="Best meal recommendation">
             <div class="best-copy">
               <p class="eyebrow" data-i18n="best.eyebrow">Best for today</p>
               <h2 id="best-pick-title" data-i18n-skip>Choose your check-in</h2>
@@ -123,215 +285,218 @@
             </div>
           </section>
 
-          <div class="toolbar" data-i18n-aria="aria.mealFilters" aria-label="Meal filters">
-            <div class="tabs" role="tablist" data-i18n-aria="aria.mealType" aria-label="Meal type">
-              <button type="button" class="tab active" data-meal-type="all" data-i18n="toolbar.all">All</button>
-              <button type="button" class="tab" data-meal-type="breakfast" data-i18n="toolbar.breakfast">Breakfast</button>
-              <button type="button" class="tab" data-meal-type="lunch" data-i18n="toolbar.lunch">Lunch</button>
-              <button type="button" class="tab" data-meal-type="dinner" data-i18n="toolbar.dinner">Dinner</button>
-              <button type="button" class="tab" data-meal-type="snack" data-i18n="toolbar.snack">Snack</button>
-            </div>
-            <button type="button" class="secondary-button" id="surprise-button" data-i18n="toolbar.shuffle">Shuffle</button>
+          <div class="tabs health-tabs" role="tablist" data-i18n-aria="aria.mealType" aria-label="Meal type">
+            <button type="button" class="tab active" data-meal-type="all" data-i18n="toolbar.all">All</button>
+            <button type="button" class="tab" data-meal-type="breakfast" data-i18n="toolbar.breakfast">Breakfast</button>
+            <button type="button" class="tab" data-meal-type="lunch" data-i18n="toolbar.lunch">Lunch</button>
+            <button type="button" class="tab" data-meal-type="dinner" data-i18n="toolbar.dinner">Dinner</button>
+            <button type="button" class="tab" data-meal-type="snack" data-i18n="toolbar.snack">Snack</button>
           </div>
 
-          <section class="panel food-controls">
-            <div class="slider-row">
-              <label for="cook-time" data-i18n="form.maxCook">Max cook time</label>
-              <output id="cook-time-output">35 min</output>
-            </div>
-            <input id="cook-time" type="range" min="5" max="60" value="35" step="5" />
-
-            <label class="field">
-              <span data-i18n="form.pantry">Pantry ingredients</span>
-              <textarea id="pantry" rows="3" data-i18n-placeholder="form.pantryPlaceholder" placeholder="spinach, rice, yogurt, lentils"></textarea>
-            </label>
-          </section>
-
-          <section>
+          <section class="health-results">
             <div class="section-heading results-heading">
               <div>
-                <p class="eyebrow" data-i18n="results.matched">Matched meals</p>
-                <h2 id="results-count" data-i18n-skip>0 ideas</h2>
+                <h2 data-i18n="health.recipeTitle">Cycle-custom recipes</h2>
+                <p id="match-note" data-i18n-skip>Add your check-in to improve the ranking.</p>
               </div>
-              <p id="match-note" data-i18n-skip>Add your check-in to improve the ranking.</p>
+              <div class="results-actions">
+                <span id="results-count" data-i18n-skip>0 ideas</span>
+                <button type="button" class="secondary-button shuffle-button" id="surprise-button" data-i18n="toolbar.shuffle">Shuffle</button>
+              </div>
             </div>
             <div class="meal-grid" id="meal-results"></div>
           </section>
+        </section>
 
-          <article class="panel grocery-panel">
+        <section class="app-view movement-screen" data-view="move-api" aria-label="Move">
+          <section class="movement-daily-card">
+            <div>
+              <h2 data-i18n="movement.todayRhythm">Today's rhythm</h2>
+              <p data-i18n="movement.rhythmCopy">Your energy is rising. This is a good time for strength and power training.</p>
+              <div class="movement-active-metric">
+                <strong>45</strong>
+                <span data-i18n="movement.activeGoal">/ 60 minutes active time</span>
+              </div>
+            </div>
+            <span class="movement-bolt" aria-hidden="true"></span>
+            <div class="movement-goal-track"><span></span></div>
+          </section>
+
+          <section class="movement-stat-grid">
+            <article class="burn">
+              <span class="movement-stat-icon fire" aria-hidden="true"></span>
+              <small data-i18n="movement.caloriesBurned">Calories burned</small>
+              <strong>342 kcal</strong>
+            </article>
+            <article class="heart">
+              <span class="movement-stat-icon heart" aria-hidden="true"></span>
+              <small data-i18n="movement.avgHeartRate">Average heart rate</small>
+              <strong>112 bpm</strong>
+            </article>
+          </section>
+
+          <section class="movement-history">
             <div class="section-heading">
               <div>
-                <p class="eyebrow" data-i18n="grocery.plan">Plan</p>
-                <h2 data-i18n="grocery.title">Grocery list</h2>
+                <h2 data-i18n="movement.recordTitle">Movement record</h2>
+                <p data-i18n="movement.recordCopy">Your body journey in this cycle</p>
               </div>
-              <button type="button" class="secondary-button" id="clear-grocery" data-i18n="grocery.clear">Clear</button>
+              <button type="button" data-i18n="today.viewAll">View all</button>
             </div>
-            <ul id="grocery-list" class="grocery-list"></ul>
+            <div class="movement-week-strip">
+              <span><small data-i18n="week.mon">Mon</small><b>12</b></span>
+              <span class="active"><small data-i18n="week.tue">Tue</small><b>13</b><i></i></span>
+              <span><small data-i18n="week.wed">Wed</small><b>14</b></span>
+              <span><small data-i18n="week.thu">Thu</small><b>15</b></span>
+              <span><small data-i18n="week.fri">Fri</small><b>16</b></span>
+              <span><small data-i18n="week.sat">Sat</small><b>17</b></span>
+              <span><small data-i18n="week.sun">Sun</small><b>18</b></span>
+            </div>
+          </section>
+
+          <section class="movement-sync">
+            <div>
+              <h2 data-i18n="movement.syncTitle">Sync suggestions</h2>
+              <p data-i18n="movement.syncCopy">Work with your physiology, not against it.</p>
+            </div>
+            <article class="movement-feature-program">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ9L4dxu1sIig_47S9BEeW8eV-jltAOO9hCopQ_Jdf1kSBTvyCf85s09JQw4ymG76mOtsHRUjIfliHzlx2DJBsG-GH8QBmhtzneXgtc-eoJxRF4gfhFXb_C02UwuPb2qkzZB2lEsw3MSuBQOlsZPjn1hh9UijLqWaAb44MjNhJ5gFiME37GjQ8Y6bFm4Bm4RX3623DdHgJHNDuAhua8Cj05dR5NyMuQiyb1qyxfUyvijMxfxFOepXf5xe78XjL8MGzF4fbIBu5yB4" alt="" loading="lazy" />
+              <span class="program-overlay" aria-hidden="true"></span>
+              <div>
+                <p><span data-i18n="movement.cardio">Efficient cardio</span><span data-i18n="movement.minutes35">35 min</span></p>
+                <h3 data-i18n="movement.featureProgram">Follicular high-intensity training</h3>
+                <small data-i18n="movement.featureCopy">Use the estrogen peak for metabolic training that builds lean muscle.</small>
+              </div>
+            </article>
+            <article class="movement-program-card">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUwrwMdxFeXu2glHFjxc7RrWt5ZLcB1Rhv2fjupV7G5uQ5-UgAawKDYCbO6wielyZERHI7AcBgsqvXAvSjiumQuVOaoNA0yAlHjck8JB6M6nLq8F_hxClwhtZjnU68KMlDi13sEMoLpKPuaNru-s6QMGT0lCWiE3Tum-t_X4ioJ24JOQyOeObTilnj6uP-DIoesYGPy47J4dnFzc3EfbQghrcysiSo-yUAJY2PY_rbjiDOegXlFnwSNVQnv1UTMRXay8LPLrCR1hA" alt="" loading="lazy" />
+              <button type="button" aria-label="Play"></button>
+              <div>
+                <small data-i18n="movement.recovery">Recovery</small>
+                <h3 data-i18n="movement.yogaProgram">Hormone-soothing yoga</h3>
+                <p data-i18n="movement.yogaMeta">20 min · low intensity</p>
+                <a href="#" data-i18n="movement.startTraining">Start training</a>
+              </div>
+            </article>
+            <article class="movement-program-card">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuADCpKI_YrFCk61SHZI30qcxjbDKQDnmpanyGx7fQBypH7N2jgLn4ZAqEFtd4FG3FwnxZkS8F3ogH59DXBpbpIZsCOQ3YuHivcpPA37wOiIEKdC8mW4EByerqS9GoHmM5YR5UFQg7E3kH0d1gRLKlAnWmCgwYrykVTQ8vBe63d0Wrl44U7jlfLUo3ImbwNWu8H3OVieiZqzXAUPzBlabLXYTnGUbGTJtSLMMXFL2L28VDXgvbao9otXVSOkJKOx96DrbhrdpH1swrQ" alt="" loading="lazy" />
+              <button type="button" aria-label="Play"></button>
+              <div>
+                <small data-i18n="movement.strength">Strength</small>
+                <h3 data-i18n="movement.strengthProgram">Power sculpt</h3>
+                <p data-i18n="movement.strengthMeta">45 min · high intensity</p>
+                <a href="#" data-i18n="movement.startTraining">Start training</a>
+              </div>
+            </article>
+          </section>
+
+          <article class="movement-science-card">
+            <span class="science-icon" aria-hidden="true"></span>
+            <h2 data-i18n="movement.scienceTitle">Cycle science</h2>
+            <p data-i18n="movement.scienceCopy">During the follicular phase, your body can use carbohydrates more efficiently for energy. Today is a good day to challenge yourself.</p>
           </article>
-        </section>
-
-        <section class="app-view" data-view="move-api" aria-label="Move">
-          <div class="screen-heading">
-            <span class="section-dot green-dot"></span>
-            <div>
-              <h2 data-i18n="movement.heading">Movement</h2>
-              <p data-i18n="movement.subheading">Gentle movement matched to your cycle</p>
-            </div>
-          </div>
-
-          <section class="feature-card">
-            <p class="eyebrow" data-i18n="movement.best">Best for today</p>
-            <h2 id="move-best-title" data-i18n="movement.defaultTitle">Cycle-aware gentle movement</h2>
-            <p id="move-best-meta">15 min &middot; matched to your current phase</p>
-          </section>
-
-          <section class="movement-progress">
-            <div class="section-heading">
-              <h3 data-i18n="movement.recent">Recent movement time</h3>
-              <span id="move-total-minutes">150 min</span>
-            </div>
-            <div class="progress-track"><span id="move-progress-fill"></span></div>
-            <div class="countdown-row">
-              <span data-i18n="movement.countdown">Practice countdown</span>
-              <strong id="move-countdown-time">--:--</strong>
-            </div>
-            <div class="countdown-track"><span id="move-countdown-fill"></span></div>
-          </section>
-
-          <section class="movement-hero">
-            <button type="button" class="movement-nav-button movement-nav-prev" id="move-prev" data-i18n-aria="movement.previous" data-i18n-title="movement.previous" aria-label="Previous movement" title="Previous movement">‹</button>
-            <div class="movement-media">
-              <div class="movement-orb" id="move-placeholder" aria-hidden="true"></div>
-              <video id="move-video" muted loop playsinline controls hidden></video>
-              <img id="move-gif" alt="" hidden />
-            </div>
-            <button type="button" class="movement-nav-button movement-nav-next" id="move-next" data-i18n-aria="movement.next" data-i18n-title="movement.next" aria-label="Next movement" title="Next movement">›</button>
-            <p class="eyebrow" id="move-source" data-i18n="movement.sourceApi">Female movement API</p>
-            <h2 id="move-title" data-i18n="movement.defaultTitle">Cycle-aware gentle movement</h2>
-            <p id="move-summary" data-i18n="movement.loadingSummary">Matching movement guidance to your current cycle phase.</p>
-            <p class="movement-swipe-hint" data-i18n="movement.swipeHint">Swipe to switch</p>
-          </section>
-
-          <section class="move-grid">
-            <article>
-              <h3 data-i18n="movement.focusTitle">Movement focus</h3>
-              <p id="move-focus" data-i18n="movement.defaultFocus">Move slowly, breathe steadily, and keep the range comfortable.</p>
-            </article>
-            <article>
-              <h3 data-i18n="movement.safetyTitle">Safety boundary</h3>
-              <p id="move-safety" data-i18n="movement.defaultSafety">Stop and rest if you feel clear abdominal pain, dizziness, or any sharp pain.</p>
-            </article>
-          </section>
-
-          <section class="exercise-steps">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow" data-i18n="movement.stepsEyebrow">Movement steps</p>
-                <h2 id="move-step-title" data-i18n="movement.stepTitle">Follow-along guide</h2>
-              </div>
-              <button type="button" class="secondary-button" id="move-refresh" data-i18n="movement.refresh">Refresh</button>
-            </div>
-            <ol id="move-steps"></ol>
-          </section>
-
-          <section class="exercise-list">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow" data-i18n="movement.more">More recommendations</p>
-                <h2 id="move-count">0 movements</h2>
-              </div>
-              <p id="move-note" data-i18n="movement.note">Filtered by the Python backend for your cycle phase and symptoms.</p>
-            </div>
-            <div id="move-results" class="exercise-results"></div>
-          </section>
-
-          <button type="button" class="primary-button full-width" id="move-start-button">Start 25 min practice</button>
-        </section>
-
-        <section class="app-view" data-view="care" aria-label="Care">
-          <div class="screen-heading">
-            <span class="section-dot primary-dot"></span>
-            <div>
-              <h2 data-i18n="care.title">Care plan</h2>
-              <p data-i18n="care.subheading">Self-care suggestions for today</p>
-            </div>
-          </div>
-
-          <section class="care-summary">
-            <p class="eyebrow" data-i18n="care.sourceToday">Today</p>
-            <ul>
-              <li>Rest more</li>
-              <li>Gentle movement</li>
-              <li>Avoid overheating</li>
-              <li>Stay warm</li>
-            </ul>
-          </section>
-
-          <section class="care-card">
-            <p class="eyebrow" data-i18n="care.recipeEyebrow">Care meal idea</p>
-            <h2>Gentle care meal</h2>
-            <p>Ingredients and steps</p>
-          </section>
-
-          <section class="care-card">
-            <p class="eyebrow" data-i18n="care.noteEyebrow">Care note</p>
-            <p>Adapt ideas to your body, ingredients, and allergies.</p>
-          </section>
-
-          <section class="care-card">
-            <p class="eyebrow" data-i18n="care.massageEyebrow">Massage idea</p>
-            <p>Today favors gentle support, less caffeine, and earlier rest.</p>
-          </section>
+          <button type="button" class="movement-floating-add" aria-label="Add">+</button>
         </section>
 
         <nav class="bottom-nav" data-i18n-aria="aria.nav" aria-label="App navigation preview">
-          <a href="#" class="active" data-view-target="today" data-i18n="nav.today">Today</a>
-          <a href="#" data-view-target="food" data-i18n="nav.meals">Meals</a>
-          <a href="#" data-view-target="move-api" data-i18n="movement.heading">Movement</a>
-          <a href="#" data-view-target="care" data-i18n="care.title">Care plan</a>
+          <a href="#" class="active" data-view-target="today"><span class="nav-icon home" aria-hidden="true"></span><span data-i18n="nav.today">Today</span></a>
+          <a href="#" data-view-target="insights"><span class="nav-icon insights" aria-hidden="true"></span><span data-i18n="nav.insights">Insights</span></a>
+          <a href="#" data-view-target="food"><span class="nav-icon health" aria-hidden="true"></span><span data-i18n="nav.health">Health</span></a>
+          <a href="#" data-view-target="move-api"><span class="nav-icon movement" aria-hidden="true"></span><span data-i18n="movement.heading">Movement</span></a>
         </nav>
       </section>
 
+      <div class="cart-scrim" id="cart-scrim" hidden></div>
+      <aside class="cart-panel" id="cart-panel" aria-label="Grocery list" aria-modal="true">
+        <header class="cart-header">
+          <button type="button" class="cart-back" id="cart-close" data-i18n-aria="grocery.close" data-i18n-title="grocery.close" aria-label="Close cart" title="Close cart"></button>
+          <h2 data-i18n="grocery.title">Grocery list</h2>
+          <button type="button" id="clear-grocery" data-i18n="grocery.clear">Clear</button>
+        </header>
+
+        <div class="grocery-list" id="grocery-list"></div>
+
+        <div class="custom-grocery-row">
+          <span aria-hidden="true"></span>
+          <input id="cart-custom-input" type="text" data-i18n-placeholder="grocery.customPlaceholder" placeholder="Add a custom ingredient..." />
+          <button type="button" id="cart-add-custom" data-i18n="grocery.addCustom">Add</button>
+        </div>
+
+        <footer class="cart-footer">
+          <p>
+            <span data-i18n="grocery.selected">Selected</span>
+            <strong><span id="cart-selected-count">0</span>/<span id="cart-total-count">0</span></strong>
+          </p>
+          <button type="button" id="cart-generate" data-i18n="grocery.generate">Generate list</button>
+        </footer>
+      </aside>
+
       <div class="profile-scrim" id="profile-scrim" hidden></div>
       <aside class="panel intake-panel" id="intake-panel" data-i18n-aria="aria.checkIn" aria-label="Daily check-in" aria-modal="true">
-        <div class="brand-row">
-          <div class="brand-mark" aria-hidden="true">
+        <div class="profile-topbar">
+          <button class="icon-button profile-close profile-back" type="button" id="profile-close" data-i18n-aria="aria.closeProfile" data-i18n-title="aria.closeProfile" aria-label="Close profile" title="Close profile">‹</button>
+          <h1>个人资料</h1>
+          <button class="icon-button profile-bell" type="button" aria-label="Notifications" title="Notifications"></button>
+        </div>
+
+        <section class="profile-overview" aria-label="Cycle profile">
+          <div class="profile-avatar" aria-hidden="true">
             <img src="assets/lunaplate-logo.png" alt="" />
           </div>
-          <div class="brand-copy">
-            <h1>LunaPlate</h1>
-            <p data-i18n="brand.tagline">Nourish your cycle</p>
+          <h2>Serene User</h2>
+          <p id="profile-cycle-status" data-i18n-skip>Cycle phase</p>
+          <div class="profile-stat-grid">
+            <article>
+              <span data-i18n="form.cycleLength">Average cycle length</span>
+              <strong id="profile-cycle-length">28</strong>
+            </article>
+            <article>
+              <span data-i18n="form.lastPeriod">First day of last period</span>
+              <strong id="profile-last-period">--</strong>
+            </article>
           </div>
-          <div class="lang-switch" role="group" data-i18n-aria="lang.choose" aria-label="Language">
+          <div class="lang-switch profile-lang-switch" role="group" data-i18n-aria="lang.choose" aria-label="Language">
             <button type="button" data-lang="en" data-i18n="lang.en" aria-pressed="true">EN</button>
             <button type="button" data-lang="zh" data-i18n="lang.zh" aria-pressed="false">ZH</button>
             <button type="button" data-lang="ru" data-i18n="lang.ru" aria-pressed="false">RU</button>
           </div>
-          <button class="icon-button profile-close" type="button" id="profile-close" data-i18n-aria="aria.closeProfile" data-i18n-title="aria.closeProfile" aria-label="Close profile" title="Close profile">×</button>
-        </div>
+        </section>
 
         <form id="meal-form" class="intake-form">
-          <section>
+          <section class="checkin-section cycle-checkin-section profile-card-section">
             <div class="section-heading">
-              <h2 data-i18n="form.cycle">Cycle</h2>
+              <h2>经期详情</h2>
               <button class="icon-button" type="button" id="reset-button" data-i18n-aria="aria.reset" data-i18n-title="aria.reset" aria-label="Reset check-in" title="Reset check-in">
                 <span aria-hidden="true" data-i18n="form.reset">Reset</span>
               </button>
             </div>
 
-            <label class="field">
-              <span data-i18n="form.lastPeriod">First day of last period</span>
-              <input id="last-period" type="date" />
-            </label>
+            <div class="flow-control">
+              <span class="control-label">经量强度</span>
+              <div class="flow-options" role="radiogroup" aria-label="Flow intensity">
+                <label><input type="radio" name="flow-intensity" value="none" /><span>无</span></label>
+                <label><input type="radio" name="flow-intensity" value="light" /><span>轻微</span></label>
+                <label><input type="radio" name="flow-intensity" value="medium" checked /><span>中等</span></label>
+                <label><input type="radio" name="flow-intensity" value="heavy" /><span>强力</span></label>
+              </div>
+            </div>
 
-            <label class="field compact">
-              <span data-i18n="form.cycleLength">Average cycle length</span>
-              <input id="cycle-length" type="number" min="21" max="45" value="28" />
-            </label>
+            <div class="cycle-detail-grid">
+              <label class="metric-field">
+                <span>天数</span>
+                <strong id="profile-period-day">03 / 05</strong>
+                <input id="last-period" type="date" />
+              </label>
+              <label class="metric-field">
+                <span>周期天数</span>
+                <strong id="profile-cycle-day">09</strong>
+                <input id="cycle-length" type="number" min="21" max="45" value="28" />
+              </label>
+            </div>
 
             <div class="field">
               <span data-i18n="form.manualPhase">Or choose phase manually</span>
-              <div class="segmented" role="radiogroup" data-i18n-aria="aria.cyclePhase" aria-label="Cycle phase">
+              <div class="segmented phase-segmented" role="radiogroup" data-i18n-aria="aria.cyclePhase" aria-label="Cycle phase">
                 <label><input type="radio" name="phase" value="auto" checked /><span data-i18n="form.auto">Auto</span></label>
                 <label><input type="radio" name="phase" value="menstrual" /><span data-i18n="phases.menstrual.title">Menstrual</span></label>
                 <label><input type="radio" name="phase" value="follicular" /><span data-i18n="phases.follicular.title">Follicular</span></label>
@@ -341,13 +506,25 @@
             </div>
           </section>
 
-          <section>
-            <h2 data-i18n="form.howFeel">How do you feel?</h2>
-            <div class="chip-grid" id="symptom-list"></div>
+          <section class="checkin-section mood-section">
+            <h2>情绪状态</h2>
+            <div class="mood-row" role="radiogroup" aria-label="Mood status">
+              <label><input type="radio" name="mood-status" value="low" /><span>☹</span><small>低落</small></label>
+              <label><input type="radio" name="mood-status" value="sensitive" /><span>◔</span><small>敏感</small></label>
+              <label><input type="radio" name="mood-status" value="balanced" checked /><span>☺</span><small>平衡</small></label>
+              <label><input type="radio" name="mood-status" value="active" /><span>☻</span><small>活跃</small></label>
+              <label><input type="radio" name="mood-status" value="glow" /><span>✦</span><small>焕发</small></label>
+            </div>
           </section>
 
-          <section>
+          <section class="checkin-section body-section">
+            <h2>身体状态</h2>
+            <div class="chip-grid symptom-tile-grid" id="symptom-list"></div>
+          </section>
+
+          <section class="checkin-section preference-section">
             <h2 data-i18n="form.preferences">Preferences</h2>
+            <span class="control-label">基本选择</span>
             <div class="switch-grid">
               <label class="switch"><input type="checkbox" id="vegetarian" /><span data-i18n="form.vegetarian">Vegetarian</span></label>
               <label class="switch"><input type="checkbox" id="vegan" /><span data-i18n="form.vegan">Vegan</span></label>
@@ -357,7 +534,7 @@
 
             <div class="field">
               <span data-i18n="form.cuisineStyle">Cuisine style</span>
-              <div class="segmented" role="radiogroup" data-i18n-aria="aria.cuisineStyle" aria-label="Cuisine style">
+              <div class="segmented cuisine-segmented" role="radiogroup" data-i18n-aria="aria.cuisineStyle" aria-label="Cuisine style">
                 <label><input type="radio" name="cuisine-style" value="balanced" checked /><span data-i18n="cuisineStyles.balanced">Balanced</span></label>
                 <label><input type="radio" name="cuisine-style" value="asian" /><span data-i18n="cuisineStyles.asian">Asian</span></label>
                 <label><input type="radio" name="cuisine-style" value="mediterranean" /><span data-i18n="cuisineStyles.mediterranean">Mediterranean</span></label>
@@ -365,6 +542,16 @@
               </div>
             </div>
           </section>
+
+          <section class="checkin-section reflection-section">
+            <h2>每日沉思</h2>
+            <label class="reflection-field">
+              <textarea id="daily-reflection" maxlength="120" placeholder="今天冥想的感觉如何？有什么特别的渴望或想法吗..."></textarea>
+              <span>120</span>
+            </label>
+          </section>
+
+          <button class="logout-button" type="button">退出登录</button>
         </form>
       </aside>
     </main>
@@ -373,15 +560,16 @@
       <article class="meal-card">
         <div class="meal-art" aria-hidden="true">
           <img class="meal-image" alt="" loading="lazy" />
+          <span class="meal-phase-badge"></span>
         </div>
         <div class="meal-body">
-          <div class="meal-meta">
-            <span class="meal-type"></span>
-            <span class="meal-time"></span>
-          </div>
           <h3></h3>
+          <div class="meal-meta">
+            <span class="meal-time"></span>
+            <span class="meal-kcal"></span>
+            <div class="tag-row"></div>
+          </div>
           <p class="meal-summary"></p>
-          <div class="tag-row"></div>
           <details>
             <summary data-i18n="form.ingredientsSteps">Ingredients and steps</summary>
             <ul class="ingredient-list"></ul>
@@ -389,14 +577,15 @@
           </details>
           <div class="card-actions">
             <button type="button" class="primary-button add-button" data-i18n="best.addGroceries">Add groceries</button>
+            <button type="button" class="secondary-button log-button" data-i18n-skip>Log this meal</button>
             <button type="button" class="secondary-button swap-button" data-i18n="form.swap">Swap</button>
           </div>
         </div>
       </article>
     </template>
 
-    <script src="i18n.js?v=20260603-profile-drawer2"></script>
-    <script src="app.js?v=20260603-profile-drawer2"></script>
+    <script src="i18n.js?v=20260630-profile-serene-local2"></script>
+    <script src="app.js?v=20260630-profile-serene-local2"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

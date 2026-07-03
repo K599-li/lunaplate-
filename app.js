@@ -1,4 +1,4 @@
-const LAST_PERIOD_KEY = "lunaPlateLastPeriod";
+﻿const LAST_PERIOD_KEY = "lunaPlateLastPeriod";
 
 function storageGet(key) {
   try {
@@ -48,6 +48,35 @@ function translateSymptom(id) {
   return i18n().translateSymptom(id);
 }
 
+function todayDateKey() {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function todayPlanStorageKey() {
+  return `lunaPlateTodayPlan:${todayDateKey()}`;
+}
+
+function loadTodayPlanState() {
+  const fallback = { date: todayDateKey(), supplementDone: false, movementDone: false, waterMl: 800, loggedMeals: [] };
+  try {
+    const saved = { ...fallback, ...JSON.parse(storageGet(todayPlanStorageKey()) || "{}") };
+    if (!Array.isArray(saved.loggedMeals)) saved.loggedMeals = [];
+    return saved;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveTodayPlanState() {
+  state.todayPlan.date = todayDateKey();
+  storageSet(todayPlanStorageKey(), JSON.stringify(state.todayPlan));
+}
+
+function clampWater(value) {
+  return Math.max(0, Math.min(2500, Math.round(Number(value || 0) / 50) * 50));
+}
+
 const symptoms = [
   { id: "cramps" },
   { id: "fatigue" },
@@ -57,28 +86,37 @@ const symptoms = [
   { id: "high_energy" },
 ];
 
-const FETCH_TIMEOUT_MS = 12000;
-const MAX_EXERCISE_RESULTS = 5;
+const symptomIcons = {
+  cramps: "⌁",
+  fatigue: "◐",
+  bloating: "≈",
+  cravings: "♡",
+  low_mood: "☾",
+  high_energy: "✦",
+};
 
+const FETCH_TIMEOUT_MS = 12000;
+const WATER_GOAL_ML = 2000;
+const BASE_KCAL_GOAL = 2000;
+const PHASE_KCAL_ADJUST = { menstrual: 50, follicular: 0, ovulation: 0, luteal: 150 };
+const MACRO_GOAL_SPLIT = { protein: 0.2, carbs: 0.5, fat: 0.3 };
+const MACRO_MEAL_SPLITS = {
+  breakfast: { protein: 0.18, carbs: 0.55, fat: 0.27 },
+  lunch: { protein: 0.24, carbs: 0.48, fat: 0.28 },
+  dinner: { protein: 0.28, carbs: 0.44, fat: 0.28 },
+  snack: { protein: 0.14, carbs: 0.56, fat: 0.3 },
+};
 const state = {
   mealType: "all",
   grocery: loadGrocery(),
   mealSource: "TheMealDB",
-  exerciseCache: null,
-  femaleMediaCache: new Map(),
-  exerciseCacheKey: "",
-  currentExercises: [],
-  selectedExerciseId: "",
-  selectedExerciseDuration: 15,
-  countdownTimer: null,
-  countdownPaused: false,
-  countdownRemaining: 0,
-  countdownTotal: 0,
   shuffleSeed: 0,
   renderToken: 0,
-  exerciseRenderToken: 0,
   careRenderToken: 0,
   viewCache: { key: "", normalizedMeals: null, ranked: null },
+  todayMealToken: 0,
+  todayMealCache: { key: "", meal: null, mealType: "", phase: "" },
+  todayPlan: { date: "", supplementDone: false, movementDone: false, waterMl: 800, loggedMeals: [] },
 };
 
 const form = document.querySelector("#meal-form");
@@ -98,7 +136,7 @@ function buildSymptomList() {
   symptoms.forEach((symptom) => {
     const label = document.createElement("label");
     label.className = "chip";
-    label.innerHTML = `<input type="checkbox" value="${symptom.id}" /><span>${escapeHtml(translateSymptom(symptom.id))}</span>`;
+    label.innerHTML = `<input type="checkbox" value="${symptom.id}" /><i aria-hidden="true">${symptomIcons[symptom.id] || "•"}</i><span>${escapeHtml(translateSymptom(symptom.id))}</span>`;
     if (selected.has(symptom.id)) label.querySelector("input").checked = true;
     symptomList.appendChild(label);
   });
@@ -160,18 +198,50 @@ function init() {
     }
   });
   document.querySelector("#reset-button").addEventListener("click", reset);
-  document.querySelector("#profile-trigger")?.addEventListener("click", openProfilePanel);
+  document.querySelectorAll(".profile-trigger").forEach((trigger) => trigger.addEventListener("click", openProfilePanel));
   document.querySelector("#profile-close")?.addEventListener("click", closeProfilePanel);
   document.querySelector("#profile-scrim")?.addEventListener("click", closeProfilePanel);
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeProfilePanel();
+    if (event.key === "Escape") {
+      closeProfilePanel();
+      closeCartPanel();
+    }
   });
   document.querySelector("#clear-grocery").addEventListener("click", () => {
     state.grocery = [];
     saveGrocery();
     renderGrocery();
   });
-  document.querySelector("#surprise-button").addEventListener("click", () => {
+  document.querySelector("#cart-trigger")?.addEventListener("click", openCartPanel);
+  document.querySelector("#cart-close")?.addEventListener("click", closeCartPanel);
+  document.querySelector("#cart-scrim")?.addEventListener("click", closeCartPanel);
+  document.querySelector("#cart-add-custom")?.addEventListener("click", addCustomGrocery);
+  document.querySelector("#cart-custom-input")?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") addCustomGrocery();
+  });
+  document.querySelector("#cart-generate")?.addEventListener("click", closeCartPanel);
+  document.querySelectorAll("[data-plan-check]").forEach((button) => {
+    button.addEventListener("click", () => toggleTodayPlanDone(button.dataset.planCheck));
+  });
+  document.querySelector("#today-recipe-log")?.addEventListener("click", () => {
+    if (state.todayMealCache.meal) toggleMealLogged(state.todayMealCache.meal);
+  });
+  document.querySelector("#today-water-range")?.addEventListener("input", (event) => {
+    setWaterAmount(Number(event.target.value));
+  });
+  document.querySelectorAll("[data-water-step]").forEach((button) => {
+    button.addEventListener("click", () => setWaterAmount(state.todayPlan.waterMl + Number(button.dataset.waterStep || 0)));
+  });
+  document.querySelector("#recipe-search")?.addEventListener("input", debouncedRender);
+  document.querySelectorAll(".time-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".time-chip").forEach((item) => item.classList.toggle("active", item === chip));
+      document.querySelector("#cook-time").value = chip.dataset.timeFilter || "60";
+      document.querySelector("#cook-time-output").textContent = formatMinutes(document.querySelector("#cook-time").value);
+      debouncedRender();
+    });
+  });
+  document.querySelector("#surprise-button")?.addEventListener("click", () => {
     state.shuffleSeed += 1;
     render();
   });
@@ -192,24 +262,6 @@ function init() {
   document.querySelectorAll("[data-open-view]").forEach((button) => {
     button.addEventListener("click", () => setActiveView(button.dataset.openView));
   });
-  document.querySelector("#move-refresh")?.addEventListener("click", () => {
-    state.exerciseCache = null;
-    state.exerciseCacheKey = "";
-    state.selectedExerciseId = "";
-    resetMoveCountdown(state.selectedExerciseDuration);
-    renderExerciseRecommendations();
-  });
-  document.querySelector("#move-prev")?.addEventListener("click", () => selectExerciseByOffset(-1));
-  document.querySelector("#move-next")?.addEventListener("click", () => selectExerciseByOffset(1));
-  bindMovementSwipe();
-  document.querySelector("#move-start-button")?.addEventListener("click", () => {
-    toggleMoveCountdown();
-  });
-  const moveProgress = document.querySelector('[data-view="move-api"] .movement-progress');
-  const moveStartButton = document.querySelector("#move-start-button");
-  if (moveProgress && moveStartButton) {
-    moveProgress.insertAdjacentElement("afterend", moveStartButton);
-  }
   window.addEventListener("hashchange", () => setActiveView(getViewFromHash(), { updateHash: false }));
 
   render();
@@ -242,15 +294,36 @@ function closeProfilePanel() {
   trigger?.focus();
 }
 
+function openCartPanel() {
+  const panel = document.querySelector("#cart-panel");
+  const scrim = document.querySelector("#cart-scrim");
+  if (!panel || !scrim) return;
+  renderGrocery();
+  panel.classList.add("open");
+  scrim.hidden = false;
+  document.body.classList.add("cart-open");
+}
+
+function closeCartPanel() {
+  const panel = document.querySelector("#cart-panel");
+  const scrim = document.querySelector("#cart-scrim");
+  if (!panel || !scrim || !panel.classList.contains("open")) return;
+  panel.classList.remove("open");
+  scrim.hidden = true;
+  document.body.classList.remove("cart-open");
+}
+
 function getViewFromHash() {
   const view = window.location.hash.replace("#", "");
+  if (view === "care") return "insights";
   if (view === "move") return "move-api";
-  return ["today", "food", "move-api", "care"].includes(view) ? view : "today";
+  return ["today", "insights", "food", "move-api"].includes(view) ? view : "today";
 }
 
 function setActiveView(view, options = {}) {
+  if (view === "care") view = "insights";
   if (view === "move") view = "move-api";
-  if (!["today", "food", "move-api", "care"].includes(view)) view = "today";
+  if (!["today", "insights", "food", "move-api"].includes(view)) view = "today";
   document.querySelectorAll(".app-view").forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.view === view);
   });
@@ -262,22 +335,38 @@ function setActiveView(view, options = {}) {
   }
   const workspace = document.querySelector(".workspace");
   if (workspace) workspace.scrollTop = 0;
-  if (view === "move-api") renderExerciseRecommendations();
-  if (view === "care") renderCarePlan();
+  if (view === "insights") renderInsights();
 }
 
 function updatePhaseBand(phase, day) {
   const phaseCopy = getPhaseCopy(phase);
-  document.querySelector("#phase-title").textContent = phaseCopy.title;
-  document.querySelector("#phase-description").textContent = phaseCopy.description;
+  document.querySelector("#phase-title").textContent = t("today.heroTitle");
+  document.querySelector("#phase-description").textContent = t("today.heroCopy");
   const dayText = day ? t("status.day", { day }) : t("status.manual");
-  document.querySelector("#day-pill").textContent = dayText;
+  const ringDayText = day && i18n()?.getLocale() === "zh" ? `第${day}天` : dayText;
+  document.querySelector("#day-pill").textContent = ringDayText;
+  const ringPhase = document.querySelector("#today-ring-phase");
+  if (ringPhase) ringPhase.textContent = phaseCopy.title;
+  const ring = document.querySelector(".today-ring");
+  if (ring) {
+    const cycleLength = Number(document.querySelector("#cycle-length")?.value) || DEFAULT_INPUTS.cycleLength;
+    const progress = day ? Math.min(0.96, Math.max(0.08, day / cycleLength)) : 0.18;
+    ring.style.setProperty("--cycle-progress", `${Math.round(progress * 360)}deg`);
+  }
+  const recipePhase = document.querySelector("#today-recipe-phase");
+  if (recipePhase) recipePhase.textContent = phaseCopy.title;
   const summary = document.querySelector("#today-cycle-summary");
   if (summary) summary.textContent = `${phaseCopy.title} · ${dayText}`;
+  renderTodayPlan(phase);
+
+  const insightDay = document.querySelector("#insight-cycle-day");
+  if (insightDay) insightDay.textContent = t("insights.currentCycle", { day: day || "--" });
 
   [1, 2, 3].forEach((number, index) => {
-    document.querySelector(`#focus-${word(number)}`).textContent = phaseCopy.focus[index][0];
-    document.querySelector(`#focus-${word(number)}-copy`).textContent = phaseCopy.focus[index][1];
+    const title = document.querySelector(`#focus-${word(number)}`);
+    const copy = document.querySelector(`#focus-${word(number)}-copy`);
+    if (title) title.textContent = phaseCopy.focus[index][0];
+    if (copy) copy.textContent = phaseCopy.focus[index][1];
   });
 }
 
@@ -296,23 +385,294 @@ function buildFallbackSummary(meal) {
   });
 }
 
+function todayPlanCopy(phase) {
+  const copy = t(`todayPlan.phases.${phase}`);
+  return typeof copy === "object" ? copy : t("todayPlan.phases.luteal");
+}
+
+function renderTodayPlan(phase) {
+  if (!state.todayPlan.date || state.todayPlan.date !== todayDateKey()) {
+    state.todayPlan = loadTodayPlanState();
+  }
+  const copy = todayPlanCopy(phase);
+  const supplementTitle = document.querySelector("#today-supplement-title");
+  const supplementCopy = document.querySelector("#today-supplement-copy");
+  const movementTitle = document.querySelector("#today-movement-title");
+  const movementCopy = document.querySelector("#today-movement-copy");
+  const hydrationTitle = document.querySelector("#today-hydration-title");
+  if (supplementTitle) supplementTitle.textContent = copy.supplementTitle;
+  if (supplementCopy) supplementCopy.textContent = copy.supplementCopy;
+  if (movementTitle) movementTitle.textContent = copy.movementTitle;
+  if (movementCopy) movementCopy.textContent = copy.movementCopy;
+  if (hydrationTitle) hydrationTitle.textContent = t("todayPlan.hydrationTitle");
+  renderTodayPlanChecks();
+  renderHydrationControl(copy);
+  renderNutritionOverview(phase);
+}
+
+function renderTodayPlanChecks() {
+  ["supplement", "movement"].forEach((item) => {
+    const done = Boolean(state.todayPlan[`${item}Done`]);
+    const row = document.querySelector(`[data-plan-item="${item}"]`);
+    const button = document.querySelector(`[data-plan-check="${item}"]`);
+    row?.classList.toggle("done", done);
+    if (button) {
+      button.classList.toggle("done", done);
+      button.setAttribute("aria-pressed", String(done));
+      button.setAttribute("aria-label", done ? t("todayPlan.markUndone") : t("todayPlan.markDone"));
+    }
+  });
+}
+
+function renderHydrationControl(copy = todayPlanCopy(estimatePhase(getInputs()).phase)) {
+  const waterMl = clampWater(state.todayPlan.waterMl);
+  const range = document.querySelector("#today-water-range");
+  const output = document.querySelector("#today-water-output");
+  const hydrationCopy = document.querySelector("#today-hydration-copy");
+  const row = document.querySelector('[data-plan-item="hydration"]');
+  const progress = Math.min(100, Math.round((waterMl / WATER_GOAL_ML) * 100));
+  state.todayPlan.waterMl = waterMl;
+  if (range) {
+    range.value = String(waterMl);
+    range.style.setProperty("--water-progress", `${Math.min(100, (waterMl / Number(range.max || 2500)) * 100)}%`);
+  }
+  if (output) output.textContent = `${waterMl}ml`;
+  if (hydrationCopy) {
+    hydrationCopy.textContent = t("todayPlan.hydrationCopy", {
+      goal: WATER_GOAL_ML,
+      current: waterMl,
+      percent: progress,
+      cue: copy.hydrationCue,
+    });
+  }
+  row?.classList.toggle("done", waterMl >= WATER_GOAL_ML);
+}
+
+function toggleTodayPlanDone(item) {
+  if (!["supplement", "movement"].includes(item)) return;
+  state.todayPlan[`${item}Done`] = !state.todayPlan[`${item}Done`];
+  saveTodayPlanState();
+  renderTodayPlanChecks();
+}
+
+function setWaterAmount(value) {
+  state.todayPlan.waterMl = clampWater(value);
+  saveTodayPlanState();
+  renderHydrationControl();
+}
+
+function getNutritionGoal(phase) {
+  const kcal = BASE_KCAL_GOAL + (PHASE_KCAL_ADJUST[phase] || 0);
+  return {
+    kcal,
+    protein: Math.round((kcal * MACRO_GOAL_SPLIT.protein) / 4),
+    carbs: Math.round((kcal * MACRO_GOAL_SPLIT.carbs) / 4),
+    fat: Math.round((kcal * MACRO_GOAL_SPLIT.fat) / 9),
+  };
+}
+
+function estimateMealMacros(meal) {
+  if (meal.macros && Number(meal.macros.protein) >= 0) {
+    return {
+      protein: Number(meal.macros.protein) || 0,
+      carbs: Number(meal.macros.carbs) || 0,
+      fat: Number(meal.macros.fat) || 0,
+    };
+  }
+  const calories = Number(meal.calories) || 0;
+  const split = MACRO_MEAL_SPLITS[meal.type] || { protein: 0.22, carbs: 0.5, fat: 0.28 };
+  return {
+    protein: Math.round((calories * split.protein) / 4),
+    carbs: Math.round((calories * split.carbs) / 4),
+    fat: Math.round((calories * split.fat) / 9),
+  };
+}
+
+function isMealLogged(mealId) {
+  return state.todayPlan.loggedMeals.some((entry) => entry.id === mealId);
+}
+
+function toggleMealLogged(meal) {
+  if (!meal || !meal.id) return;
+  if (state.todayPlan.date !== todayDateKey()) {
+    state.todayPlan = loadTodayPlanState();
+  }
+  if (isMealLogged(meal.id)) {
+    state.todayPlan.loggedMeals = state.todayPlan.loggedMeals.filter((entry) => entry.id !== meal.id);
+  } else {
+    state.todayPlan.loggedMeals.push({
+      id: meal.id,
+      name: meal.name,
+      type: meal.type,
+      calories: Number(meal.calories) || 0,
+      macros: estimateMealMacros(meal),
+    });
+  }
+  saveTodayPlanState();
+  renderNutritionOverview();
+  updateLogButtons();
+}
+
+function getLoggedTotals() {
+  return state.todayPlan.loggedMeals.reduce(
+    (totals, entry) => {
+      const macros = entry.macros || {};
+      totals.kcal += Number(entry.calories) || 0;
+      totals.protein += Number(macros.protein) || 0;
+      totals.carbs += Number(macros.carbs) || 0;
+      totals.fat += Number(macros.fat) || 0;
+      return totals;
+    },
+    { kcal: 0, protein: 0, carbs: 0, fat: 0 },
+  );
+}
+
+function renderNutritionOverview(phase = estimatePhase(getInputs()).phase) {
+  if (!state.todayPlan.date || state.todayPlan.date !== todayDateKey()) {
+    state.todayPlan = loadTodayPlanState();
+  }
+  const goal = getNutritionGoal(phase);
+  const totals = getLoggedTotals();
+  const kcalValue = document.querySelector("#nutrition-kcal");
+  const kcalLeft = document.querySelector("#nutrition-kcal-left");
+  if (kcalValue) kcalValue.textContent = totals.kcal.toLocaleString();
+  if (kcalLeft) {
+    const remaining = goal.kcal - totals.kcal;
+    kcalLeft.textContent =
+      remaining >= 0 ? t("today.kcalLeft", { n: remaining }) : t("today.kcalOver", { n: Math.abs(remaining) });
+    kcalLeft.classList.toggle("over-goal", remaining < 0);
+  }
+  ["protein", "carbs", "fat"].forEach((macro) => {
+    const label = document.querySelector(`#nutrition-${macro}-label`);
+    const bar = document.querySelector(`#nutrition-${macro}-bar`);
+    const percentEl = document.querySelector(`#nutrition-${macro}-percent`);
+    const percent = goal[macro] ? Math.round((totals[macro] / goal[macro]) * 100) : 0;
+    if (label) label.textContent = t(`today.${macro}`, { n: totals[macro] });
+    if (bar) bar.style.setProperty("--macro-progress", `${Math.min(100, percent)}%`);
+    if (percentEl) percentEl.textContent = `${percent}%`;
+  });
+}
+
+function updateLogButtons() {
+  document.querySelectorAll("[data-log-meal-id]").forEach((button) => {
+    const logged = isMealLogged(button.dataset.logMealId);
+    button.classList.toggle("logged", logged);
+    button.textContent = logged ? t("today.loggedMeal") : t("today.logMeal");
+    button.setAttribute("aria-pressed", String(logged));
+  });
+  const todayButton = document.querySelector("#today-recipe-log");
+  if (todayButton) {
+    const meal = state.todayMealCache.meal;
+    todayButton.hidden = !meal;
+    if (meal) {
+      const logged = isMealLogged(meal.id);
+      todayButton.classList.toggle("logged", logged);
+      todayButton.textContent = logged
+        ? t("today.loggedMeal")
+        : `${t("today.logMeal")} · ${t("recipe.kcal", { n: meal.calories || 0 })}`;
+      todayButton.setAttribute("aria-pressed", String(logged));
+    }
+  }
+}
+
+function getCurrentMealTypeByTime() {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour <= 10) return "breakfast";
+  if (hour >= 11 && hour <= 14) return "lunch";
+  if (hour >= 15 && hour <= 17) return "snack";
+  return "dinner";
+}
+
+function buildTodayMealCacheKey(inputs, phase) {
+  return JSON.stringify({
+    phase,
+    mealType: getCurrentMealTypeByTime(),
+    symptoms: inputs.symptoms,
+    vegetarian: inputs.vegetarian,
+    vegan: inputs.vegan,
+    glutenFree: inputs.glutenFree,
+    dairyFree: inputs.dairyFree,
+    cuisineStyle: inputs.cuisineStyle,
+    pantry: inputs.pantry,
+  });
+}
+
+function updateTodayRecipeCard(meal, phase, mealType) {
+  const phaseLabel = document.querySelector("#today-recipe-phase");
+  const title = document.querySelector("#today-recipe-name");
+  const meta = document.querySelector("#today-recipe-meta");
+  const image = document.querySelector("#today-recipe-image");
+  if (!title || !meta || !image) return;
+
+  const displayMealType = meal.type || mealType || getCurrentMealTypeByTime();
+  const tagSeparator = i18n()?.getLocale() === "zh" ? "、" : ", ";
+  const translatedTags = (meal.tags || [])
+    .slice(0, 2)
+    .map((tag) => translateTag(tag))
+    .join(tagSeparator);
+
+  if (phaseLabel) phaseLabel.textContent = `${getPhaseCopy(phase).title} · ${translateMealType(displayMealType)}`;
+  title.textContent = meal.name || t("today.recipeName");
+  meta.textContent = `${formatMinutes(meal.time || 20)} · ${translatedTags || buildFallbackSummary(meal)}`;
+  if (meal.image) {
+    image.src = meal.image;
+    image.alt = meal.name || "";
+  }
+  updateLogButtons();
+}
+
+function setTodayRecipePending(phase) {
+  const mealType = getCurrentMealTypeByTime();
+  const phaseLabel = document.querySelector("#today-recipe-phase");
+  const title = document.querySelector("#today-recipe-name");
+  const meta = document.querySelector("#today-recipe-meta");
+  if (phaseLabel) phaseLabel.textContent = `${getPhaseCopy(phase).title} · ${translateMealType(mealType)}`;
+  if (title) title.textContent = t("empty.findingTitle");
+  if (meta) meta.textContent = t("results.fetching");
+  const logButton = document.querySelector("#today-recipe-log");
+  if (logButton) logButton.hidden = true;
+}
+
+async function renderTodayMeal(inputs, phase) {
+  const cacheKey = buildTodayMealCacheKey(inputs, phase);
+  if (state.todayMealCache.key === cacheKey && state.todayMealCache.meal) {
+    updateTodayRecipeCard(state.todayMealCache.meal, phase, state.todayMealCache.mealType);
+    return;
+  }
+
+  const token = (state.todayMealToken += 1);
+  setTodayRecipePending(phase);
+
+  try {
+    const data = await fetchTodayMeal(inputs, phase);
+    if (token !== state.todayMealToken) return;
+    const meal = data.meal ? normalizeBackendMeal(data.meal) : null;
+    if (!meal) return;
+    state.todayMealCache = {
+      key: cacheKey,
+      meal,
+      mealType: data.mealType || meal.type || getCurrentMealTypeByTime(),
+      phase,
+    };
+    updateTodayRecipeCard(meal, phase, state.todayMealCache.mealType);
+  } catch {
+    if (state.todayMealCache.meal) {
+      updateTodayRecipeCard(state.todayMealCache.meal, phase, state.todayMealCache.mealType);
+    }
+  }
+}
+
 function refreshLocale() {
   const inputs = getInputs();
   const { phase, day } = estimatePhase(inputs);
   updatePhaseBand(phase, day);
+  updateProfileOverview(inputs, phase, day);
+  if (state.todayMealCache.meal) {
+    updateTodayRecipeCard(state.todayMealCache.meal, phase, state.todayMealCache.mealType);
+  }
   renderCycleCalendar(inputs);
+  renderInsights();
   document.querySelector("#cook-time-output").textContent = formatMinutes(document.querySelector("#cook-time").value);
-  if (document.querySelector('[data-view="care"]')?.classList.contains("active")) {
-    renderCarePlan();
-  }
-  if (document.querySelector('[data-view="move-api"]')?.classList.contains("active")) {
-    if (state.currentExercises.length) {
-      renderExercisePanel(state.currentExercises, phase, { resetCountdown: false });
-    } else {
-      renderExerciseRecommendations();
-    }
-  }
-
   if (!state.viewCache.ranked) {
     renderGrocery();
     return;
@@ -341,6 +701,7 @@ function debounce(callback, wait) {
 }
 
 function getInputs() {
+  const activeTimeChip = document.querySelector(".time-chip.active");
   return {
     lastPeriod: document.querySelector("#last-period").value,
     cycleLength: Number(document.querySelector("#cycle-length").value || 28),
@@ -351,7 +712,9 @@ function getInputs() {
     glutenFree: document.querySelector("#gluten-free").checked,
     dairyFree: document.querySelector("#dairy-free").checked,
     cuisineStyle: document.querySelector("input[name='cuisine-style']:checked")?.value || "balanced",
-    cookTime: Number(document.querySelector("#cook-time").value),
+    cookTime: Number(activeTimeChip?.dataset.timeFilter || document.querySelector("#cook-time").value || 60),
+    cookTimeMin: Number(activeTimeChip?.dataset.timeMin || 0),
+    recipeQuery: (document.querySelector("#recipe-search")?.value || "").trim(),
     pantry: document.querySelector("#pantry").value
       .toLowerCase()
       .split(",")
@@ -431,7 +794,8 @@ function renderCycleCalendar(inputs) {
   }).format(firstOfMonth);
 
   const cells = [];
-  for (let index = 0; index < firstOfMonth.getDay(); index += 1) {
+  const firstDayIndex = (firstOfMonth.getDay() + 6) % 7;
+  for (let index = 0; index < firstDayIndex; index += 1) {
     cells.push('<span class="calendar-empty" aria-hidden="true"></span>');
   }
 
@@ -457,6 +821,88 @@ function renderCycleCalendar(inputs) {
   grid.innerHTML = cells.join("");
 }
 
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function formatShortDate(date) {
+  const locale = i18n()?.getLocale() === "zh" ? "zh-CN" : i18n()?.getLocale() || "en";
+  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(date);
+}
+
+function formatMonthLabel(date) {
+  const locale = i18n()?.getLocale() === "zh" ? "zh-CN" : i18n()?.getLocale() || "en";
+  return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(date);
+}
+
+function formatProfileDate(value) {
+  const date = parseLocalDate(value);
+  if (!date) return "--";
+  const locale = i18n()?.getLocale() === "zh" ? "zh-CN" : i18n()?.getLocale() || "en";
+  return new Intl.DateTimeFormat(locale, { month: "numeric", day: "numeric" }).format(date);
+}
+
+function updateProfileOverview(inputs, phase, day) {
+  const status = document.querySelector("#profile-cycle-status");
+  const cycleLength = document.querySelector("#profile-cycle-length");
+  const lastPeriod = document.querySelector("#profile-last-period");
+  const periodDay = document.querySelector("#profile-period-day");
+  const cycleDay = document.querySelector("#profile-cycle-day");
+  if (status) {
+    const dayText = day ? t("status.day", { day }) : t("status.manual");
+    status.textContent = `${getPhaseCopy(phase).title} · ${dayText}`;
+  }
+  if (cycleLength) cycleLength.textContent = `${inputs.cycleLength || 28}`;
+  if (lastPeriod) lastPeriod.textContent = formatProfileDate(inputs.lastPeriod);
+  if (periodDay) {
+    const shownDay = String(Math.min(5, Math.max(1, Number(day) || 3))).padStart(2, "0");
+    periodDay.textContent = `${shownDay} / 05`;
+  }
+  if (cycleDay) cycleDay.textContent = String(Number(day) || "--").padStart(Number(day) ? 2 : 0, "0");
+}
+
+function renderInsights() {
+  const view = document.querySelector('[data-view="insights"]');
+  if (!view) return;
+
+  const inputs = getInputs();
+  const { phase, day } = estimatePhase(inputs);
+  const phaseCopy = getPhaseCopy(phase);
+  const insightDay = document.querySelector("#insight-cycle-day");
+  if (insightDay) insightDay.textContent = t("insights.currentCycle", { day: day || "--" });
+  renderCycleCalendar(inputs);
+
+  const energyTitle = document.querySelector("#insight-energy-title");
+  const energyCopy = document.querySelector("#insight-energy-copy");
+  const socialTitle = document.querySelector("#insight-social-title");
+  const socialCopy = document.querySelector("#insight-social-copy");
+  if (energyTitle) energyTitle.textContent = phaseCopy.focus?.[0]?.[0] || t("insights.energyTitle");
+  if (energyCopy) energyCopy.textContent = phaseCopy.focus?.[0]?.[1] || t("insights.energyCopy");
+  if (socialTitle) socialTitle.textContent = phaseCopy.focus?.[1]?.[0] || t("insights.socialTitle");
+  if (socialCopy) socialCopy.textContent = phaseCopy.focus?.[1]?.[1] || t("insights.socialCopy");
+
+  const start = parseLocalDate(inputs.lastPeriod);
+  if (!start) return;
+  const cycleLength = Math.max(21, Math.min(45, Number(inputs.cycleLength) || 28));
+  const ovulationOffset = Math.max(11, cycleLength - 14) - 1;
+  const today = stripTime(new Date());
+  const elapsedCycles = Math.max(0, Math.floor(daysBetween(start, today) / cycleLength) + 1);
+
+  [1, 2, 3].forEach((slot, index) => {
+    const periodDate = addDays(start, (elapsedCycles + index) * cycleLength);
+    const ovulationDate = addDays(periodDate, ovulationOffset);
+    const wordSlot = word(slot);
+    const month = document.querySelector(`#prediction-month-${wordSlot}`);
+    const period = document.querySelector(`#prediction-period-${wordSlot}`);
+    const ovulation = document.querySelector(`#prediction-ovulation-${wordSlot}`);
+    if (month) month.textContent = formatMonthLabel(periodDate);
+    if (period) period.textContent = formatShortDate(periodDate);
+    if (ovulation) ovulation.textContent = formatShortDate(ovulationDate);
+  });
+}
+
 function buildInputCacheKey(inputs, phase) {
   return JSON.stringify({
     phase,
@@ -470,6 +916,8 @@ function buildInputCacheKey(inputs, phase) {
     dairyFree: inputs.dairyFree,
     cuisineStyle: inputs.cuisineStyle,
     cookTime: inputs.cookTime,
+    cookTimeMin: inputs.cookTimeMin,
+    recipeQuery: inputs.recipeQuery,
     pantry: inputs.pantry,
   });
 }
@@ -497,14 +945,10 @@ async function render() {
   const { phase, day } = estimatePhase(inputs);
   const cacheKey = buildInputCacheKey(inputs, phase);
   updatePhaseBand(phase, day);
+  updateProfileOverview(inputs, phase, day);
+  renderTodayMeal(inputs, phase);
   renderCycleCalendar(inputs);
-  if (document.querySelector('[data-view="move-api"]')?.classList.contains("active")) {
-    renderExerciseRecommendations();
-  }
-  if (document.querySelector('[data-view="care"]')?.classList.contains("active")) {
-    renderCarePlan();
-  }
-
+  renderInsights();
   if (state.viewCache.key === cacheKey && state.viewCache.normalizedMeals) {
     presentRanked(rankMeals(state.viewCache.normalizedMeals), inputs, phase);
     renderGrocery();
@@ -555,12 +999,33 @@ async function fetchBackendMeals(inputs, phase) {
     glutenFree: String(inputs.glutenFree),
     dairyFree: String(inputs.dairyFree),
     cookTime: String(inputs.cookTime),
+    cookTimeMin: String(inputs.cookTimeMin || 0),
+    search: inputs.recipeQuery || "",
     pantry: inputs.pantry.join(","),
   });
   const data = await fetchJson(`/api/meals?${params.toString()}`);
   const meals = (data.meals || []).map(normalizeBackendMeal);
   state.mealSource = data.source || "TheMealDB";
   return meals;
+}
+
+async function fetchTodayMeal(inputs, phase) {
+  const params = new URLSearchParams({
+    phase,
+    hour: String(new Date().getHours()),
+    mealType: getCurrentMealTypeByTime(),
+    symptoms: inputs.symptoms.join(","),
+    cuisineStyle: inputs.cuisineStyle,
+    vegetarian: String(inputs.vegetarian),
+    vegan: String(inputs.vegan),
+    glutenFree: String(inputs.glutenFree),
+    dairyFree: String(inputs.dairyFree),
+    cookTime: String(inputs.cookTime),
+    cookTimeMin: String(inputs.cookTimeMin || 0),
+    search: inputs.recipeQuery || "",
+    pantry: inputs.pantry.join(","),
+  });
+  return fetchJson(`/api/today-meal?${params.toString()}`);
 }
 
 function normalizeBackendMeal(meal) {
@@ -574,10 +1039,12 @@ function normalizeBackendMeal(meal) {
     name: meal.name,
     type: meal.type || "dinner",
     time: Number(meal.time || 20),
+    calories: Number(meal.calories || 0),
     summary: meal.summary || buildFallbackSummary(normalizedMeal),
     ingredients: meal.ingredients || [],
     steps: meal.steps || [t("recipe.followSource")],
     tags,
+    macros: meal.macros || null,
     image: meal.image || null,
     source: meal.source || "TheMealDB",
     backendScore: Number(meal.backendScore ?? meal.score ?? 0),
@@ -607,12 +1074,9 @@ async function fetchJson(url) {
 function scoreMeal(meal) {
   let score = Number.isFinite(meal.backendScore) ? meal.backendScore : 0;
   if (state.mealType !== "all" && meal.type !== state.mealType) score -= 45;
-  return score + pseudoRandom(meal.id, state.shuffleSeed);
+  return score + pseudoRandom(meal.id, state.shuffleSeed) * (state.shuffleSeed ? 32 : 1);
 }
 
-function containsAny(text, words) {
-  return words.some((word) => text.includes(word));
-}
 
 function cleanIngredient(ingredient) {
   return ingredient.replace(/^[\d/.\s]+/, "").trim();
@@ -684,20 +1148,27 @@ function renderMeals(ranked) {
     return;
   }
 
+  const { phase } = estimatePhase(getInputs());
+  const phaseTitle = getPhaseCopy(phase).title;
   ranked.forEach(({ meal }) => {
     const node = template.content.firstElementChild.cloneNode(true);
     localizeMealCard(node);
-    node.querySelector(".meal-type").textContent = translateMealType(meal.type);
+    node.querySelector(".meal-phase-badge").textContent = phaseTitle;
     node.querySelector(".meal-time").textContent = formatMinutes(meal.time);
+    node.querySelector(".meal-kcal").textContent = meal.calories ? t("recipe.kcal", { n: meal.calories }) : "";
     node.querySelector("h3").textContent = meal.name;
     node.querySelector(".meal-summary").textContent = meal.summary;
-    node.querySelector(".tag-row").innerHTML = meal.tags
-      .slice(0, 5)
-      .map((tag) => `<span class="tag">${escapeHtml(translateTag(tag))}</span>`)
-      .join("");
+    node.dataset.searchText = [meal.name, meal.summary, meal.ingredients.join(" "), meal.tags.join(" ")].join(" ").toLowerCase();
+    const primaryTag = meal.tags.find((tag) => !["vegetarian", "vegan", "dairy-free", "gluten-free"].includes(tag)) || meal.tags[0];
+    node.querySelector(".tag-row").innerHTML = primaryTag ? `<span class="tag">${escapeHtml(translateTag(primaryTag))}</span>` : "";
     node.querySelector(".ingredient-list").innerHTML = meal.ingredients.map((ingredient) => `<li>${escapeHtml(ingredient)}</li>`).join("");
     node.querySelector(".step-list").innerHTML = meal.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
-    node.querySelector(".add-button").addEventListener("click", () => addGroceries(meal.ingredients));
+    node.querySelector(".add-button").addEventListener("click", () => addGroceries(meal.ingredients, meal.name));
+    const logButton = node.querySelector(".log-button");
+    if (logButton) {
+      logButton.dataset.logMealId = meal.id;
+      logButton.addEventListener("click", () => toggleMealLogged(meal));
+    }
     node.querySelector(".swap-button").addEventListener("click", () => {
       state.shuffleSeed += 1;
       render();
@@ -712,6 +1183,16 @@ function renderMeals(ranked) {
       image.hidden = true;
     }
     mealResults.appendChild(node);
+  });
+  filterVisibleMeals();
+  updateLogButtons();
+}
+
+function filterVisibleMeals() {
+  const query = (document.querySelector("#recipe-search")?.value || "").trim().toLowerCase();
+  document.querySelectorAll("#meal-results .meal-card").forEach((card) => {
+    const matches = !query || card.dataset.searchText?.includes(query);
+    card.hidden = !matches;
   });
 }
 
@@ -758,7 +1239,7 @@ function renderBestPick(ranked, inputs, phase) {
     bestImage.hidden = true;
     bestImage.removeAttribute("src");
   }
-  bestPickButton.onclick = () => addGroceries(best.ingredients);
+  bestPickButton.onclick = () => addGroceries(best.ingredients, best.name);
 }
 
 function buildBestReason(meal, inputs, phase) {
@@ -917,7 +1398,7 @@ function buildLocalCarePlan(context) {
     if (symptomActions?.[symptom.id]) plan.actions.push(symptomActions[symptom.id]);
   });
   if (context.pantry.length) {
-    plan.recipeCopy += t("care.pantrySuffix", { items: context.pantry.slice(0, 2).join(i18n()?.getLocale() === "zh" ? "、" : ", ") });
+    plan.recipeCopy += t("care.pantrySuffix", { items: context.pantry.slice(0, 2).join(i18n()?.getLocale() === "zh" ? "ã€" : ", ") });
   }
   plan.actions = [...new Set(plan.actions)].slice(0, 5);
   plan.note = t("care.finalNote");
@@ -934,720 +1415,6 @@ function renderCarePlanContent(plan, fromLLM) {
   document.querySelector("#care-massage").textContent = plan.massage;
 }
 
-function renderMoveProgress() {
-  const minutes = state.selectedExerciseDuration || 15;
-  const total = document.querySelector("#move-total-minutes");
-  const fill = document.querySelector("#move-progress-fill");
-  const label = total?.closest(".movement-progress")?.querySelector("h3");
-  if (label) label.textContent = t("movement.recent");
-  if (total) total.textContent = formatMinutes(minutes);
-  if (fill) fill.style.width = `${Math.min(100, Math.round((minutes / 25) * 100))}%`;
-  const countdownLabel = document.querySelector(".countdown-row span");
-  if (countdownLabel) countdownLabel.textContent = t("movement.countdown");
-}
-
-function resetMoveCountdown(minutes = state.selectedExerciseDuration || 15) {
-  if (state.countdownTimer) {
-    window.clearInterval(state.countdownTimer);
-    state.countdownTimer = null;
-  }
-  state.countdownTotal = Math.max(1, Math.round(minutes * 60));
-  state.countdownRemaining = state.countdownTotal;
-  const button = document.querySelector("#move-start-button");
-  if (button) button.disabled = false;
-  state.countdownPaused = false;
-  updateCountdownDisplay();
-}
-
-function toggleMoveCountdown() {
-  if (state.countdownTimer) {
-    pauseMoveCountdown();
-    return;
-  }
-  startMoveCountdown();
-}
-
-function pauseMoveCountdown() {
-  if (!state.countdownTimer) return;
-  window.clearInterval(state.countdownTimer);
-  state.countdownTimer = null;
-  state.countdownPaused = true;
-  updateCountdownDisplay();
-}
-
-function startMoveCountdown() {
-  if (state.countdownTimer) return;
-
-  const minutes = state.selectedExerciseDuration || 15;
-  if (!state.countdownRemaining || state.countdownRemaining <= 0 || state.countdownRemaining > minutes * 60) {
-    resetMoveCountdown(minutes);
-  }
-
-  state.countdownPaused = false;
-
-  state.countdownTimer = window.setInterval(() => {
-    state.countdownRemaining = Math.max(0, state.countdownRemaining - 1);
-    updateCountdownDisplay();
-
-    if (state.countdownRemaining <= 0) {
-      window.clearInterval(state.countdownTimer);
-      state.countdownTimer = null;
-      state.countdownPaused = false;
-      const completed = Number(storageGet("lunaPlateMoveMinutes") || 0) + minutes;
-      storageSet("lunaPlateMoveMinutes", String(completed));
-      updateCountdownDisplay();
-    }
-  }, 1000);
-  updateCountdownDisplay();
-}
-
-function updateCountdownDisplay() {
-  const time = document.querySelector("#move-countdown-time");
-  const fill = document.querySelector("#move-countdown-fill");
-  const button = document.querySelector("#move-start-button");
-  const total = state.countdownTotal || Math.max(1, (state.selectedExerciseDuration || 15) * 60);
-  const remaining = state.countdownTotal ? Math.max(0, state.countdownRemaining) : total;
-
-  if (time) time.textContent = formatCountdown(remaining);
-  if (fill) fill.style.width = `${Math.round((remaining / total) * 100)}%`;
-  if (!button) return;
-  button.disabled = false;
-  if (state.countdownTimer) {
-    button.textContent = t("movement.pause", { time: formatCountdown(remaining) });
-  } else if (remaining > 0 && remaining < total) {
-    button.textContent = t("movement.resume", { time: formatCountdown(remaining) });
-  } else if (remaining <= 0) {
-    button.textContent = t("movement.completed");
-  } else {
-    button.textContent = t("movement.start", { n: state.selectedExerciseDuration || 15 });
-  }
-}
-
-function formatCountdown(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-}
-
-async function renderExerciseRecommendations() {
-  const title = document.querySelector("#move-title");
-  const results = document.querySelector("#move-results");
-  if (!title || !results) return;
-
-  const token = (state.exerciseRenderToken += 1);
-  const inputs = getInputs();
-  const { phase } = estimatePhase(inputs);
-  renderMoveProgress();
-  renderExerciseLoading();
-
-  try {
-    const exercises = await fetchExerciseRecommendations(phase, inputs);
-    if (token !== state.exerciseRenderToken) return;
-    renderExercisePanel(exercises.slice(0, MAX_EXERCISE_RESULTS), phase);
-  } catch (error) {
-    if (token !== state.exerciseRenderToken) return;
-    console.warn("Female movement API unavailable:", error);
-    renderExerciseError(error);
-  }
-}
-
-function renderExerciseLoading() {
-  document.querySelector("#move-source").textContent = t("movement.sourceApi");
-  document.querySelector("#move-title").textContent = t("movement.loadingTitle");
-  document.querySelector("#move-summary").textContent = t("movement.loadingSummary");
-  document.querySelector("#move-steps").innerHTML = `<li>${escapeHtml(t("movement.loadingStep"))}</li>`;
-  document.querySelector("#move-results").innerHTML = "";
-  document.querySelector("#move-count").textContent = t("results.loading");
-}
-
-function renderExerciseError(error) {
-  document.querySelector("#move-source").textContent = t("movement.sourceApi");
-  document.querySelector("#move-title").textContent = t("movement.unavailableTitle");
-  document.querySelector("#move-summary").textContent = t("movement.unavailableNote");
-  document.querySelector("#move-steps").innerHTML = `<li>${escapeHtml(t("movement.unavailableStep"))}</li>`;
-  document.querySelector("#move-results").innerHTML = "";
-  document.querySelector("#move-count").textContent = t("movement.count", { n: 0 });
-  document.querySelector("#move-note").textContent = t("movement.unavailableNote");
-}
-
-async function fetchExerciseRecommendations(phase, inputs) {
-  const cacheKey = buildFemaleExerciseCacheKey(phase, inputs);
-  if (state.exerciseCache && state.exerciseCacheKey === cacheKey) {
-    return state.exerciseCache;
-  }
-
-  const exercises = await fetchFemaleExerciseRecommendations(phase, inputs);
-  if (!exercises.length) throw new Error("Female movement API returned no exercises");
-  state.exerciseCache = exercises;
-  state.exerciseCacheKey = cacheKey;
-  return exercises;
-}
-
-function buildFemaleExerciseCacheKey(phase, inputs) {
-  return JSON.stringify({
-    phase,
-    symptoms: inputs.symptoms,
-  });
-}
-
-async function fetchFemaleExerciseRecommendations(phase, inputs) {
-  if (window.LunaPlateFemaleExercises?.search) {
-    return normalizeFemaleExerciseCollection(await window.LunaPlateFemaleExercises.search(buildFemaleExerciseContext(phase, inputs)));
-  }
-
-  const endpoint = window.LunaPlateConfig?.femaleExerciseEndpoint || "/api/female-exercises";
-  const url = new URL(endpoint, window.location.origin);
-  url.searchParams.set("gender", "female");
-  url.searchParams.set("phase", phase);
-  url.searchParams.set("symptoms", inputs.symptoms.join(","));
-  url.searchParams.set("limit", "80");
-
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Female movement API returned ${response.status}`);
-  return normalizeFemaleExerciseCollection(await response.json());
-}
-
-function buildFemaleExerciseContext(phase, inputs) {
-  return {
-    gender: "female",
-    phase,
-    symptoms: inputs.symptoms,
-    goal: "cycle-aware gentle movement",
-    preferredIntensity: phase === "menstrual" ? "low" : "low-to-moderate",
-  };
-}
-
-function normalizeFemaleExerciseCollection(payload) {
-  const list = Array.isArray(payload)
-    ? payload
-    : payload?.exercises || payload?.results || payload?.data || payload?.items || [];
-  return list.map(normalizeFemaleExercise).filter((exercise) => exercise.name);
-}
-
-function normalizeFemaleExercise(exercise) {
-  const media = normalizeExerciseMedia(
-    exercise.media ||
-      exercise.video ||
-      exercise.image ||
-      {
-        url: exercise.videoUrl || exercise.video_url || exercise.gifUrl || exercise.gif_url || exercise.imageUrl || exercise.image_url,
-        poster: exercise.poster || exercise.posterUrl || exercise.thumbnailUrl,
-        source: exercise.source || exercise.provider,
-      },
-  );
-  const instructions = normalizeExerciseInstructions(exercise.instructions || exercise.steps || exercise.cues || exercise.description);
-
-  return {
-    id: String(exercise.id || exercise.exerciseId || exercise.exercise_id || exercise.slug || exercise.name || cryptoRandomId()),
-    name: exercise.name || exercise.title || exercise.exerciseName || "exercise",
-    gifUrl: "",
-    media,
-    bodyParts: normalizeStringList(exercise.bodyParts || exercise.body_parts || exercise.bodyPart || exercise.category || exercise.categories),
-    equipments: normalizeStringList(exercise.equipments || exercise.equipment || exercise.equipmentTypes || exercise.equipment_type),
-    targetMuscles: normalizeStringList(exercise.targetMuscles || exercise.target_muscles || exercise.primaryMuscles || exercise.muscles || exercise.muscleGroups),
-    instructions,
-    duration: Number(exercise.duration || exercise.minutes || exercise.time || 0),
-    summary: exercise.summary || "",
-    focus: exercise.focus || "",
-    safety: exercise.safety || "",
-    visualType: exercise.visualType || exercise.visual_type || "",
-    source: exercise.source || exercise.provider || "Female movement API",
-  };
-}
-
-function normalizeStringList(value) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.map((item) => String(item).toLowerCase()).filter(Boolean);
-  return String(value)
-    .split(/[,/|]/)
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function normalizeExerciseInstructions(value) {
-  if (Array.isArray(value)) return value.map((step) => String(step).replace(/^Step:\d+\s*/i, "")).filter(Boolean);
-  if (!value) return ["Move slowly, keep the range comfortable, and stop if anything feels painful."];
-  return String(value)
-    .split(/(?:\.\s+|\n+)/)
-    .map((step) => step.trim())
-    .filter((step) => step.length > 12)
-    .slice(0, 5)
-    .map((step) => (step.endsWith(".") ? step : `${step}.`));
-}
-
-function cryptoRandomId() {
-  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
-  return `female-${Date.now()}-${Math.round(Math.random() * 10000)}`;
-}
-
-function exerciseText(exercise) {
-  return `${exercise.name} ${exercise.bodyParts.join(" ")} ${exercise.equipments.join(" ")} ${exercise.targetMuscles.join(" ")} ${exercise.instructions.join(" ")}`.toLowerCase();
-}
-
-function renderExercisePanel(exercises, phase, options = {}) {
-  const uniqueExercises = uniqueExercisesForDisplay(exercises);
-  state.currentExercises = uniqueExercises;
-  const best = uniqueExercises.find((exercise) => exercise.id === state.selectedExerciseId) || uniqueExercises[0];
-  if (!best) {
-    renderExerciseError(new Error("Female movement API returned no exercises"));
-    return;
-  }
-  state.selectedExerciseId = best.id;
-
-  document.querySelector("#move-source").textContent = localizeExerciseSource(best.source);
-  renderSelectedExercise(best, phase, options);
-
-  const shown = uniqueExercises.filter((exercise) => exercise.id !== best.id).slice(0, 4);
-  document.querySelector("#move-count").textContent = t("movement.count", { n: shown.length + 1 });
-  document.querySelector("#move-note").textContent = t("movement.note");
-  document.querySelector("#move-results").innerHTML = shown.map((exercise) => renderExerciseCard(exercise, best.id)).join("");
-  bindExerciseCards(phase);
-  updateMovementNavControls();
-}
-
-function uniqueExercisesForDisplay(exercises) {
-  const seen = new Set();
-  return (exercises || []).filter((exercise) => {
-    const key = getMovementType(exercise);
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function selectExerciseByOffset(offset) {
-  const exercises = state.currentExercises || [];
-  if (exercises.length < 2) return;
-  const currentIndex = Math.max(0, exercises.findIndex((exercise) => exercise.id === state.selectedExerciseId));
-  const nextIndex = (currentIndex + offset + exercises.length) % exercises.length;
-  state.selectedExerciseId = exercises[nextIndex].id;
-  const inputs = getInputs();
-  const { phase } = estimatePhase(inputs);
-  renderExercisePanel(exercises, phase);
-}
-
-function updateMovementNavControls() {
-  const disabled = state.currentExercises.length < 2;
-  document.querySelectorAll("#move-prev, #move-next").forEach((button) => {
-    button.disabled = disabled;
-  });
-}
-
-function bindMovementSwipe() {
-  const media = document.querySelector(".movement-media");
-  const hero = document.querySelector(".movement-hero");
-  if (!media || !hero) return;
-
-  hero.tabIndex = 0;
-  hero.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      selectExerciseByOffset(-1);
-    }
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      selectExerciseByOffset(1);
-    }
-  });
-
-  let startX = 0;
-  let startY = 0;
-  let active = false;
-
-  media.addEventListener("pointerdown", (event) => {
-    active = true;
-    startX = event.clientX;
-    startY = event.clientY;
-    media.setPointerCapture?.(event.pointerId);
-  });
-
-  media.addEventListener("pointerup", (event) => {
-    if (!active) return;
-    active = false;
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
-    selectExerciseByOffset(dx < 0 ? 1 : -1);
-  });
-
-  media.addEventListener("pointercancel", () => {
-    active = false;
-  });
-}
-
-function renderSelectedExercise(best, phase, options = {}) {
-  const duration = estimateExerciseDuration(best, phase);
-  const guide = getExerciseGuide(best);
-  const title = guide.title || titleCase(best.name);
-  state.selectedExerciseDuration = duration;
-
-  document.querySelector("#move-best-title").textContent = title;
-  document.querySelector("#move-best-meta").textContent = t("movement.defaultMeta", { n: duration });
-  document.querySelector("#move-title").textContent = title;
-  document.querySelector("#move-summary").textContent = buildSelectedExerciseSummary(best, phase, guide);
-  document.querySelector("#move-focus").textContent = guide.cues?.join(" · ") || t("movement.defaultFocus");
-  const safety = document.querySelector("#move-safety");
-  if (safety) safety.textContent = guide.safety || t("movement.defaultSafety");
-  document.querySelector("#move-step-title").textContent = title;
-  document.querySelector("#move-steps").innerHTML = buildExerciseSteps(best, guide)
-    .map((step) => `<li>${escapeHtml(step)}</li>`)
-    .join("");
-
-  renderExerciseMedia(best);
-
-  renderMoveProgress();
-  if (options.resetCountdown === false) {
-    updateCountdownDisplay();
-  } else {
-    resetMoveCountdown(duration);
-  }
-}
-
-async function renderExerciseMedia(exercise) {
-  const media = await resolveExerciseMedia(exercise);
-  if (state.selectedExerciseId !== exercise.id) return;
-  presentExerciseMedia(exercise, media);
-}
-
-async function resolveExerciseMedia(exercise) {
-  const cacheKey = exercise.id || exercise.name;
-  if (state.femaleMediaCache.has(cacheKey)) return state.femaleMediaCache.get(cacheKey);
-
-  const femaleMedia = await fetchFemaleExerciseMedia(exercise);
-  const media = femaleMedia || getGeneratedMovementMedia(exercise);
-  state.femaleMediaCache.set(cacheKey, media);
-  return media;
-}
-
-function getGeneratedMovementMedia(exercise) {
-  const visualType = getMovementVisualType(exercise);
-  const available = {
-    "cat-cow": "cat-cow.webp",
-    "child-pose": "child-pose.webp",
-    "neck-release": "neck-release.webp",
-    "hip-rock": "hip-rock.webp",
-    twist: "twist.webp",
-    breath: "breath.webp",
-    "side-stretch": "side-stretch.webp",
-    "forward-fold": "forward-fold.webp",
-    butterfly: "butterfly.webp",
-    "legs-wall": "legs-wall.webp",
-    "shoulder-rolls": "shoulder-rolls.webp",
-    "mindful-walk": "mindful-walk.webp",
-  };
-  if (!available[visualType]) {
-    return {
-      type: "vector",
-      url: "",
-      sourceKey: "movement.sourceVector",
-    };
-  }
-  return {
-    type: "image",
-    url: `assets/movement/${available[visualType]}`,
-    sourceKey: "movement.sourceVector",
-  };
-}
-
-async function fetchFemaleExerciseMedia(exercise) {
-  try {
-    if (exercise.media?.url) return exercise.media;
-
-    if (window.LunaPlateFemaleMedia?.resolve) {
-      return normalizeExerciseMedia(await window.LunaPlateFemaleMedia.resolve(exercise));
-    }
-
-    const endpoint = window.LunaPlateConfig?.femaleExerciseMediaEndpoint || "/api/female-exercise-media";
-    if (!window.LunaPlateConfig?.femaleExerciseMediaEndpoint) return null;
-
-    const url = new URL(endpoint, window.location.origin);
-    url.searchParams.set("name", exercise.name);
-    url.searchParams.set("gender", "female");
-    url.searchParams.set("bodyParts", exercise.bodyParts.join(","));
-    url.searchParams.set("targetMuscles", exercise.targetMuscles.join(","));
-    url.searchParams.set("equipment", exercise.equipments.join(","));
-
-    const response = await fetch(url);
-    if (!response.ok) return null;
-    return normalizeExerciseMedia(await response.json());
-  } catch (error) {
-    console.warn("Female exercise media fallback:", error);
-    return null;
-  }
-}
-
-function normalizeExerciseMedia(media) {
-  if (!media || typeof media !== "object" || !media.url) return null;
-  const type = media.type === "video" || /\.(mp4|webm|mov)(?:\?|$)/i.test(media.url) ? "video" : "image";
-  return {
-    type,
-    url: String(media.url),
-    poster: media.poster ? String(media.poster) : "",
-    source: media.source ? String(media.source) : "Female movement library",
-  };
-}
-
-function presentExerciseMedia(exercise, media) {
-  const gif = document.querySelector("#move-gif");
-  const video = document.querySelector("#move-video");
-  const placeholder = document.querySelector("#move-placeholder");
-  if (!gif || !video || !placeholder) return;
-
-  gif.hidden = true;
-  video.hidden = true;
-  placeholder.hidden = true;
-  gif.removeAttribute("src");
-  video.removeAttribute("src");
-  video.removeAttribute("poster");
-
-  if (media.type !== "vector") {
-    document.querySelector("#move-source").textContent = media.sourceKey ? t(media.sourceKey) : localizeExerciseSource(media.source);
-  }
-
-  if (media.type === "video" && media.url) {
-    video.src = media.url;
-    if (media.poster) video.poster = media.poster;
-    video.hidden = false;
-    video.load();
-    video.play().catch(() => {
-      // controls stay available if autoplay is blocked
-    });
-    return;
-  }
-
-  if (media.url) {
-    gif.alt = getExerciseGuide(exercise).title || titleCase(exercise.name);
-    gif.onerror = () => {
-      gif.hidden = true;
-      renderExerciseGuidePlaceholder(placeholder, exercise);
-    };
-    gif.src = media.url;
-    gif.hidden = false;
-    return;
-  }
-
-  renderExerciseGuidePlaceholder(placeholder, exercise);
-}
-
-function renderExerciseGuidePlaceholder(placeholder, exercise) {
-  placeholder.hidden = false;
-  document.querySelector("#move-source").textContent = t("movement.sourceVector");
-  placeholder.innerHTML = buildExerciseGuideMarkup(exercise);
-}
-
-function localizeExerciseSource(source) {
-  if (!source) return t("movement.sourceApi");
-  const normalized = String(source).toLowerCase();
-  if (normalized.includes("female movement")) return t("movement.sourceApi");
-  return normalized.includes("local") || normalized.includes("generated") || normalized.includes("vector")
-    ? t("movement.sourceVector")
-    : source;
-}
-
-function buildExerciseGuideMarkup(exercise) {
-  const guide = getExerciseGuide(exercise);
-  const visualType = getMovementVisualType(exercise);
-  return `
-    <div class="movement-guide-figure ${visualType}" aria-hidden="true">
-      ${buildMovementVector(visualType)}
-    </div>
-    <div class="movement-guide-copy">
-      <strong>${escapeHtml(guide.title)}</strong>
-      <span>${escapeHtml(guide.breath)}</span>
-      <small>${guide.cues.map((cue) => escapeHtml(cue)).join(" · ")}</small>
-    </div>
-  `;
-}
-
-function getMovementVisualType(exercise) {
-  return getMovementType(exercise);
-}
-
-function getMovementType(exercise) {
-  if (exercise.visualType) return exercise.visualType;
-  const text = exerciseText(exercise);
-  if (containsAny(text, ["side stretch", "side-body", "side body"])) return "side-stretch";
-  if (containsAny(text, ["forward fold", "hamstring"])) return "forward-fold";
-  if (containsAny(text, ["butterfly", "inner thighs"])) return "butterfly";
-  if (containsAny(text, ["legs up", "wall"])) return "legs-wall";
-  if (containsAny(text, ["shoulder roll"])) return "shoulder-rolls";
-  if (containsAny(text, ["walk", "mindful"])) return "mindful-walk";
-  if (containsAny(text, ["cat", "cow", "spine", "back"])) return "cat-cow";
-  if (containsAny(text, ["child", "pose", "breathing"])) return "child-pose";
-  if (containsAny(text, ["neck", "shoulder"])) return "neck-release";
-  if (containsAny(text, ["hip", "upper legs", "glute", "pelvic"])) return "hip-rock";
-  if (containsAny(text, ["rotation", "twist", "waist"])) return "twist";
-  return "breath";
-}
-
-function getMovementGuideKey(type) {
-  return {
-    "cat-cow": "catCow",
-    "child-pose": "childPose",
-    "neck-release": "neckRelease",
-    "hip-rock": "hipRock",
-    twist: "twist",
-    breath: "breath",
-    "side-stretch": "sideStretch",
-    "forward-fold": "forwardFold",
-    butterfly: "butterfly",
-    "legs-wall": "legsWall",
-    "shoulder-rolls": "shoulderRolls",
-    "mindful-walk": "mindfulWalk",
-  }[type] || "default";
-}
-
-function buildMovementVector(type) {
-  const sharedStart = `
-    <svg class="movement-vector" viewBox="0 0 220 148" role="img" aria-hidden="true">
-      <defs>
-        <linearGradient id="mv-soft" x1="0" x2="1">
-          <stop offset="0" stop-color="#8f6aa4" />
-          <stop offset="1" stop-color="#d7828f" />
-        </linearGradient>
-      </defs>
-      <ellipse class="mv-shadow" cx="110" cy="128" rx="72" ry="10" />
-  `;
-  const sharedEnd = "</svg>";
-  const shapes = {
-    "cat-cow": `
-      <path class="mv-back mv-breathe" d="M52 78 C82 52, 128 52, 161 78" />
-      <circle class="mv-head mv-breathe" cx="174" cy="69" r="13" />
-      <path class="mv-limb" d="M70 80 L62 118" />
-      <path class="mv-limb" d="M142 80 L151 118" />
-      <path class="mv-limb" d="M88 74 L92 118" />
-      <path class="mv-limb" d="M125 74 L121 118" />
-      <path class="mv-breath-line" d="M35 48 C50 35, 70 35, 85 48" />
-    `,
-    "child-pose": `
-      <circle class="mv-head mv-sway" cx="78" cy="90" r="13" />
-      <path class="mv-back mv-sway" d="M92 88 C112 70, 145 72, 168 95" />
-      <path class="mv-limb" d="M76 101 C96 111, 132 113, 174 106" />
-      <path class="mv-limb" d="M102 100 C86 117, 66 122, 46 116" />
-      <path class="mv-limb" d="M135 100 C124 118, 102 124, 80 119" />
-      <path class="mv-breath-line" d="M54 57 C70 45, 92 45, 108 57" />
-    `,
-    "neck-release": `
-      <path class="mv-body" d="M108 82 L108 123" />
-      <circle class="mv-head mv-tilt" cx="110" cy="58" r="17" />
-      <path class="mv-limb" d="M79 91 C98 82, 122 82, 141 91" />
-      <path class="mv-limb" d="M83 105 L65 124" />
-      <path class="mv-limb" d="M137 105 L154 124" />
-      <path class="mv-breath-line" d="M141 50 C158 42, 172 45, 181 57" />
-    `,
-    "hip-rock": `
-      <circle class="mv-head" cx="58" cy="91" r="13" />
-      <path class="mv-body" d="M72 94 C99 100, 127 100, 154 94" />
-      <path class="mv-limb" d="M98 99 C108 78, 128 78, 138 100" />
-      <path class="mv-limb mv-rock" d="M138 100 C153 95, 171 101, 180 116" />
-      <path class="mv-limb mv-rock" d="M101 100 C87 96, 71 103, 63 118" />
-      <path class="mv-breath-line" d="M92 60 C110 48, 136 48, 154 60" />
-    `,
-    twist: `
-      <circle class="mv-head mv-sway" cx="112" cy="45" r="15" />
-      <path class="mv-body mv-sway" d="M110 62 C103 84, 104 106, 113 125" />
-      <path class="mv-limb" d="M75 84 C99 78, 128 78, 153 86" />
-      <path class="mv-limb" d="M98 124 C83 118, 70 110, 61 98" />
-      <path class="mv-limb" d="M118 124 C137 119, 153 110, 162 96" />
-      <path class="mv-breath-line" d="M147 60 C165 55, 178 60, 184 73" />
-    `,
-    breath: `
-      <circle class="mv-head mv-breathe" cx="110" cy="50" r="16" />
-      <path class="mv-body mv-breathe" d="M110 66 L110 122" />
-      <path class="mv-limb mv-breathe" d="M76 84 C96 75, 124 75, 144 84" />
-      <path class="mv-limb" d="M96 122 C86 116, 78 109, 70 99" />
-      <path class="mv-limb" d="M120 122 C134 116, 145 108, 153 98" />
-      <circle class="mv-breath-circle" cx="110" cy="84" r="34" />
-    `,
-  };
-  return `${sharedStart}${shapes[type] || shapes.breath}${sharedEnd}`;
-}
-
-function getExerciseGuide(exercise) {
-  return t(`movement.guide.${getMovementGuideKey(getMovementType(exercise))}`);
-}
-
-function renderExerciseCard(exercise, selectedId = "") {
-  const guide = getExerciseGuide(exercise);
-  const title = guide.title || titleCase(exercise.name);
-  const summary = buildExerciseSummary(exercise, "", guide);
-  const focus = guide.cues?.join(" · ") || t("movement.defaultFocus");
-  const meta = (guide.cues || []).slice(0, 3);
-  const duration = Number(exercise.duration) || "";
-  return `
-    <button type="button" class="exercise-card${exercise.id === selectedId ? " active" : ""}" data-exercise-id="${escapeHtml(exercise.id)}">
-      <div class="exercise-card-heading">
-        <h3>${escapeHtml(title)}</h3>
-        ${duration ? `<span>${escapeHtml(formatMinutes(duration))}</span>` : ""}
-      </div>
-      <p>${escapeHtml(summary)}</p>
-      <p class="exercise-focus">${escapeHtml(focus)}</p>
-      <div class="exercise-meta">
-        ${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
-      </div>
-    </button>
-  `;
-}
-
-function bindExerciseCards(phase) {
-  document.querySelectorAll("#move-results [data-exercise-id]").forEach((card) => {
-    card.addEventListener("click", () => {
-      const exercise = state.currentExercises.find((item) => item.id === card.dataset.exerciseId);
-      if (!exercise) return;
-      state.selectedExerciseId = exercise.id;
-      renderExercisePanel(state.currentExercises, phase);
-    });
-  });
-}
-
-function estimateExerciseDuration(exercise, phase) {
-  if (Number(exercise.duration) > 0) return Number(exercise.duration);
-  const text = `${exercise.name} ${exercise.bodyParts.join(" ")} ${exercise.equipments.join(" ")} ${exercise.targetMuscles.join(" ")}`.toLowerCase();
-  const baseByPhase = {
-    menstrual: 10,
-    follicular: 18,
-    ovulation: 20,
-    luteal: 15,
-  };
-  let minutes = baseByPhase[phase] || 15;
-  if (text.includes("stretch") || text.includes("pose") || text.includes("dog") || text.includes("spine")) minutes -= 2;
-  if (text.includes("raise") || text.includes("curl") || text.includes("rotation")) minutes += 2;
-  if (text.includes("dip") || text.includes("pull") || text.includes("push") || text.includes("barbell")) minutes += 4;
-  if (exercise.equipments.some((item) => item.includes("body weight"))) minutes -= 1;
-  return Math.max(8, Math.min(25, Math.round(minutes / 5) * 5));
-}
-
-function buildExerciseSummary(exercise, phase = "", guide = getExerciseGuide(exercise)) {
-  const body = humanList(exercise.bodyParts);
-  const target = humanList(exercise.targetMuscles);
-  const phaseCopy = phase ? `${getPhaseCopy(phase).title} · ` : "";
-  if (guide?.breath) return formatGuideSummary(phaseCopy, guide);
-  if (exercise.summary) return `${phaseCopy}${exercise.summary}`;
-  return `${phaseCopy}${body || "gentle movement"} for ${target || "mobility"}, using ${humanList(exercise.equipments) || "simple setup"}.`;
-}
-
-function buildSelectedExerciseSummary(exercise, phase = "", guide = getExerciseGuide(exercise)) {
-  const phaseCopy = phase ? `${getPhaseCopy(phase).title} · ` : "";
-  if (guide?.breath) return formatGuideSummary(phaseCopy, guide);
-  if (exercise.summary) return `${phaseCopy}${exercise.summary}`;
-  return buildExerciseSummary(exercise, phase, guide);
-}
-
-function formatGuideSummary(prefix, guide) {
-  const end = i18n()?.getLocale() === "zh" ? "。" : ".";
-  const gap = i18n()?.getLocale() === "zh" ? "" : " ";
-  return `${prefix}${guide.breath}${end}${gap}${guide.cues.join(" · ")}${end}`;
-}
-
-function buildExerciseSteps(exercise, guide = getExerciseGuide(exercise)) {
-  if (guide?.cues?.length) return [guide.breath, ...guide.cues].filter(Boolean);
-  return exercise.instructions.slice(0, 4);
-}
-
-function humanList(items) {
-  return [...new Set((items || []).filter(Boolean))].slice(0, 3).join(", ");
-}
-
 function titleCase(value) {
   return String(value)
     .split(" ")
@@ -1656,10 +1423,21 @@ function titleCase(value) {
     .join(" ");
 }
 
-function addGroceries(items) {
+function addGroceries(items, source = "") {
   state.grocery = [...new Set([...state.grocery, ...items])].sort();
   saveGrocery();
   renderGrocery();
+  const trigger = document.querySelector("#cart-trigger");
+  if (trigger) {
+    trigger.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], {
+      duration: 260,
+      easing: "ease-out",
+    });
+  }
+  if (source) {
+    const count = document.querySelector("#cart-count");
+    if (count) count.title = source;
+  }
 }
 
 function saveGrocery() {
@@ -1674,11 +1452,84 @@ function showBootError(message) {
 }
 
 function renderGrocery() {
+  const cartCount = document.querySelector("#cart-count");
+  const selectedCount = document.querySelector("#cart-selected-count");
+  const totalCount = document.querySelector("#cart-total-count");
+  if (cartCount) cartCount.textContent = String(state.grocery.length);
+  if (totalCount) totalCount.textContent = String(state.grocery.length);
+
   if (!state.grocery.length) {
-    groceryList.innerHTML = `<li>${escapeHtml(t("grocery.empty"))}</li>`;
+    if (selectedCount) selectedCount.textContent = "0";
+    groceryList.innerHTML = `<div class="cart-empty">${escapeHtml(t("grocery.empty"))}</div>`;
     return;
   }
-  groceryList.innerHTML = state.grocery.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  groceryList.innerHTML = `
+    <section class="grocery-group">
+      <div class="grocery-group-heading">
+        <h3>${escapeHtml(t("grocery.generatedGroup"))}</h3>
+        <span>${escapeHtml(t("grocery.itemCount", { n: state.grocery.length }))}</span>
+      </div>
+      <div class="grocery-item-list">
+        ${state.grocery.map((item, index) => renderGroceryItem(item, index)).join("")}
+      </div>
+    </section>
+  `;
+  groceryList.querySelectorAll("input[type='checkbox']").forEach((input) => {
+    input.addEventListener("change", updateGrocerySelectedCount);
+  });
+  updateGrocerySelectedCount();
+}
+
+function renderGroceryItem(item, index) {
+  const id = `grocery-${index}`;
+  return `
+    <label class="grocery-item" for="${id}">
+      <input id="${id}" type="checkbox" ${index === 0 ? "checked" : ""} />
+      <span class="grocery-checkbox" aria-hidden="true"></span>
+      <span class="grocery-thumb">
+        <img src="${escapeHtml(ingredientImageUrl(item))}" alt="" loading="lazy" onerror="this.hidden=true" />
+      </span>
+      <span class="grocery-copy">
+        <strong>${escapeHtml(titleCase(displayIngredientName(item)))}</strong>
+        <small>${escapeHtml(defaultIngredientAmount(item))}</small>
+      </span>
+    </label>
+  `;
+}
+
+function ingredientImageUrl(item) {
+  const clean = displayIngredientName(item).split(/\s+/).slice(-2).join(" ");
+  return `https://www.themealdb.com/images/ingredients/${encodeURIComponent(clean || item)}.png`;
+}
+
+function displayIngredientName(item) {
+  return String(item)
+    .replace(/\([^)]*\)/g, "")
+    .replace(/\b\d+\/?\d*\s*(g|kg|ml|l|cup|cups|tbsp|tsp|oz|slice|slices|piece|pieces)?\b/gi, "")
+    .replace(/\b(large|small|medium|chopped|sliced|peeled|crushed|fresh|ground|to taste|pinch|dash|bunch|clove|cloves|cup|cups|topping)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim() || String(item);
+}
+
+function defaultIngredientAmount(item) {
+  const value = String(item).match(/\b\d+\/?\d*\s*(g|kg|ml|l|cup|cups|tbsp|tsp|oz|slice|slices|piece|pieces)?\b/i);
+  return value ? value[0] : t("grocery.asNeeded");
+}
+
+function updateGrocerySelectedCount() {
+  const selectedCount = document.querySelector("#cart-selected-count");
+  if (!selectedCount) return;
+  selectedCount.textContent = String(document.querySelectorAll("#grocery-list input[type='checkbox']:checked").length);
+}
+
+function addCustomGrocery() {
+  const input = document.querySelector("#cart-custom-input");
+  const value = input?.value.trim();
+  if (!value) return;
+  state.grocery = [...new Set([...state.grocery, value])].sort();
+  input.value = "";
+  saveGrocery();
+  renderGrocery();
 }
 
 function reset() {
