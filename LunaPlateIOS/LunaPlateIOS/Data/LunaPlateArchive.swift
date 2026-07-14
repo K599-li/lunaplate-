@@ -135,6 +135,17 @@ struct ArchiveSettings: Codable {
         reminderHour = try container.decodeIfPresent(Int.self, forKey: .reminderHour) ?? 20
         reminderMinute = try container.decodeIfPresent(Int.self, forKey: .reminderMinute) ?? 0
     }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(averageCycleLength, forKey: .averageCycleLength)
+        try container.encode(averagePeriodLength, forKey: .averagePeriodLength)
+        try container.encodeIfPresent(manualPhaseOverride, forKey: .manualPhaseOverride)
+        try container.encode(localeIdentifier, forKey: .localeIdentifier)
+        try container.encode(notificationsEnabled, forKey: .notificationsEnabled)
+        try container.encode(reminderHour, forKey: .reminderHour)
+        try container.encode(reminderMinute, forKey: .reminderMinute)
+    }
 }
 
 struct ArchiveGroceryItem: Codable {
