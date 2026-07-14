@@ -18,7 +18,7 @@ struct MealsResponse: Decodable {
     let meals: [Meal]
 }
 
-struct Meal: Decodable, Identifiable {
+struct Meal: Decodable, Identifiable, Sendable {
     let id: String
     let name: String
     let type: String
@@ -33,7 +33,7 @@ struct Meal: Decodable, Identifiable {
     let backendScore: Int
 }
 
-struct MealMacros: Decodable {
+struct MealMacros: Decodable, Sendable {
     let protein: Int
     let carbs: Int
     let fat: Int
@@ -46,7 +46,7 @@ struct ExercisesResponse: Decodable {
     let exercises: [Exercise]
 }
 
-struct Exercise: Decodable, Identifiable {
+struct Exercise: Decodable, Identifiable, Sendable {
     let id: String
     let name: String
     let visualType: String
@@ -62,7 +62,7 @@ struct Exercise: Decodable, Identifiable {
     let source: String
 }
 
-struct ExerciseMedia: Decodable {
+struct ExerciseMedia: Decodable, Sendable {
     let type: String
     let url: String
     let source: String

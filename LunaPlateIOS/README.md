@@ -45,10 +45,10 @@ Implemented native capabilities:
 4. Phase- and symptom-aware Food, Movement, and evidence-linked care recommendations
 5. Local cycle/check-in notifications, real Swift Charts insights, privacy details, and delete-all controls
 6. XCTest coverage for prediction/archive compatibility plus CI content and simulator tests
+7. Automatic offline fallback with 12 meal ideas and 8 phase/symptom-aware movement options
 
 Remaining release work:
 
-1. Verify and resolve all Xcode CI findings on macOS
-2. Add a larger offline meal catalog and fully offline movement media loading
-3. Complete App Icon artwork, screenshots, production signing, and App Store metadata
-4. Publish the privacy policy at a stable public URL and configure the production HTTPS API
+1. Add fully offline movement illustrations
+2. Complete App Icon artwork, screenshots, production signing, and App Store metadata
+3. Publish the privacy policy at a stable public URL and configure the production HTTPS API

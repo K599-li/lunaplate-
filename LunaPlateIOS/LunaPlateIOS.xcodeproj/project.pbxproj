@@ -30,6 +30,7 @@
 		A10000000000000000000016 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* NotificationService.swift */; };
 		A10000000000000000000017 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* PrivacyView.swift */; };
 		A10000000000000000000018 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* PrivacyInfo.xcprivacy */; };
+		A10000000000000000000019 /* OfflineContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* OfflineContent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		B10000000000000000000019 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		B1000000000000000000001A /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B1000000000000000000001C /* OfflineContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineContent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,7 +111,7 @@
 		D10000000000000000000005 /* Design */ = {isa = PBXGroup; children = (B10000000000000000000003); path = Design; sourceTree = "<group>"; };
 		D10000000000000000000006 /* Models */ = {isa = PBXGroup; children = (B10000000000000000000004, B10000000000000000000014); path = Models; sourceTree = "<group>"; };
 		D10000000000000000000007 /* Networking */ = {isa = PBXGroup; children = (B10000000000000000000005); path = Networking; sourceTree = "<group>"; };
-		D10000000000000000000008 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000006, B10000000000000000000007, B10000000000000000000018); path = Data; sourceTree = "<group>"; };
+		D10000000000000000000008 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000006, B10000000000000000000007, B10000000000000000000018, B1000000000000000000001C); path = Data; sourceTree = "<group>"; };
 		D10000000000000000000009 /* Features */ = {isa = PBXGroup; children = (D1000000000000000000000A, D1000000000000000000000B, D1000000000000000000000C, D1000000000000000000000F, D10000000000000000000010, D10000000000000000000011, D10000000000000000000012); path = Features; sourceTree = "<group>"; };
 		D1000000000000000000000A /* Today */ = {isa = PBXGroup; children = (B10000000000000000000008, B10000000000000000000009); path = Today; sourceTree = "<group>"; };
 		D1000000000000000000000B /* Insights */ = {isa = PBXGroup; children = (B1000000000000000000000A); path = Insights; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				A10000000000000000000015,
 				A10000000000000000000016,
 				A10000000000000000000017,
+				A10000000000000000000019,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

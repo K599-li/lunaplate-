@@ -1,6 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "content.offline.notice" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Using built-in suggestions while the server is unavailable" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Сервер недоступен — используются встроенные рекомендации" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务器暂不可用，正在使用内置建议" } } } },
     "common.done" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Готово" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "完成" } } } },
     "cycle.day" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Cycle day" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "День цикла" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "周期日" } } } },
     "cycle.empty.body" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Add your latest period to begin a private, on-device cycle timeline." } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Добавьте последнюю менструацию, чтобы начать локальную историю цикла." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "记录最近一次经期，开始仅保存在本机的周期时间线。" } } } },

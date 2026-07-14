@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-enum CyclePhase: String, Codable, CaseIterable {
+enum CyclePhase: String, Codable, CaseIterable, Hashable, Sendable {
     case menstrual
     case follicular
     case ovulatory

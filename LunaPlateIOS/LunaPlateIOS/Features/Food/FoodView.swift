@@ -6,15 +6,18 @@ final class FoodViewModel: ObservableObject {
     @Published private(set) var meals: [Meal] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
+    @Published private(set) var isUsingOfflineContent = false
 
     func load(phase: CyclePhase, symptoms: [String]) async {
         isLoading = true
         errorMessage = nil
+        isUsingOfflineContent = false
         defer { isLoading = false }
         do {
             meals = try await APIClient.shared.meals(phase: phase, symptoms: symptoms)
         } catch {
-            errorMessage = error.localizedDescription
+            meals = OfflineContent.meals(phase: phase, symptoms: symptoms)
+            isUsingOfflineContent = true
         }
     }
 }
@@ -37,6 +40,9 @@ struct FoodView: View {
                 } else if let error = viewModel.errorMessage {
                     ContentUnavailableView("food.error", systemImage: "wifi.exclamationmark", description: Text(error))
                 } else {
+                    if viewModel.isUsingOfflineContent {
+                        offlineNotice
+                    }
                     ForEach(viewModel.meals) { meal in
                         mealRow(meal)
                     }
@@ -50,6 +56,16 @@ struct FoodView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task(id: requestKey) { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
         .refreshable { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
+    }
+
+    private var offlineNotice: some View {
+        Label("content.offline.notice", systemImage: "wifi.slash")
+            .font(.caption)
+            .foregroundStyle(AppTheme.sage)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(AppTheme.sage.opacity(0.10), in: Capsule())
+            .accessibilityIdentifier("food.offlineNotice")
     }
 
     private func mealRow(_ meal: Meal) -> some View {

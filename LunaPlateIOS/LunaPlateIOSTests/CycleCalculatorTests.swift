@@ -108,6 +108,30 @@ final class CycleCalculatorTests: XCTestCase {
         XCTAssertEqual(CyclePhase.fromStoredValue("luteal"), .luteal)
     }
 
+    func testOfflineMealsPrioritizeTheActivePhase() {
+        let meals = OfflineContent.meals(phase: .menstrual, symptoms: ["cramps"])
+
+        XCTAssertGreaterThanOrEqual(meals.count, 10)
+        XCTAssertEqual(meals.first?.id, "oat-berry")
+        XCTAssertTrue(meals.allSatisfy { $0.source == "offline" })
+    }
+
+    func testOfflineTodayMealUsesTimeOfDay() {
+        let lunch = OfflineContent.todayMeal(phase: .follicular, symptoms: [], hour: 13)
+        let dinner = OfflineContent.todayMeal(phase: .follicular, symptoms: [], hour: 19)
+
+        XCTAssertEqual(lunch?.type, "lunch")
+        XCTAssertEqual(dinner?.type, "dinner")
+    }
+
+    func testOfflineMovementRespondsToSymptomsAndLimit() {
+        let exercises = OfflineContent.exercises(phase: .menstrual, symptoms: ["cramps"], limit: 3)
+
+        XCTAssertEqual(exercises.count, 3)
+        XCTAssertTrue(["breathing", "cat-cow", "hips"].contains(exercises.first?.id ?? ""))
+        XCTAssertTrue(exercises.allSatisfy { $0.source == "offline" })
+    }
+
     private func record(_ start: String, end: String? = nil) -> CycleRecord {
         CycleRecord(startDate: date(start), endDate: end.map(date))
     }

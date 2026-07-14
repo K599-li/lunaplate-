@@ -193,6 +193,12 @@ struct TodayView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, minHeight: 90)
             } else if let meal = viewModel.meal {
+                if viewModel.isUsingOfflineContent {
+                    Label("content.offline.notice", systemImage: "wifi.slash")
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.sage)
+                        .accessibilityIdentifier("today.offlineNotice")
+                }
                 HStack(spacing: 14) {
                     AsyncImage(url: meal.image) { image in
                         image.resizable().scaledToFill()
