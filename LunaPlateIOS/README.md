@@ -46,9 +46,10 @@ Implemented native capabilities:
 5. Local cycle/check-in notifications, real Swift Charts insights, privacy details, and delete-all controls
 6. XCTest coverage for prediction/archive compatibility plus CI content and simulator tests
 7. Automatic offline fallback with 12 meal ideas and 8 phase/symptom-aware movement options
+8. App Icon, public privacy policy, production HTTPS endpoint, grocery workflow, and actionable daily checklist
 
 Remaining release work:
 
 1. Add fully offline movement illustrations
-2. Complete App Icon artwork, screenshots, production signing, and App Store metadata
-3. Publish the privacy policy at a stable public URL and configure the production HTTPS API
+2. Capture final App Store screenshots and prepare listing metadata
+3. Select your Apple Developer Team in Xcode and confirm the final bundle identifier before archiving

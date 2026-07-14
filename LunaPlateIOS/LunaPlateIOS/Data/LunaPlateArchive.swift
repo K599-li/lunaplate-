@@ -3,6 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct LunaPlateArchive: Codable {
+    static let maximumFileSize = 5 * 1024 * 1024
     let schemaVersion: Int
     let exportedAt: String
     let cycles: [ArchiveCycle]
@@ -38,10 +39,15 @@ struct LunaPlateArchive: Codable {
 
     func validate() throws {
         guard schemaVersion == 1 else { throw ArchiveError.unsupportedVersion }
+        guard cycles.count <= 500, days.count <= 5_000, groceries.count <= 1_000 else {
+            throw ArchiveError.tooManyRecords
+        }
         guard (21...45).contains(settings.averageCycleLength),
               (2...10).contains(settings.averagePeriodLength),
               (0...23).contains(settings.reminderHour),
-              (0...59).contains(settings.reminderMinute) else {
+              (0...59).contains(settings.reminderMinute),
+              settings.localeIdentifier.count <= 100,
+              CyclePhase.fromStoredValue(settings.manualPhaseOverride) != nil || settings.manualPhaseOverride == nil else {
             throw ArchiveError.invalidSettings
         }
 
@@ -49,7 +55,10 @@ struct LunaPlateArchive: Codable {
         for cycle in cycles {
             guard let start = ArchiveDate.date(cycle.startDate) else { throw ArchiveError.invalidDate }
             if let endValue = cycle.endDate {
-                guard let end = ArchiveDate.date(endValue), end >= start else { throw ArchiveError.invalidDate }
+                guard let end = ArchiveDate.date(endValue), end >= start,
+                      Calendar.current.dateComponents([.day], from: start, to: end).day.map({ $0 <= 31 }) == true else {
+                    throw ArchiveError.invalidDate
+                }
             }
             guard cycleStarts.insert(cycle.startDate).inserted else { throw ArchiveError.duplicateRecord }
         }
@@ -58,8 +67,25 @@ struct LunaPlateArchive: Codable {
         for day in days {
             guard ArchiveDate.date(day.date) != nil else { throw ArchiveError.invalidDate }
             guard (0...10).contains(day.painLevel),
-                  (0...5000).contains(day.waterMilliliters) else { throw ArchiveError.invalidDailyLog }
+                  (0...5000).contains(day.waterMilliliters),
+                  ["none", "spotting", "light", "medium", "heavy"].contains(day.flow),
+                  ["great", "ok", "low", "irritable", "anxious"].contains(day.mood),
+                  day.symptoms.count <= SymptomCatalog.all.count,
+                  day.symptoms.allSatisfy(SymptomCatalog.all.contains),
+                  day.notes.count <= 5_000,
+                  day.planChecks.count <= 20,
+                  day.planChecks.allSatisfy({ !$0.isEmpty && $0.count <= 64 }) else {
+                throw ArchiveError.invalidDailyLog
+            }
             guard dayKeys.insert(day.date).inserted else { throw ArchiveError.duplicateRecord }
+        }
+
+        for item in groceries {
+            let name = item.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !name.isEmpty, name.count <= 200,
+                  ISO8601DateFormatter().date(from: item.createdAt) != nil else {
+                throw ArchiveError.invalidGroceryItem
+            }
         }
     }
 }
@@ -164,6 +190,7 @@ struct LunaPlateArchiveDocument: FileDocument {
 
     init(configuration: ReadConfiguration) throws {
         guard let data = configuration.file.regularFileContents else { throw ArchiveError.unreadableFile }
+        guard data.count <= LunaPlateArchive.maximumFileSize else { throw ArchiveError.fileTooLarge }
         archive = try JSONDecoder().decode(LunaPlateArchive.self, from: data)
         try archive.validate()
     }
@@ -194,7 +221,10 @@ enum ArchiveError: LocalizedError {
     case invalidSettings
     case invalidDate
     case invalidDailyLog
+    case invalidGroceryItem
     case duplicateRecord
+    case tooManyRecords
+    case fileTooLarge
 
     var errorDescription: String? {
         switch self {
@@ -203,7 +233,10 @@ enum ArchiveError: LocalizedError {
         case .invalidSettings: String(localized: "archive.error.settings")
         case .invalidDate: String(localized: "archive.error.date")
         case .invalidDailyLog: String(localized: "archive.error.log")
+        case .invalidGroceryItem: String(localized: "archive.error.grocery")
         case .duplicateRecord: String(localized: "archive.error.duplicate")
+        case .tooManyRecords: String(localized: "archive.error.records")
+        case .fileTooLarge: String(localized: "archive.error.fileSize")
         }
     }
 }

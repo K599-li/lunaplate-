@@ -122,6 +122,29 @@ final class CycleCalculatorTests: XCTestCase {
         XCTAssertThrowsError(try archive.validate())
     }
 
+    func testArchiveRejectsInvalidHealthAndGroceryValues() {
+        let badLog = ArchiveDailyLog(
+            date: "2026-07-01", symptoms: ["unknown"], flow: "massive", mood: "ok",
+            painLevel: 5, waterMilliliters: 500, notes: "", planChecks: []
+        )
+        let badGrocery = ArchiveGroceryItem(name: "", isCompleted: false, createdAt: "not-a-date")
+
+        XCTAssertThrowsError(try LunaPlateArchive(days: [badLog]).validate())
+        XCTAssertThrowsError(try LunaPlateArchive(groceries: [badGrocery]).validate())
+    }
+
+    func testArchiveRoundTripsGroceryItems() throws {
+        let original = LunaPlateArchive(groceries: [
+            ArchiveGroceryItem(name: "rolled oats", isCompleted: true, createdAt: "2026-07-14T12:00:00Z")
+        ])
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(LunaPlateArchive.self, from: data)
+        try decoded.validate()
+
+        XCTAssertEqual(decoded.groceries.first?.name, "rolled oats")
+        XCTAssertEqual(decoded.groceries.first?.isCompleted, true)
+    }
+
     func testOvulatoryPhaseMapsToLegacyBackendAndWebValue() {
         XCTAssertEqual(CyclePhase.ovulatory.apiValue, "ovulation")
         XCTAssertEqual(CyclePhase.fromStoredValue("ovulation"), .ovulatory)

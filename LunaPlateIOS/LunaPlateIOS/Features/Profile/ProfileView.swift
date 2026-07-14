@@ -95,7 +95,13 @@ struct ProfileView: View {
                 let url = try result.get()
                 let accessing = url.startAccessingSecurityScopedResource()
                 defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-                let archive = try JSONDecoder().decode(LunaPlateArchive.self, from: Data(contentsOf: url))
+                let values = try url.resourceValues(forKeys: [.fileSizeKey])
+                guard (values.fileSize ?? 0) <= LunaPlateArchive.maximumFileSize else {
+                    throw ArchiveError.fileTooLarge
+                }
+                let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+                guard data.count <= LunaPlateArchive.maximumFileSize else { throw ArchiveError.fileTooLarge }
+                let archive = try JSONDecoder().decode(LunaPlateArchive.self, from: data)
                 try archive.validate()
                 pendingImport = archive
             } catch {
