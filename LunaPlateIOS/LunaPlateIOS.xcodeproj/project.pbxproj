@@ -21,7 +21,26 @@
 		A1000000000000000000000D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* ProfileView.swift */; };
 		A1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* Assets.xcassets */; };
 		A1000000000000000000000F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* Localizable.xcstrings */; };
+		A10000000000000000000010 /* CycleCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* CycleCalendarView.swift */; };
+		A10000000000000000000011 /* DailyCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* DailyCheckInView.swift */; };
+		A10000000000000000000012 /* CarePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* CarePlan.swift */; };
+		A10000000000000000000013 /* care-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000015 /* care-rules.json */; };
+		A10000000000000000000014 /* CycleCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000016 /* CycleCalculatorTests.swift */; };
+		A10000000000000000000015 /* LunaPlateArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* LunaPlateArchive.swift */; };
+		A10000000000000000000016 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* NotificationService.swift */; };
+		A10000000000000000000017 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* PrivacyView.swift */; };
+		A10000000000000000000018 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		G10000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E10000000000000000000001;
+			remoteInfo = LunaPlateIOS;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B10000000000000000000001 /* LunaPlateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaPlateApp.swift; sourceTree = "<group>"; };
@@ -41,6 +60,16 @@
 		B1000000000000000000000F /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		B10000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B10000000000000000000011 /* LunaPlate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LunaPlate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000012 /* CycleCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleCalendarView.swift; sourceTree = "<group>"; };
+		B10000000000000000000013 /* DailyCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCheckInView.swift; sourceTree = "<group>"; };
+		B10000000000000000000014 /* CarePlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarePlan.swift; sourceTree = "<group>"; };
+		B10000000000000000000015 /* care-rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "care-rules.json"; sourceTree = "<group>"; };
+		B10000000000000000000016 /* CycleCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleCalculatorTests.swift; sourceTree = "<group>"; };
+		B10000000000000000000017 /* LunaPlateIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LunaPlateIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000018 /* LunaPlateArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaPlateArchive.swift; sourceTree = "<group>"; };
+		B10000000000000000000019 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		B1000000000000000000001A /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
+		B1000000000000000000001B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +79,7 @@
 			files = ();
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C10000000000000000000005 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -57,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				D10000000000000000000002 /* LunaPlateIOS */,
+				D10000000000000000000014 /* LunaPlateIOSTests */,
 				D1000000000000000000000E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,19 +105,24 @@
 			sourceTree = "<group>";
 		};
 		D10000000000000000000003 /* App */ = {isa = PBXGroup; children = (B10000000000000000000001, B10000000000000000000002); path = App; sourceTree = "<group>"; };
-		D10000000000000000000004 /* Core */ = {isa = PBXGroup; children = (D10000000000000000000005, D10000000000000000000006, D10000000000000000000007); path = Core; sourceTree = "<group>"; };
+		D10000000000000000000004 /* Core */ = {isa = PBXGroup; children = (D10000000000000000000005, D10000000000000000000006, D10000000000000000000007, D10000000000000000000015); path = Core; sourceTree = "<group>"; };
 		D10000000000000000000005 /* Design */ = {isa = PBXGroup; children = (B10000000000000000000003); path = Design; sourceTree = "<group>"; };
-		D10000000000000000000006 /* Models */ = {isa = PBXGroup; children = (B10000000000000000000004); path = Models; sourceTree = "<group>"; };
+		D10000000000000000000006 /* Models */ = {isa = PBXGroup; children = (B10000000000000000000004, B10000000000000000000014); path = Models; sourceTree = "<group>"; };
 		D10000000000000000000007 /* Networking */ = {isa = PBXGroup; children = (B10000000000000000000005); path = Networking; sourceTree = "<group>"; };
-		D10000000000000000000008 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000006, B10000000000000000000007); path = Data; sourceTree = "<group>"; };
-		D10000000000000000000009 /* Features */ = {isa = PBXGroup; children = (D1000000000000000000000A, D1000000000000000000000B, D1000000000000000000000C, D1000000000000000000000F, D10000000000000000000010); path = Features; sourceTree = "<group>"; };
+		D10000000000000000000008 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000006, B10000000000000000000007, B10000000000000000000018); path = Data; sourceTree = "<group>"; };
+		D10000000000000000000009 /* Features */ = {isa = PBXGroup; children = (D1000000000000000000000A, D1000000000000000000000B, D1000000000000000000000C, D1000000000000000000000F, D10000000000000000000010, D10000000000000000000011, D10000000000000000000012); path = Features; sourceTree = "<group>"; };
 		D1000000000000000000000A /* Today */ = {isa = PBXGroup; children = (B10000000000000000000008, B10000000000000000000009); path = Today; sourceTree = "<group>"; };
 		D1000000000000000000000B /* Insights */ = {isa = PBXGroup; children = (B1000000000000000000000A); path = Insights; sourceTree = "<group>"; };
 		D1000000000000000000000C /* Food */ = {isa = PBXGroup; children = (B1000000000000000000000B); path = Food; sourceTree = "<group>"; };
 		D1000000000000000000000F /* Movement */ = {isa = PBXGroup; children = (B1000000000000000000000C); path = Movement; sourceTree = "<group>"; };
-		D10000000000000000000010 /* Profile */ = {isa = PBXGroup; children = (B1000000000000000000000D); path = Profile; sourceTree = "<group>"; };
-		D1000000000000000000000D /* Resources */ = {isa = PBXGroup; children = (B1000000000000000000000E, B1000000000000000000000F, B10000000000000000000010); path = Resources; sourceTree = "<group>"; };
-		D1000000000000000000000E /* Products */ = {isa = PBXGroup; children = (B10000000000000000000011); name = Products; sourceTree = "<group>"; };
+		D10000000000000000000010 /* Profile */ = {isa = PBXGroup; children = (B1000000000000000000000D, B1000000000000000000001A); path = Profile; sourceTree = "<group>"; };
+		D10000000000000000000011 /* CycleCalendar */ = {isa = PBXGroup; children = (B10000000000000000000012); path = CycleCalendar; sourceTree = "<group>"; };
+		D10000000000000000000012 /* CheckIn */ = {isa = PBXGroup; children = (B10000000000000000000013); path = CheckIn; sourceTree = "<group>"; };
+		D1000000000000000000000D /* Resources */ = {isa = PBXGroup; children = (B1000000000000000000000E, B1000000000000000000000F, B10000000000000000000010, B1000000000000000000001B, D10000000000000000000013); path = Resources; sourceTree = "<group>"; };
+		D10000000000000000000013 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000015); path = Data; sourceTree = "<group>"; };
+		D1000000000000000000000E /* Products */ = {isa = PBXGroup; children = (B10000000000000000000011, B10000000000000000000017); name = Products; sourceTree = "<group>"; };
+		D10000000000000000000014 /* LunaPlateIOSTests */ = {isa = PBXGroup; children = (B10000000000000000000016); path = LunaPlateIOSTests; sourceTree = "<group>"; };
+		D10000000000000000000015 /* Notifications */ = {isa = PBXGroup; children = (B10000000000000000000019); path = Notifications; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -101,6 +137,17 @@
 			productReference = B10000000000000000000011 /* LunaPlate.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E10000000000000000000003 /* LunaPlateIOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F10000000000000000000009 /* Build configuration list for PBXNativeTarget "LunaPlateIOSTests" */;
+			buildPhases = (C10000000000000000000004, C10000000000000000000005, C10000000000000000000006);
+			buildRules = ();
+			dependencies = (G10000000000000000000002 /* PBXTargetDependency */);
+			name = LunaPlateIOSTests;
+			productName = LunaPlateIOSTests;
+			productReference = B10000000000000000000017 /* LunaPlateIOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -110,7 +157,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = { E10000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; };
+				TargetAttributes = { E10000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; E10000000000000000000003 = { CreatedOnToolsVersion = 16.0; TestTargetID = E10000000000000000000001; }; };
 			};
 			buildConfigurationList = F10000000000000000000001 /* Build configuration list for PBXProject "LunaPlateIOS" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -121,7 +168,7 @@
 			productRefGroup = D1000000000000000000000E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (E10000000000000000000001 /* LunaPlateIOS */);
+			targets = (E10000000000000000000001 /* LunaPlateIOS */, E10000000000000000000003 /* LunaPlateIOSTests */);
 		};
 /* End PBXProject section */
 
@@ -129,9 +176,10 @@
 		C10000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (A1000000000000000000000E, A1000000000000000000000F);
+			files = (A1000000000000000000000E, A1000000000000000000000F, A10000000000000000000013, A10000000000000000000018);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C10000000000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -144,21 +192,34 @@
 				A10000000000000000000007, A10000000000000000000008, A10000000000000000000009,
 				A1000000000000000000000A, A1000000000000000000000B, A1000000000000000000000C,
 				A1000000000000000000000D,
+				A10000000000000000000010, A10000000000000000000011,
+				A10000000000000000000012,
+				A10000000000000000000015,
+				A10000000000000000000016,
+				A10000000000000000000017,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C10000000000000000000004 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000014); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		G10000000000000000000002 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = E10000000000000000000001 /* LunaPlateIOS */; targetProxy = G10000000000000000000001 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F10000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_TESTABILITY = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
 		F10000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; VALIDATE_PRODUCT = YES; }; name = Release; };
 		F10000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LunaPlateIOS/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlate; PRODUCT_NAME = LunaPlate; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
 		F10000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LunaPlateIOS/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlate; PRODUCT_NAME = LunaPlate; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		F10000000000000000000007 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlateTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaPlate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaPlate"; }; name = Debug; };
+		F10000000000000000000008 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlateTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaPlate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LunaPlate"; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
 		F10000000000000000000001 /* Build configuration list for PBXProject "LunaPlateIOS" */ = {isa = XCConfigurationList; buildConfigurations = (F10000000000000000000003, F10000000000000000000004); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		F10000000000000000000002 /* Build configuration list for PBXNativeTarget "LunaPlateIOS" */ = {isa = XCConfigurationList; buildConfigurations = (F10000000000000000000005, F10000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		F10000000000000000000009 /* Build configuration list for PBXNativeTarget "LunaPlateIOSTests" */ = {isa = XCConfigurationList; buildConfigurations = (F10000000000000000000007, F10000000000000000000008); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = E10000000000000000000002 /* Project object */;

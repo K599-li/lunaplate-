@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-07-14",
+  "sources": [
+    {
+      "id": "acog-dysmenorrhea",
+      "organization": "American College of Obstetricians and Gynecologists",
+      "title": "Dysmenorrhea: Painful Periods",
+      "url": "https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods"
+    },
+    {
+      "id": "owh-pms",
+      "organization": "U.S. Office on Women's Health",
+      "title": "Premenstrual syndrome (PMS)",
+      "url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome"
+    },
+    {
+      "id": "nhs-period-pain",
+      "organization": "National Health Service",
+      "title": "Period pain",
+      "url": "https://www.nhs.uk/symptoms/period-pain/"
+    },
+    {
+      "id": "acog-heavy-bleeding",
+      "organization": "American College of Obstetricians and Gynecologists",
+      "title": "Heavy Menstrual Bleeding",
+      "url": "https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding"
+    }
+  ],
+  "rules": [
+    {
+      "id": "cramps-warmth",
+      "phases": ["menstrual"],
+      "symptoms": ["cramps"],
+      "category": "warmth",
+      "priority": 100,
+      "title": {"en": "Try gentle warmth", "zh": "试试温热舒缓", "ru": "Попробуйте мягкое тепло"},
+      "action": {"en": "Use a warm bath or a wrapped heating pad on your lower abdomen for a comfortable short session.", "zh": "可以洗温水澡，或将热敷垫隔着衣物放在下腹，短时间舒适热敷。", "ru": "Примите тёплую ванну или ненадолго приложите к низу живота грелку через ткань."},
+      "reason": {"en": "ACOG and the NHS list heat as a self-care option that may soothe period discomfort.", "zh": "ACOG 和 NHS 都将热敷列为可能缓解经期不适的日常护理方式。", "ru": "ACOG и NHS указывают тепло как способ самопомощи, который может облегчить дискомфорт."},
+      "safety": {"en": "Keep the temperature comfortable and protect your skin from direct heat.", "zh": "温度以舒适为准，避免热源直接接触皮肤。", "ru": "Температура должна быть комфортной; не прикладывайте источник тепла прямо к коже."},
+      "sourceIds": ["acog-dysmenorrhea", "nhs-period-pain"]
+    },
+    {
+      "id": "cramps-gentle-movement",
+      "phases": ["menstrual"],
+      "symptoms": ["cramps"],
+      "category": "movement",
+      "priority": 90,
+      "title": {"en": "Choose easy movement", "zh": "选择轻柔活动", "ru": "Выберите лёгкое движение"},
+      "action": {"en": "If it feels comfortable, try a short walk, gentle yoga, swimming, or easy cycling.", "zh": "如果身体感觉合适，可以短时间散步、做轻柔瑜伽、游泳或轻松骑车。", "ru": "Если вам комфортно, попробуйте короткую прогулку, мягкую йогу, плавание или спокойную езду на велосипеде."},
+      "reason": {"en": "Regular or gentle exercise is recommended by ACOG and the NHS as a way to cope with period pain.", "zh": "ACOG 和 NHS 建议通过规律或轻柔运动帮助应对经期疼痛。", "ru": "ACOG и NHS рекомендуют регулярную или лёгкую активность для облегчения менструальной боли."},
+      "safety": {"en": "Keep the range small and stop if pain increases, you feel faint, or movement feels wrong.", "zh": "动作幅度保持轻柔；如果疼痛加重、头晕或感觉不对，请停止。", "ru": "Двигайтесь мягко и остановитесь, если боль усиливается, появляется слабость или дискомфорт."},
+      "sourceIds": ["acog-dysmenorrhea", "nhs-period-pain"]
+    },
+    {
+      "id": "menstrual-rest",
+      "phases": ["menstrual"],
+      "symptoms": ["fatigue", "insomnia"],
+      "category": "sleep",
+      "priority": 80,
+      "title": {"en": "Protect tonight's sleep", "zh": "照顾今晚的睡眠", "ru": "Позаботьтесь о сне"},
+      "action": {"en": "Give yourself a consistent wind-down time and reduce demanding tasks if your energy is low.", "zh": "为睡前留出稳定的放松时间；如果精力较低，适当减少高强度安排。", "ru": "Выделите постоянное время для спокойной подготовки ко сну и снизьте нагрузку, если мало сил."},
+      "reason": {"en": "ACOG notes that adequate sleep before and during a period can help with coping with discomfort.", "zh": "ACOG 指出，经期前和经期中保证充足睡眠有助于应对不适。", "ru": "ACOG отмечает, что достаточный сон до и во время менструации помогает справляться с дискомфортом."},
+      "safety": {"en": "Persistent exhaustion or sleep problems that disrupt daily life deserve professional advice.", "zh": "如果疲劳或睡眠问题持续并影响日常生活，建议咨询专业人员。", "ru": "Если усталость или проблемы со сном постоянно мешают жизни, обратитесь за профессиональной помощью."},
+      "sourceIds": ["acog-dysmenorrhea"]
+    },
+    {
+      "id": "pms-aerobic-activity",
+      "phases": ["luteal"],
+      "symptoms": ["fatigue", "mood_changes", "anxious"],
+      "category": "movement",
+      "priority": 85,
+      "title": {"en": "Add a little steady activity", "zh": "加入一点稳定活动", "ru": "Добавьте немного активности"},
+      "action": {"en": "Choose an amount of walking or other aerobic activity that leaves you feeling supported, not depleted.", "zh": "选择适量散步或其他有氧活动，以活动后感到舒适、不过度疲惫为准。", "ru": "Выберите прогулку или другую аэробную нагрузку, после которой вы чувствуете поддержку, а не истощение."},
+      "reason": {"en": "The Office on Women's Health says regular aerobic activity may help fatigue, concentration, and low mood linked with PMS.", "zh": "美国妇女健康办公室指出，规律有氧活动可能帮助缓解与经前综合征相关的疲劳、注意力和情绪问题。", "ru": "Управление по охране здоровья женщин отмечает, что регулярная аэробная активность может помогать при усталости и снижении настроения при ПМС."},
+      "safety": {"en": "Adjust the intensity to your energy and stop for worsening pain, dizziness, or unusual symptoms.", "zh": "根据精力调整强度；如疼痛加重、头晕或出现异常症状，请停止。", "ru": "Подбирайте интенсивность по самочувствию и остановитесь при усилении боли, головокружении или необычных симптомах."},
+      "sourceIds": ["owh-pms"]
+    },
+    {
+      "id": "pms-sleep",
+      "phases": ["luteal"],
+      "symptoms": ["insomnia", "fatigue", "mood_changes", "anxious"],
+      "category": "sleep",
+      "priority": 82,
+      "title": {"en": "Keep sleep regular", "zh": "保持规律睡眠", "ru": "Сохраняйте режим сна"},
+      "action": {"en": "Aim for a consistent bedtime and enough sleep, especially during the days before your period.", "zh": "尽量保持固定入睡时间，并在经期前几天保证充足睡眠。", "ru": "Старайтесь ложиться в одно время и достаточно спать, особенно в дни перед менструацией."},
+      "reason": {"en": "The Office on Women's Health notes that lack of sleep can worsen mood-related PMS symptoms.", "zh": "美国妇女健康办公室指出，睡眠不足可能加重经前期的情绪症状。", "ru": "Управление по охране здоровья женщин отмечает, что недостаток сна может усиливать эмоциональные симптомы ПМС."},
+      "safety": {"en": "Seek support if sleep or mood symptoms regularly interfere with work, school, or relationships.", "zh": "如果睡眠或情绪问题经常影响工作、学习或人际关系，请寻求专业支持。", "ru": "Обратитесь за поддержкой, если сон или настроение регулярно мешают работе, учёбе или отношениям."},
+      "sourceIds": ["owh-pms"]
+    },
+    {
+      "id": "pms-balanced-food",
+      "phases": ["luteal"],
+      "symptoms": ["bloating", "breast_tenderness", "mood_changes"],
+      "category": "nutrition",
+      "priority": 76,
+      "title": {"en": "Keep meals steady and balanced", "zh": "保持规律均衡进餐", "ru": "Питайтесь регулярно и сбалансированно"},
+      "action": {"en": "Choose regular balanced meals and notice whether large amounts of salt, caffeine, or added sugar make symptoms feel worse.", "zh": "保持规律、均衡进餐，并留意大量盐、咖啡因或添加糖是否会让症状更明显。", "ru": "Питайтесь регулярно и сбалансированно и отмечайте, усиливают ли симптомы большие количества соли, кофеина или добавленного сахара."},
+      "reason": {"en": "The Office on Women's Health says healthy food choices and reducing caffeine, salt, and sugar may lessen some PMS symptoms.", "zh": "美国妇女健康办公室指出，健康饮食并减少咖啡因、盐和糖可能减轻部分经前期症状。", "ru": "Управление по охране здоровья женщин отмечает, что здоровое питание и уменьшение кофеина, соли и сахара могут облегчить некоторые симптомы ПМС."},
+      "safety": {"en": "Avoid restrictive diets; use this as a personal observation rather than a treatment rule.", "zh": "不要进行过度限制饮食；把它作为个人观察，而不是治疗规则。", "ru": "Избегайте строгих ограничений; рассматривайте это как личное наблюдение, а не правило лечения."},
+      "sourceIds": ["owh-pms"]
+    },
+    {
+      "id": "pms-stress-pause",
+      "phases": ["luteal"],
+      "symptoms": ["mood_changes", "anxious", "insomnia"],
+      "category": "mind",
+      "priority": 78,
+      "title": {"en": "Make space to decompress", "zh": "留一点放松空间", "ru": "Оставьте время для отдыха"},
+      "action": {"en": "Try a short journal entry, quiet breathing, meditation, gentle yoga, or a supportive conversation.", "zh": "可以试试简短记录、安静呼吸、冥想、轻柔瑜伽，或与信任的人聊一聊。", "ru": "Попробуйте короткую запись в дневнике, спокойное дыхание, медитацию, мягкую йогу или разговор с близким человеком."},
+      "reason": {"en": "The Office on Women's Health recommends healthy stress-coping habits and notes that some people find journaling, yoga, or meditation helpful.", "zh": "美国妇女健康办公室建议采用健康的压力应对方式，并指出记录、瑜伽或冥想对部分人有帮助。", "ru": "Управление по охране здоровья женщин рекомендует здоровые способы справляться со стрессом; некоторым помогают дневник, йога или медитация."},
+      "safety": {"en": "If anxiety or low mood feels unsafe or overwhelming, contact a qualified professional or urgent local support.", "zh": "如果焦虑或低落让你感到不安全或难以承受，请联系专业人员或当地紧急支持。", "ru": "Если тревога или подавленность становятся невыносимыми или небезопасными, обратитесь к специалисту или в местную экстренную службу."},
+      "sourceIds": ["owh-pms"]
+    },
+    {
+      "id": "follicular-steady-basics",
+      "phases": ["menstrual", "follicular", "ovulatory", "luteal"],
+      "symptoms": [],
+      "category": "care",
+      "priority": 35,
+      "title": {"en": "Keep the basics steady", "zh": "保持稳定的日常节奏", "ru": "Сохраняйте устойчивый ритм"},
+      "action": {"en": "Use this lower-symptom window to keep sleep, meals, movement, and symptom notes consistent.", "zh": "可以利用症状较轻的阶段，保持睡眠、进餐、活动和症状记录的稳定节奏。", "ru": "Используйте период с меньшим количеством симптомов, чтобы поддерживать режим сна, питания, движения и записей."},
+      "reason": {"en": "Consistent daily records make it easier to notice personal patterns across several cycles.", "zh": "持续记录日常状态，有助于在多个周期后发现属于自己的规律。", "ru": "Регулярные записи помогают замечать личные закономерности на протяжении нескольких циклов."},
+      "safety": {"en": "Cycle estimates are approximate and should not be used as contraception or diagnosis.", "zh": "周期预测仅为估算，不能用于避孕或诊断。", "ru": "Прогноз цикла приблизителен и не должен использоваться для контрацепции или диагностики."},
+      "sourceIds": ["owh-pms"]
+    },
+    {
+      "id": "ovulatory-body-check",
+      "phases": ["ovulatory"],
+      "symptoms": [],
+      "category": "care",
+      "priority": 35,
+      "title": {"en": "Check in with your body", "zh": "留意身体感受", "ru": "Прислушайтесь к телу"},
+      "action": {"en": "Keep your usual supportive routine and record any new pain, spotting, or energy changes without assuming a cause.", "zh": "保持适合自己的日常节奏，并记录新出现的疼痛、点滴出血或精力变化，不自行判断原因。", "ru": "Сохраняйте привычный режим и записывайте новую боль, мажущие выделения или изменения энергии, не пытаясь самостоятельно определить причину."},
+      "reason": {"en": "A consistent symptom diary gives useful context if you later choose to discuss changes with a clinician.", "zh": "持续的症状记录可以在日后咨询专业人员时提供有用信息。", "ru": "Регулярный дневник симптомов даёт полезный контекст для разговора с врачом."},
+      "safety": {"en": "New severe or one-sided pelvic pain needs medical assessment rather than an app explanation.", "zh": "新出现的剧烈或单侧盆腔疼痛需要医学评估，不应依赖 App 解释。", "ru": "Новая сильная или односторонняя тазовая боль требует медицинской оценки, а не объяснения в приложении."},
+      "sourceIds": ["nhs-period-pain"]
+    }
+  ],
+  "redFlags": [
+    {
+      "id": "heavy-seven-days",
+      "kind": "heavyFlowConsecutiveDays",
+      "threshold": 7,
+      "message": {"en": "Bleeding recorded as heavy for 7 days deserves medical advice.", "zh": "连续 7 天记录为大量出血，建议咨询医疗专业人员。", "ru": "Обильное кровотечение в течение 7 дней требует медицинской консультации."},
+      "sourceIds": ["acog-heavy-bleeding"]
+    },
+    {
+      "id": "severe-disruptive-pain",
+      "kind": "painLevel",
+      "threshold": 8,
+      "message": {"en": "Severe or worsening pain that disrupts daily life needs prompt medical advice.", "zh": "剧烈、加重或影响日常生活的疼痛需要及时咨询医疗专业人员。", "ru": "Сильная или усиливающаяся боль, мешающая повседневной жизни, требует медицинской консультации."},
+      "sourceIds": ["acog-dysmenorrhea", "nhs-period-pain"]
+    }
+  ]
+}

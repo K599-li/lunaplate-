@@ -7,12 +7,40 @@ enum CyclePhase: String, Codable, CaseIterable {
     case ovulatory
     case luteal
 
+    var apiValue: String {
+        self == .ovulatory ? "ovulation" : rawValue
+    }
+
+    static func fromStoredValue(_ value: String?) -> CyclePhase? {
+        guard let value else { return nil }
+        if value == "ovulation" { return .ovulatory }
+        return CyclePhase(rawValue: value)
+    }
+
     var localizedName: String {
         switch self {
         case .menstrual: String(localized: "phase.menstrual")
         case .follicular: String(localized: "phase.follicular")
         case .ovulatory: String(localized: "phase.ovulatory")
         case .luteal: String(localized: "phase.luteal")
+        }
+    }
+}
+
+enum SymptomCatalog {
+    static let all = ["cramps", "bloating", "headache", "fatigue", "insomnia", "mood_changes", "acne", "breast_tenderness"]
+
+    static func localizedName(_ value: String) -> String {
+        switch value {
+        case "cramps": String(localized: "symptom.cramps")
+        case "bloating": String(localized: "symptom.bloating")
+        case "headache": String(localized: "symptom.headache")
+        case "fatigue": String(localized: "symptom.fatigue")
+        case "insomnia": String(localized: "symptom.insomnia")
+        case "mood_changes": String(localized: "symptom.moodChanges")
+        case "acne": String(localized: "symptom.acne")
+        case "breast_tenderness": String(localized: "symptom.breastTenderness")
+        default: value
         }
     }
 }
@@ -37,6 +65,7 @@ final class DailyLog {
     var symptoms: [String]
     var flow: String
     var mood: String
+    var painLevel: Int = 0
     var waterMilliliters: Int
     var notes: String
     var planChecks: [String]
@@ -46,21 +75,23 @@ final class DailyLog {
         symptoms: [String] = [],
         flow: String = "none",
         mood: String = "ok",
+        painLevel: Int = 0,
         waterMilliliters: Int = 0,
         notes: String = "",
         planChecks: [String] = []
     ) {
         self.date = date
-        self.dateKey = Self.makeDateKey(date)
+        self.dateKey = Self.dateKey(for: date)
         self.symptoms = symptoms
         self.flow = flow
         self.mood = mood
+        self.painLevel = max(0, min(10, painLevel))
         self.waterMilliliters = waterMilliliters
         self.notes = notes
         self.planChecks = planChecks
     }
 
-    private static func makeDateKey(_ date: Date) -> String {
+    static func dateKey(for date: Date) -> String {
         let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
     }
@@ -73,19 +104,28 @@ final class UserSettings {
     var averagePeriodLength: Int
     var manualPhaseOverride: String?
     var localeIdentifier: String
+    var notificationsEnabled: Bool = false
+    var reminderHour: Int = 20
+    var reminderMinute: Int = 0
 
     init(
         id: String = "current-user",
         averageCycleLength: Int = 28,
         averagePeriodLength: Int = 5,
         manualPhaseOverride: CyclePhase? = nil,
-        localeIdentifier: String = Locale.current.identifier
+        localeIdentifier: String = Locale.current.identifier,
+        notificationsEnabled: Bool = false,
+        reminderHour: Int = 20,
+        reminderMinute: Int = 0
     ) {
         self.id = id
         self.averageCycleLength = averageCycleLength
         self.averagePeriodLength = averagePeriodLength
         self.manualPhaseOverride = manualPhaseOverride?.rawValue
         self.localeIdentifier = localeIdentifier
+        self.notificationsEnabled = notificationsEnabled
+        self.reminderHour = max(0, min(23, reminderHour))
+        self.reminderMinute = max(0, min(59, reminderMinute))
     }
 }
 

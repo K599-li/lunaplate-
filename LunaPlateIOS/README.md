@@ -37,11 +37,18 @@ The simulator uses `http://localhost:5178` by default. A physical iPhone cannot 
 
 The iOS app owns private user data locally through SwiftData. The Python service remains stateless and supplies public recommendation content. HTML, CSS, localStorage, and service-worker behavior are not embedded in the native app.
 
-Next implementation milestones:
+Implemented native capabilities:
 
-1. Period start/end editing and calendar history
-2. Daily symptom, flow, mood, hydration, and notes check-in
-3. JSON import from the web app's `lunaplate.cycles.v1` schema
-4. Phase-aware Food and Movement queries using the active SwiftData snapshot
-5. Local notifications and offline recommendation fallback
-6. App icon artwork, privacy manifest, tests, and App Store signing
+1. Period start/end editing, calendar history, predicted ranges, and ovulation estimates
+2. Daily symptom, flow, mood, pain, hydration, and notes check-ins
+3. Versioned JSON backup/restore, including the web app's `lunaplate.cycles.v1` schema
+4. Phase- and symptom-aware Food, Movement, and evidence-linked care recommendations
+5. Local cycle/check-in notifications, real Swift Charts insights, privacy details, and delete-all controls
+6. XCTest coverage for prediction/archive compatibility plus CI content and simulator tests
+
+Remaining release work:
+
+1. Verify and resolve all Xcode CI findings on macOS
+2. Add a larger offline meal catalog and fully offline movement media loading
+3. Complete App Icon artwork, screenshots, production signing, and App Store metadata
+4. Publish the privacy policy at a stable public URL and configure the production HTTPS API

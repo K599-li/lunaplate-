@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @MainActor
 final class FoodViewModel: ObservableObject {
@@ -6,12 +7,12 @@ final class FoodViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
 
-    func load() async {
+    func load(phase: CyclePhase, symptoms: [String]) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
         do {
-            meals = try await APIClient.shared.meals(phase: .luteal, symptoms: [])
+            meals = try await APIClient.shared.meals(phase: phase, symptoms: symptoms)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -20,6 +21,9 @@ final class FoodViewModel: ObservableObject {
 
 struct FoodView: View {
     @StateObject private var viewModel = FoodViewModel()
+    @Query(sort: \CycleRecord.startDate, order: .reverse) private var cycles: [CycleRecord]
+    @Query private var settings: [UserSettings]
+    @Query private var logs: [DailyLog]
 
     var body: some View {
         ScrollView {
@@ -44,8 +48,8 @@ struct FoodView: View {
         .background(AppTheme.ivory.ignoresSafeArea())
         .navigationTitle("nav.food")
         .navigationBarTitleDisplayMode(.inline)
-        .task { await viewModel.load() }
-        .refreshable { await viewModel.load() }
+        .task(id: requestKey) { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
+        .refreshable { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
     }
 
     private func mealRow(_ meal: Meal) -> some View {
@@ -71,5 +75,18 @@ struct FoodView: View {
             Spacer(minLength: 0)
         }
         .lunaCard()
+    }
+
+    private var activePhase: CyclePhase {
+        let currentSettings = settings.first ?? UserSettings()
+        return CycleCalculator.snapshot(records: cycles, settings: currentSettings)?.phase ?? .luteal
+    }
+
+    private var todaySymptoms: [String] {
+        logs.first { Calendar.current.isDateInToday($0.date) }?.symptoms ?? []
+    }
+
+    private var requestKey: String {
+        "\(activePhase.rawValue)|\(todaySymptoms.sorted().joined(separator: ","))"
     }
 }

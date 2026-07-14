@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @MainActor
 final class MovementViewModel: ObservableObject {
@@ -6,12 +7,12 @@ final class MovementViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
 
-    func load() async {
+    func load(phase: CyclePhase, symptoms: [String]) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
         do {
-            exercises = try await APIClient.shared.exercises(phase: .luteal, symptoms: [])
+            exercises = try await APIClient.shared.exercises(phase: phase, symptoms: symptoms)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -20,6 +21,9 @@ final class MovementViewModel: ObservableObject {
 
 struct MovementView: View {
     @StateObject private var viewModel = MovementViewModel()
+    @Query(sort: \CycleRecord.startDate, order: .reverse) private var cycles: [CycleRecord]
+    @Query private var settings: [UserSettings]
+    @Query private var logs: [DailyLog]
 
     var body: some View {
         ScrollView {
@@ -35,6 +39,16 @@ struct MovementView: View {
                 } else {
                     ForEach(viewModel.exercises) { exercise in
                         VStack(alignment: .leading, spacing: 10) {
+                            AsyncImage(url: APIClient.shared.assetURL(path: exercise.media.url)) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                AppTheme.sage.opacity(0.12)
+                                    .overlay { ProgressView() }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 190)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+
                             HStack {
                                 Text(exercise.name).font(.headline)
                                 Spacer()
@@ -58,7 +72,20 @@ struct MovementView: View {
         .background(AppTheme.ivory.ignoresSafeArea())
         .navigationTitle("nav.movement")
         .navigationBarTitleDisplayMode(.inline)
-        .task { await viewModel.load() }
-        .refreshable { await viewModel.load() }
+        .task(id: requestKey) { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
+        .refreshable { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
+    }
+
+    private var activePhase: CyclePhase {
+        let currentSettings = settings.first ?? UserSettings()
+        return CycleCalculator.snapshot(records: cycles, settings: currentSettings)?.phase ?? .luteal
+    }
+
+    private var todaySymptoms: [String] {
+        logs.first { Calendar.current.isDateInToday($0.date) }?.symptoms ?? []
+    }
+
+    private var requestKey: String {
+        "\(activePhase.rawValue)|\(todaySymptoms.sorted().joined(separator: ","))"
     }
 }

@@ -7,20 +7,14 @@ struct TodayView: View {
     @Query private var settings: [UserSettings]
     @Query private var dailyLogs: [DailyLog]
     @StateObject private var viewModel = TodayViewModel()
+    @State private var isCheckInPresented = false
 
     private var currentSettings: UserSettings {
         settings.first ?? UserSettings()
     }
 
     private var snapshot: CycleSnapshot? {
-        guard let latestStart = cycles.first?.startDate else { return nil }
-        let manualOverride = currentSettings.manualPhaseOverride.flatMap(CyclePhase.init(rawValue:))
-        return CycleCalculator.snapshot(
-            latestPeriodStart: latestStart,
-            averageCycleLength: currentSettings.averageCycleLength,
-            averagePeriodLength: currentSettings.averagePeriodLength,
-            manualOverride: manualOverride
-        )
+        CycleCalculator.snapshot(records: cycles, settings: currentSettings)
     }
 
     var body: some View {
@@ -36,7 +30,9 @@ struct TodayView: View {
                 }
 
                 cycleOverview
-                dailyCareCard
+                actionRow
+                safetyNotice
+                careSection
                 mealCard
             }
             .padding(.horizontal, AppTheme.pagePadding)
@@ -45,8 +41,13 @@ struct TodayView: View {
         .background(AppTheme.ivory.ignoresSafeArea())
         .navigationTitle("nav.today")
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: snapshot?.phase) {
-            await viewModel.load(phase: snapshot?.phase ?? .luteal)
+        .task(id: recommendationRequestKey) {
+            await viewModel.load(phase: snapshot?.phase ?? .luteal, symptoms: todayLog?.symptoms ?? [])
+        }
+        .sheet(isPresented: $isCheckInPresented) {
+            NavigationStack {
+                DailyCheckInView(date: .now)
+            }
         }
     }
 
@@ -100,21 +101,85 @@ struct TodayView: View {
         }
     }
 
-    private var dailyCareCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label("today.care.title", systemImage: "heart.text.square")
-                .font(.headline)
-                .foregroundStyle(AppTheme.sage)
-            Text("today.care.body")
-                .foregroundStyle(.secondary)
-            HStack {
-                Label("today.care.hydration", systemImage: "drop")
-                Spacer()
-                Text(todayLog.map { "\($0.waterMilliliters) ml" } ?? "0 ml")
+    @ViewBuilder
+    private var safetyNotice: some View {
+        if let notice = CarePlanEngine.safetyNotice(logs: dailyLogs) {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("care.safety.title", systemImage: "exclamationmark.triangle")
+                    .font(.headline)
+                    .foregroundStyle(.red)
+                Text(notice.message.value)
+                Text("care.safety.boundary")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+            .lunaCard()
+        }
+    }
+
+    private var careSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Label("today.care.title", systemImage: "heart.text.square")
+                    .font(.title3.bold())
+                    .foregroundStyle(AppTheme.sage)
+                Spacer()
+                Label("\(todayLog?.waterMilliliters ?? 0) ml", systemImage: "drop")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(careRecommendations) { rule in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(rule.title.value)
+                        .font(.headline)
+                    Text(rule.action.value)
+                    Text(rule.reason.value)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    DisclosureGroup("care.safetyAndSources") {
+                        VStack(alignment: .leading, spacing: 7) {
+                            Text(rule.safety.value)
+                                .font(.caption)
+                            ForEach(rule.sourceIds, id: \.self) { sourceID in
+                                if let source = CareLibrary.bundled.source(id: sourceID) {
+                                    Link(source.organization, destination: source.url)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
+                    .font(.caption)
+                }
+                .padding(.vertical, 4)
+
+                if rule.id != careRecommendations.last?.id {
+                    Divider()
+                }
             }
         }
         .lunaCard()
+    }
+
+    private var actionRow: some View {
+        HStack(spacing: 12) {
+            NavigationLink {
+                CycleCalendarView()
+            } label: {
+                Label("today.action.calendar", systemImage: "calendar")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+
+            Button {
+                isCheckInPresented = true
+            } label: {
+                Label("today.action.checkin", systemImage: "checklist")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+        }
     }
 
     @ViewBuilder
@@ -163,6 +228,17 @@ struct TodayView: View {
     private var todayLog: DailyLog? {
         let today = Calendar.current.startOfDay(for: .now)
         return dailyLogs.first { Calendar.current.isDate($0.date, inSameDayAs: today) }
+    }
+
+    private var recommendationRequestKey: String {
+        "\(snapshot?.phase.rawValue ?? "luteal")|\((todayLog?.symptoms ?? []).sorted().joined(separator: ","))"
+    }
+
+    private var careRecommendations: [CareRule] {
+        CarePlanEngine.recommendations(
+            phase: snapshot?.phase ?? .luteal,
+            symptoms: todayLog?.symptoms ?? []
+        )
     }
 
     private func ensureSettingsExist() {

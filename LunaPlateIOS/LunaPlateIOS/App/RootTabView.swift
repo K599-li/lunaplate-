@@ -1,6 +1,10 @@
 import SwiftUI
+import SwiftData
 
 struct RootTabView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @Query private var settings: [UserSettings]
+    @Query private var cycles: [CycleRecord]
     @State private var isProfilePresented = false
 
     var body: some View {
@@ -24,6 +28,15 @@ struct RootTabView: View {
         .sheet(isPresented: $isProfilePresented) {
             NavigationStack {
                 ProfileView()
+            }
+        }
+        .task {
+            await NotificationService.shared.rescheduleIfEnabled(settings: settings.first, cycles: cycles)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task {
+                await NotificationService.shared.rescheduleIfEnabled(settings: settings.first, cycles: cycles)
             }
         }
     }

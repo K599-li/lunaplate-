@@ -24,7 +24,7 @@ struct APIClient {
         let response: TodayMealResponse = try await get(
             path: "api/today-meal",
             queryItems: [
-                URLQueryItem(name: "phase", value: phase.rawValue),
+                URLQueryItem(name: "phase", value: phase.apiValue),
                 URLQueryItem(name: "symptoms", value: symptoms.joined(separator: ",")),
                 URLQueryItem(name: "hour", value: String(hour))
             ]
@@ -36,7 +36,7 @@ struct APIClient {
         let response: MealsResponse = try await get(
             path: "api/meals",
             queryItems: [
-                URLQueryItem(name: "phase", value: phase.rawValue),
+                URLQueryItem(name: "phase", value: phase.apiValue),
                 URLQueryItem(name: "symptoms", value: symptoms.joined(separator: ","))
             ]
         )
@@ -47,12 +47,19 @@ struct APIClient {
         let response: ExercisesResponse = try await get(
             path: "api/female-exercises",
             queryItems: [
-                URLQueryItem(name: "phase", value: phase.rawValue),
+                URLQueryItem(name: "phase", value: phase.apiValue),
                 URLQueryItem(name: "symptoms", value: symptoms.joined(separator: ",")),
                 URLQueryItem(name: "limit", value: String(limit))
             ]
         )
         return response.exercises
+    }
+
+    func assetURL(path: String) -> URL? {
+        if let absolute = URL(string: path), absolute.scheme != nil {
+            return absolute
+        }
+        return baseURL.appendingPathComponent(path)
     }
 
     private func get<Response: Decodable>(
