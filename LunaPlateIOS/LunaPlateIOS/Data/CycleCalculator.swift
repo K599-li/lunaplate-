@@ -85,7 +85,7 @@ enum CycleCalculator {
         }
         guard let latest = eligibleRecords.max(by: { $0.startDate < $1.startDate }) else { return nil }
         let stats = statistics(
-            records: records,
+            records: eligibleRecords,
             fallbackCycleLength: settings.averageCycleLength,
             fallbackPeriodLength: settings.averagePeriodLength,
             calendar: calendar

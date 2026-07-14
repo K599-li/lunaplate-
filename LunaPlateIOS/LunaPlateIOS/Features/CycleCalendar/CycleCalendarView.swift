@@ -253,13 +253,13 @@ private struct PeriodEditorView: View {
     var body: some View {
         Form {
             Section("periodEditor.dates") {
-                DatePicker("periodEditor.start", selection: $startDate, displayedComponents: .date)
+                DatePicker("periodEditor.start", selection: $startDate, in: ...Date.now, displayedComponents: .date)
                 Toggle("periodEditor.hasEnded", isOn: $hasEnded)
                 if hasEnded {
                     DatePicker(
                         "periodEditor.end",
                         selection: $endDate,
-                        in: startDate...,
+                        in: startDate...Date.now,
                         displayedComponents: .date
                     )
                 }

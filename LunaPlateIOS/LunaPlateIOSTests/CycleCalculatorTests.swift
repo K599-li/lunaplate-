@@ -78,6 +78,26 @@ final class CycleCalculatorTests: XCTestCase {
         XCTAssertEqual(result.phase, .ovulatory)
     }
 
+    func testSnapshotStatisticsIgnoreFutureRecords() {
+        let records = [
+            record("2026-05-01", end: "2026-05-05"),
+            record("2026-05-29", end: "2026-06-02"),
+            record("2026-06-26", end: "2026-06-30"),
+            record("2026-09-20", end: "2026-09-24")
+        ]
+        let settings = UserSettings(averageCycleLength: 35, averagePeriodLength: 5)
+
+        let snapshot = CycleCalculator.snapshot(
+            on: date("2026-07-01"),
+            records: records,
+            settings: settings,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(snapshot?.nextPeriodDate, date("2026-07-24"))
+        XCTAssertEqual(snapshot?.phase, .follicular)
+    }
+
     func testArchiveDecodesExistingWebCycleSchema() throws {
         let json = #"""
         {
