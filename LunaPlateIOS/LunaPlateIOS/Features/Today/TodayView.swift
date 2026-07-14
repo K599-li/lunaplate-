@@ -32,6 +32,7 @@ struct TodayView: View {
                 cycleOverview
                 actionRow
                 safetyNotice
+                dailyPlanSection
                 careSection
                 mealCard
             }
@@ -162,6 +163,46 @@ struct TodayView: View {
         .lunaCard()
     }
 
+    private var dailyPlanSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("today.plan.title", systemImage: "checklist")
+                    .font(.title3.bold())
+                    .foregroundStyle(AppTheme.berry)
+                Spacer()
+                Text("\(completedPlanCount)/\(planItems.count)")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(planItems, id: \.id) { item in
+                Button {
+                    togglePlanItem(item.id)
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: isPlanItemComplete(item.id) ? "checkmark.circle.fill" : "circle")
+                            .font(.title3)
+                            .foregroundStyle(isPlanItemComplete(item.id) ? AppTheme.sage : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.title)
+                                .font(.subheadline.bold())
+                            Text(item.detail)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("today.plan.\(item.id)")
+
+                if item.id != planItems.last?.id { Divider() }
+            }
+        }
+        .lunaCard()
+    }
+
     private var actionRow: some View {
         HStack(spacing: 12) {
             NavigationLink {
@@ -237,6 +278,44 @@ struct TodayView: View {
     private var todayLog: DailyLog? {
         let today = Calendar.current.startOfDay(for: .now)
         return dailyLogs.first { Calendar.current.isDate($0.date, inSameDayAs: today) }
+    }
+
+    private struct PlanItem {
+        let id: String
+        let title: LocalizedStringKey
+        let detail: LocalizedStringKey
+    }
+
+    private var planItems: [PlanItem] {
+        [
+            PlanItem(id: "hydrate", title: "today.plan.hydrate", detail: "today.plan.hydrate.detail"),
+            PlanItem(id: "move", title: "today.plan.move", detail: "today.plan.move.detail"),
+            PlanItem(id: "nourish", title: "today.plan.nourish", detail: "today.plan.nourish.detail")
+        ]
+    }
+
+    private var completedPlanCount: Int {
+        planItems.filter { isPlanItemComplete($0.id) }.count
+    }
+
+    private func isPlanItemComplete(_ id: String) -> Bool {
+        todayLog?.planChecks.contains(id) == true
+    }
+
+    private func togglePlanItem(_ id: String) {
+        let log: DailyLog
+        if let todayLog {
+            log = todayLog
+        } else {
+            log = DailyLog(date: Calendar.current.startOfDay(for: .now))
+            modelContext.insert(log)
+        }
+        if let index = log.planChecks.firstIndex(of: id) {
+            log.planChecks.remove(at: index)
+        } else {
+            log.planChecks.append(id)
+        }
+        try? modelContext.save()
     }
 
     private var recommendationRequestKey: String {
