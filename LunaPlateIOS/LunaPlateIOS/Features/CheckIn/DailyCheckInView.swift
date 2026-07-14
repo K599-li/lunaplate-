@@ -53,6 +53,20 @@ struct DailyCheckInView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                if flow == "heavy" {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Label("checkin.heavy.title", systemImage: "exclamationmark.triangle")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.red)
+                        Text("checkin.heavy.help")
+                            .font(.caption)
+                        if let source = CareLibrary.bundled.source(id: "acog-heavy-bleeding") {
+                            Link(source.organization, destination: source.url)
+                                .font(.caption)
+                        }
+                    }
+                    .accessibilityIdentifier("checkin.heavyFlowSafety")
+                }
             }
 
             Section("checkin.mood") {
