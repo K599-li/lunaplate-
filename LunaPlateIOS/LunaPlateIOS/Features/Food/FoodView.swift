@@ -69,28 +69,31 @@ struct FoodView: View {
     }
 
     private func mealRow(_ meal: Meal) -> some View {
-        HStack(spacing: 14) {
-            AsyncImage(url: meal.image) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                AppTheme.oat.opacity(0.35)
+        NavigationLink {
+            MealDetailView(meal: meal)
+        } label: {
+            HStack(spacing: 14) {
+                MealArtwork(meal: meal, size: 104)
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(meal.name).font(.headline).lineLimit(2)
+                    Text(meal.tags.prefix(3).joined(separator: " · "))
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.sage)
+                        .lineLimit(2)
+                    Text("\(meal.time) min")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundStyle(.tertiary)
             }
-            .frame(width: 104, height: 104)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-
-            VStack(alignment: .leading, spacing: 7) {
-                Text(meal.name).font(.headline).lineLimit(2)
-                Text(meal.tags.prefix(3).joined(separator: " · "))
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.sage)
-                    .lineLimit(2)
-                Text("\(meal.time) min")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .lunaCard()
+        .accessibilityIdentifier("food.meal.\(meal.id)")
     }
 
     private var activePhase: CyclePhase {
@@ -104,5 +107,95 @@ struct FoodView: View {
 
     private var requestKey: String {
         "\(activePhase.rawValue)|\(todaySymptoms.sorted().joined(separator: ","))"
+    }
+}
+
+struct MealDetailView: View {
+    let meal: Meal
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                MealArtwork(meal: meal, size: 220)
+                    .frame(maxWidth: .infinity)
+
+                VStack(alignment: .leading, spacing: 9) {
+                    Text(meal.name)
+                        .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                        .foregroundStyle(AppTheme.plumText)
+                    Label("\(meal.time) min", systemImage: "clock")
+                        .foregroundStyle(.secondary)
+                    if let calories = meal.calories {
+                        Text("\(calories) kcal")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(AppTheme.sage)
+                    }
+                    if let macros = meal.macros {
+                        Text(String(format: String(localized: "meal.macros.format"), macros.protein, macros.carbs, macros.fat))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                detailSection(title: "meal.ingredients", values: meal.ingredients, numbered: false)
+                detailSection(title: "meal.steps", values: meal.steps, numbered: true)
+                Text("meal.nutrition.notice")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, AppTheme.pagePadding)
+            .padding(.bottom, 28)
+        }
+        .background(AppTheme.ivory.ignoresSafeArea())
+        .navigationTitle("meal.details")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func detailSection(title: LocalizedStringKey, values: [String], numbered: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.title3.bold())
+                .foregroundStyle(AppTheme.berry)
+            ForEach(Array(values.enumerated()), id: \.offset) { index, value in
+                HStack(alignment: .top, spacing: 10) {
+                    Text(numbered ? "\(index + 1)" : "•")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(AppTheme.sage)
+                        .frame(width: 24)
+                    Text(value).frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .lunaCard()
+    }
+}
+
+struct MealArtwork: View {
+    let meal: Meal
+    let size: CGFloat
+
+    var body: some View {
+        Group {
+            if let image = meal.image {
+                AsyncImage(url: image) { loaded in
+                    loaded.resizable().scaledToFill()
+                } placeholder: {
+                    placeholder
+                }
+            } else {
+                placeholder
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: min(size * 0.16, 22)))
+    }
+
+    private var placeholder: some View {
+        AppTheme.oat.opacity(0.35)
+            .overlay {
+                Image(systemName: "fork.knife")
+                    .font(.system(size: size * 0.30, weight: .light))
+                    .foregroundStyle(AppTheme.berry.opacity(0.75))
+            }
     }
 }

@@ -199,29 +199,32 @@ struct TodayView: View {
                         .foregroundStyle(AppTheme.sage)
                         .accessibilityIdentifier("today.offlineNotice")
                 }
-                HStack(spacing: 14) {
-                    AsyncImage(url: meal.image) { image in
-                        image.resizable().scaledToFill()
-                    } placeholder: {
-                        AppTheme.oat.opacity(0.35)
-                    }
-                    .frame(width: 92, height: 92)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(meal.name)
-                            .font(.headline)
-                            .lineLimit(2)
-                        Text("\(meal.time) min")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        if let calories = meal.calories {
-                            Text("\(calories) kcal")
-                                .font(.caption)
-                                .foregroundStyle(AppTheme.sage)
+                NavigationLink {
+                    MealDetailView(meal: meal)
+                } label: {
+                    HStack(spacing: 14) {
+                        MealArtwork(meal: meal, size: 92)
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(meal.name)
+                                .font(.headline)
+                                .lineLimit(2)
+                            Text("\(meal.time) min")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            if let calories = meal.calories {
+                                Text("\(calories) kcal")
+                                    .font(.caption)
+                                    .foregroundStyle(AppTheme.sage)
+                            }
                         }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(.tertiary)
                     }
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("today.meal.details")
             } else {
                 Text(viewModel.errorMessage ?? String(localized: "today.meal.empty"))
                     .foregroundStyle(.secondary)

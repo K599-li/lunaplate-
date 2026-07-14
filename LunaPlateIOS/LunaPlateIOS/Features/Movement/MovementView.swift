@@ -75,6 +75,20 @@ struct MovementView: View {
                                     .foregroundStyle(AppTheme.berry)
                             }
                             Text(exercise.summary).foregroundStyle(.secondary)
+                            DisclosureGroup("movement.instructions") {
+                                VStack(alignment: .leading, spacing: 9) {
+                                    ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
+                                        HStack(alignment: .top, spacing: 8) {
+                                            Text("\(index + 1).")
+                                                .foregroundStyle(AppTheme.sage)
+                                            Text(instruction)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                    }
+                                }
+                                .padding(.top, 8)
+                            }
+                            .font(.subheadline)
                             Divider()
                             Label(exercise.safety, systemImage: "shield.checkered")
                                 .font(.caption)
