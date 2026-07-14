@@ -51,3 +51,19 @@ jobs:
             -configuration Release \
             -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}" \
             CODE_SIGNING_ALLOWED=NO
+      - name: Install and launch the Release app
+        shell: bash
+        run: |
+          APP_PATH=$(find "$HOME/Library/Developer/Xcode/DerivedData" -path "*/Build/Products/Release-iphonesimulator/LunaPlate.app" -print -quit)
+          test -n "$APP_PATH"
+          xcrun simctl bootstatus "${{ steps.simulator.outputs.id }}" -b
+          xcrun simctl install "${{ steps.simulator.outputs.id }}" "$APP_PATH"
+          xcrun simctl launch "${{ steps.simulator.outputs.id }}" com.k599.LunaPlate
+          sleep 3
+          xcrun simctl io "${{ steps.simulator.outputs.id }}" screenshot "$RUNNER_TEMP/lunaplate-release.png"
+          test -s "$RUNNER_TEMP/lunaplate-release.png"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lunaplate-release-smoke
+          path: ${{ runner.temp }}/lunaplate-release.png
+          if-no-files-found: error
