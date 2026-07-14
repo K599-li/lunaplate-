@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Validate care content
-        run: python -m unittest tests.test_ios_care_content -v
+      - name: Validate content and recommendation API
+        run: python -m unittest discover -s tests -v
 
   xcode-tests:
     runs-on: macos-latest

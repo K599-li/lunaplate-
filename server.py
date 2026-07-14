@@ -1,6 +1,6 @@
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, quote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlencode, urlparse
 from urllib.request import urlopen
 import json
 import os
@@ -11,6 +11,12 @@ ROOT = Path(__file__).resolve().parent
 THEMEALDB_BASE = "https://www.themealdb.com/api/json/v1/1"
 MAX_LIST_QUERIES = 10
 MAX_DETAIL_MEALS = 18
+MAX_POST_BODY_BYTES = 16 * 1024
+VALID_PHASES = {"menstrual", "follicular", "ovulation", "ovulatory", "luteal"}
+POST_FIELDS = {
+    "phase", "symptoms", "cuisineStyle", "vegetarian", "vegan", "glutenFree",
+    "dairyFree", "pantry", "cookTime", "cookTimeMin", "search", "hour", "mealType", "limit",
+}
 
 MEAL_TIME_PROFILES = {
     "breakfast": [
@@ -499,9 +505,13 @@ class LunaPlateHandler(SimpleHTTPRequestHandler):
     }
 
     def translate_path(self, path):
-        path = urlparse(path).path
-        path = path.lstrip("/")
-        return str((ROOT / path).resolve())
+        relative_path = unquote(urlparse(path).path).lstrip("/")
+        requested = (ROOT / relative_path).resolve()
+        try:
+            requested.relative_to(ROOT)
+        except ValueError:
+            return str(ROOT / "__not_found__")
+        return str(requested)
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -519,6 +529,65 @@ class LunaPlateHandler(SimpleHTTPRequestHandler):
             self.handle_female_exercises(parsed)
             return
         super().do_GET()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        handlers = {
+            "/api/meals": self.handle_meals,
+            "/api/today-meal": self.handle_today_meal,
+            "/api/female-exercises": self.handle_female_exercises,
+        }
+        handler = handlers.get(parsed.path)
+        if handler is None:
+            self.send_json({"error": "Not found"}, status=404)
+            return
+        if self.headers.get_content_type() != "application/json":
+            self.send_json({"error": "Content-Type must be application/json"}, status=415)
+            return
+        try:
+            content_length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            self.send_json({"error": "Invalid Content-Length"}, status=400)
+            return
+        if not 0 < content_length <= MAX_POST_BODY_BYTES:
+            self.send_json({"error": "Request body must be between 1 and 16384 bytes"}, status=413)
+            return
+        try:
+            payload = json.loads(self.rfile.read(content_length).decode("utf-8"))
+            parsed_request = self.parsed_request_from_json(parsed.path, payload)
+        except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError) as error:
+            self.send_json({"error": str(error) or "Invalid JSON body"}, status=400)
+            return
+        handler(parsed_request)
+
+    def parsed_request_from_json(self, path, payload):
+        if not isinstance(payload, dict):
+            raise TypeError("JSON body must be an object")
+        unknown = set(payload) - POST_FIELDS
+        if unknown:
+            raise ValueError("Unknown request fields")
+        phase = payload.get("phase", "luteal")
+        if phase not in VALID_PHASES:
+            raise ValueError("Invalid cycle phase")
+        symptoms = payload.get("symptoms", [])
+        if not isinstance(symptoms, list) or len(symptoms) > 20:
+            raise TypeError("symptoms must be an array with at most 20 items")
+        if not all(isinstance(item, str) and 0 < len(item) <= 64 for item in symptoms):
+            raise TypeError("Each symptom must be a short string")
+
+        query_payload = {}
+        for key, value in payload.items():
+            if isinstance(value, list):
+                if not all(isinstance(item, str) and len(item) <= 100 for item in value):
+                    raise TypeError(f"{key} must contain short strings")
+                query_payload[key] = ",".join(value)
+            elif isinstance(value, bool):
+                query_payload[key] = "true" if value else "false"
+            elif isinstance(value, (str, int)):
+                query_payload[key] = str(value)
+            else:
+                raise TypeError(f"Invalid value for {key}")
+        return urlparse(f"{path}?{urlencode(query_payload)}")
 
     def send_json(self, payload, status=200):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
