@@ -31,6 +31,7 @@
 		A10000000000000000000017 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* PrivacyView.swift */; };
 		A10000000000000000000018 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* PrivacyInfo.xcprivacy */; };
 		A10000000000000000000019 /* OfflineContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* OfflineContent.swift */; };
+		A1000000000000000000001A /* GroceryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* GroceryListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		B1000000000000000000001A /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B1000000000000000000001C /* OfflineContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineContent.swift; sourceTree = "<group>"; };
+		B1000000000000000000001D /* GroceryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +117,7 @@
 		D10000000000000000000009 /* Features */ = {isa = PBXGroup; children = (D1000000000000000000000A, D1000000000000000000000B, D1000000000000000000000C, D1000000000000000000000F, D10000000000000000000010, D10000000000000000000011, D10000000000000000000012); path = Features; sourceTree = "<group>"; };
 		D1000000000000000000000A /* Today */ = {isa = PBXGroup; children = (B10000000000000000000008, B10000000000000000000009); path = Today; sourceTree = "<group>"; };
 		D1000000000000000000000B /* Insights */ = {isa = PBXGroup; children = (B1000000000000000000000A); path = Insights; sourceTree = "<group>"; };
-		D1000000000000000000000C /* Food */ = {isa = PBXGroup; children = (B1000000000000000000000B); path = Food; sourceTree = "<group>"; };
+		D1000000000000000000000C /* Food */ = {isa = PBXGroup; children = (B1000000000000000000000B, B1000000000000000000001D); path = Food; sourceTree = "<group>"; };
 		D1000000000000000000000F /* Movement */ = {isa = PBXGroup; children = (B1000000000000000000000C); path = Movement; sourceTree = "<group>"; };
 		D10000000000000000000010 /* Profile */ = {isa = PBXGroup; children = (B1000000000000000000000D, B1000000000000000000001A); path = Profile; sourceTree = "<group>"; };
 		D10000000000000000000011 /* CycleCalendar */ = {isa = PBXGroup; children = (B10000000000000000000012); path = CycleCalendar; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				A10000000000000000000016,
 				A10000000000000000000017,
 				A10000000000000000000019,
+				A1000000000000000000001A,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

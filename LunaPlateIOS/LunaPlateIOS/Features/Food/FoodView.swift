@@ -27,6 +27,7 @@ struct FoodView: View {
     @Query(sort: \CycleRecord.startDate, order: .reverse) private var cycles: [CycleRecord]
     @Query private var settings: [UserSettings]
     @Query private var logs: [DailyLog]
+    @Query private var groceries: [GroceryItem]
 
     var body: some View {
         ScrollView {
@@ -54,6 +55,20 @@ struct FoodView: View {
         .background(AppTheme.ivory.ignoresSafeArea())
         .navigationTitle("nav.food")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    GroceryListView()
+                } label: {
+                    Label {
+                        Text("grocery.title")
+                    } icon: {
+                        Image(systemName: groceries.contains(where: { !$0.isCompleted }) ? "basket.fill" : "basket")
+                    }
+                }
+                .accessibilityIdentifier("food.groceryList")
+            }
+        }
         .task(id: requestKey) { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
         .refreshable { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
     }
@@ -111,6 +126,9 @@ struct FoodView: View {
 }
 
 struct MealDetailView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var groceries: [GroceryItem]
+    @State private var isAddedAlertPresented = false
     let meal: Meal
 
     var body: some View {
@@ -138,6 +156,15 @@ struct MealDetailView: View {
                 }
 
                 detailSection(title: "meal.ingredients", values: meal.ingredients, numbered: false)
+                Button {
+                    addIngredientsToGroceryList()
+                } label: {
+                    Label("meal.addToGrocery", systemImage: "basket.badge.plus")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(missingIngredients.isEmpty)
+                .accessibilityIdentifier("meal.addToGrocery")
                 detailSection(title: "meal.steps", values: meal.steps, numbered: true)
                 Text("meal.nutrition.notice")
                     .font(.caption)
@@ -149,6 +176,9 @@ struct MealDetailView: View {
         .background(AppTheme.ivory.ignoresSafeArea())
         .navigationTitle("meal.details")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("meal.grocery.added", isPresented: $isAddedAlertPresented) {
+            Button("common.done", role: .cancel) {}
+        }
     }
 
     private func detailSection(title: LocalizedStringKey, values: [String], numbered: Bool) -> some View {
@@ -167,6 +197,21 @@ struct MealDetailView: View {
             }
         }
         .lunaCard()
+    }
+
+    private var missingIngredients: [String] {
+        let existing = Set(groceries.map { $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() })
+        return meal.ingredients.filter {
+            !existing.contains($0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased())
+        }
+    }
+
+    private func addIngredientsToGroceryList() {
+        let additions = missingIngredients
+        guard !additions.isEmpty else { return }
+        additions.forEach { modelContext.insert(GroceryItem(name: $0)) }
+        try? modelContext.save()
+        isAddedAlertPresented = true
     }
 }
 
