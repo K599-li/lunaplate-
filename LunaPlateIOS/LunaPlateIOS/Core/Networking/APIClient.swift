@@ -21,25 +21,26 @@ struct APIClient {
         symptoms: [String],
         hour: Int = Calendar.current.component(.hour, from: .now)
     ) async throws -> Meal? {
-        let response: TodayMealResponse = try await post(
-            path: "api/today-meal",
-            body: RecommendationRequest(phase: phase.apiValue, symptoms: symptoms, hour: hour)
+        let response: TodayMealResponse = try await send(
+            makeRecommendationRequest(
+                path: "api/today-meal", phase: phase, symptoms: symptoms, hour: hour
+            )
         )
         return response.meal
     }
 
     func meals(phase: CyclePhase, symptoms: [String]) async throws -> [Meal] {
-        let response: MealsResponse = try await post(
-            path: "api/meals",
-            body: RecommendationRequest(phase: phase.apiValue, symptoms: symptoms)
+        let response: MealsResponse = try await send(
+            makeRecommendationRequest(path: "api/meals", phase: phase, symptoms: symptoms)
         )
         return response.meals
     }
 
     func exercises(phase: CyclePhase, symptoms: [String], limit: Int = 8) async throws -> [Exercise] {
-        let response: ExercisesResponse = try await post(
-            path: "api/female-exercises",
-            body: RecommendationRequest(phase: phase.apiValue, symptoms: symptoms, limit: limit)
+        let response: ExercisesResponse = try await send(
+            makeRecommendationRequest(
+                path: "api/female-exercises", phase: phase, symptoms: symptoms, limit: limit
+            )
         )
         return response.exercises
     }
@@ -51,17 +52,27 @@ struct APIClient {
         return baseURL.appendingPathComponent(path)
     }
 
-    private func post<Response: Decodable, Body: Encodable>(
+    /// Internal so the test target can enforce that health values stay in a JSON body, never the URL.
+    func makeRecommendationRequest(
         path: String,
-        body: Body
-    ) async throws -> Response {
+        phase: CyclePhase,
+        symptoms: [String],
+        hour: Int? = nil,
+        limit: Int? = nil
+    ) throws -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.timeoutInterval = 20
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.httpBody = try JSONEncoder().encode(body)
+        request.httpBody = try JSONEncoder().encode(RecommendationRequest(
+            phase: phase.apiValue, symptoms: symptoms, hour: hour, limit: limit
+        ))
+        return request
+    }
+
+    private func send<Response: Decodable>(_ request: URLRequest) async throws -> Response {
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,
               (200..<300).contains(httpResponse.statusCode) else {
