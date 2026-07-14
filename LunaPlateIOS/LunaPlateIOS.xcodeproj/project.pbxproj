@@ -1,0 +1,165 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* LunaPlateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* LunaPlateApp.swift */; };
+		A10000000000000000000002 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* RootTabView.swift */; };
+		A10000000000000000000003 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* AppTheme.swift */; };
+		A10000000000000000000004 /* RemoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000004 /* RemoteModels.swift */; };
+		A10000000000000000000005 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* APIClient.swift */; };
+		A10000000000000000000006 /* PersistentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* PersistentModels.swift */; };
+		A10000000000000000000007 /* CycleCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* CycleCalculator.swift */; };
+		A10000000000000000000008 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* TodayViewModel.swift */; };
+		A10000000000000000000009 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* TodayView.swift */; };
+		A1000000000000000000000A /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* InsightsView.swift */; };
+		A1000000000000000000000B /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* FoodView.swift */; };
+		A1000000000000000000000C /* MovementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* MovementView.swift */; };
+		A1000000000000000000000D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* ProfileView.swift */; };
+		A1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* Assets.xcassets */; };
+		A1000000000000000000000F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* Localizable.xcstrings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000000000000000000001 /* LunaPlateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaPlateApp.swift; sourceTree = "<group>"; };
+		B10000000000000000000002 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		B10000000000000000000003 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		B10000000000000000000004 /* RemoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteModels.swift; sourceTree = "<group>"; };
+		B10000000000000000000005 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		B10000000000000000000006 /* PersistentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentModels.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* CycleCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleCalculator.swift; sourceTree = "<group>"; };
+		B10000000000000000000008 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
+		B10000000000000000000009 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		B1000000000000000000000A /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		B1000000000000000000000B /* FoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodView.swift; sourceTree = "<group>"; };
+		B1000000000000000000000C /* MovementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementView.swift; sourceTree = "<group>"; };
+		B1000000000000000000000D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		B1000000000000000000000E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B1000000000000000000000F /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		B10000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B10000000000000000000011 /* LunaPlate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LunaPlate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C10000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D10000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				D10000000000000000000002 /* LunaPlateIOS */,
+				D1000000000000000000000E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D10000000000000000000002 /* LunaPlateIOS */ = {
+			isa = PBXGroup;
+			children = (
+				D10000000000000000000003 /* App */,
+				D10000000000000000000004 /* Core */,
+				D10000000000000000000008 /* Data */,
+				D10000000000000000000009 /* Features */,
+				D1000000000000000000000D /* Resources */,
+			);
+			path = LunaPlateIOS;
+			sourceTree = "<group>";
+		};
+		D10000000000000000000003 /* App */ = {isa = PBXGroup; children = (B10000000000000000000001, B10000000000000000000002); path = App; sourceTree = "<group>"; };
+		D10000000000000000000004 /* Core */ = {isa = PBXGroup; children = (D10000000000000000000005, D10000000000000000000006, D10000000000000000000007); path = Core; sourceTree = "<group>"; };
+		D10000000000000000000005 /* Design */ = {isa = PBXGroup; children = (B10000000000000000000003); path = Design; sourceTree = "<group>"; };
+		D10000000000000000000006 /* Models */ = {isa = PBXGroup; children = (B10000000000000000000004); path = Models; sourceTree = "<group>"; };
+		D10000000000000000000007 /* Networking */ = {isa = PBXGroup; children = (B10000000000000000000005); path = Networking; sourceTree = "<group>"; };
+		D10000000000000000000008 /* Data */ = {isa = PBXGroup; children = (B10000000000000000000006, B10000000000000000000007); path = Data; sourceTree = "<group>"; };
+		D10000000000000000000009 /* Features */ = {isa = PBXGroup; children = (D1000000000000000000000A, D1000000000000000000000B, D1000000000000000000000C, D1000000000000000000000F, D10000000000000000000010); path = Features; sourceTree = "<group>"; };
+		D1000000000000000000000A /* Today */ = {isa = PBXGroup; children = (B10000000000000000000008, B10000000000000000000009); path = Today; sourceTree = "<group>"; };
+		D1000000000000000000000B /* Insights */ = {isa = PBXGroup; children = (B1000000000000000000000A); path = Insights; sourceTree = "<group>"; };
+		D1000000000000000000000C /* Food */ = {isa = PBXGroup; children = (B1000000000000000000000B); path = Food; sourceTree = "<group>"; };
+		D1000000000000000000000F /* Movement */ = {isa = PBXGroup; children = (B1000000000000000000000C); path = Movement; sourceTree = "<group>"; };
+		D10000000000000000000010 /* Profile */ = {isa = PBXGroup; children = (B1000000000000000000000D); path = Profile; sourceTree = "<group>"; };
+		D1000000000000000000000D /* Resources */ = {isa = PBXGroup; children = (B1000000000000000000000E, B1000000000000000000000F, B10000000000000000000010); path = Resources; sourceTree = "<group>"; };
+		D1000000000000000000000E /* Products */ = {isa = PBXGroup; children = (B10000000000000000000011); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E10000000000000000000001 /* LunaPlateIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F10000000000000000000002 /* Build configuration list for PBXNativeTarget "LunaPlateIOS" */;
+			buildPhases = (C10000000000000000000002, C10000000000000000000001, C10000000000000000000003);
+			buildRules = ();
+			dependencies = ();
+			name = LunaPlateIOS;
+			productName = LunaPlate;
+			productReference = B10000000000000000000011 /* LunaPlate.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E10000000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = { E10000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; };
+			};
+			buildConfigurationList = F10000000000000000000001 /* Build configuration list for PBXProject "LunaPlateIOS" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, "zh-Hans", ru);
+			mainGroup = D10000000000000000000001;
+			productRefGroup = D1000000000000000000000E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (E10000000000000000000001 /* LunaPlateIOS */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C10000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (A1000000000000000000000E, A1000000000000000000000F);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C10000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001, A10000000000000000000002, A10000000000000000000003,
+				A10000000000000000000004, A10000000000000000000005, A10000000000000000000006,
+				A10000000000000000000007, A10000000000000000000008, A10000000000000000000009,
+				A1000000000000000000000A, A1000000000000000000000B, A1000000000000000000000C,
+				A1000000000000000000000D,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F10000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_TESTABILITY = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		F10000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; VALIDATE_PRODUCT = YES; }; name = Release; };
+		F10000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LunaPlateIOS/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlate; PRODUCT_NAME = LunaPlate; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		F10000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LunaPlateIOS/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LunaPlate; PRODUCT_NAME = LunaPlate; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F10000000000000000000001 /* Build configuration list for PBXProject "LunaPlateIOS" */ = {isa = XCConfigurationList; buildConfigurations = (F10000000000000000000003, F10000000000000000000004); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		F10000000000000000000002 /* Build configuration list for PBXNativeTarget "LunaPlateIOS" */ = {isa = XCConfigurationList; buildConfigurations = (F10000000000000000000005, F10000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = E10000000000000000000002 /* Project object */;
+}
