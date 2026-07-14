@@ -1,6 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "privacy.policy.web" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Read the full privacy policy" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Полная политика конфиденциальности" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "查看完整隐私政策" } } } },
     "meal.details" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Meal details" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Описание блюда" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "餐食详情" } } } },
     "meal.ingredients" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Ingredients" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Ингредиенты" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "食材" } } } },
     "meal.steps" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Steps" } }, "ru" : { "stringUnit" : { "state" : "translated", "value" : "Приготовление" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "做法" } } } },

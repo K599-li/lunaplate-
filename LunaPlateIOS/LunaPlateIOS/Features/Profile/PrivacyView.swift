@@ -14,6 +14,7 @@ struct PrivacyView: View {
             }
             Section("privacy.controls.title") {
                 Text("privacy.controls.body")
+                Link("privacy.policy.web", destination: URL(string: "https://lunaplate.onrender.com/privacy.html")!)
             }
             Section("privacy.medical.title") {
                 Text("profile.disclaimer")

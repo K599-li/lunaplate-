@@ -40,6 +40,6 @@
         <true/>
     </dict>
     <key>LUNAPLATE_API_BASE_URL</key>
-    <string>http://localhost:5178</string>
+    <string>$(LUNAPLATE_API_BASE_URL)</string>
 </dict>
 </plist>
