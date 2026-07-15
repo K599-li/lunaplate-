@@ -33,8 +33,15 @@ struct FoodView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 18) {
                 Text("food.title")
-                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                    .foregroundStyle(AppTheme.plumText)
+                    .font(AppTheme.brandFont(.largeTitle, weight: .semibold))
+                    .foregroundStyle(AppTheme.ink)
+
+                Text(activePhase.localizedName)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.primaryDeep)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(AppTheme.primarySoft.opacity(0.7), in: Capsule())
 
                 if viewModel.isLoading {
                     ProgressView().frame(maxWidth: .infinity, minHeight: 180)
@@ -52,7 +59,7 @@ struct FoodView: View {
             .padding(.horizontal, AppTheme.pagePadding)
             .padding(.bottom, 28)
         }
-        .background(AppTheme.ivory.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
         .navigationTitle("nav.food")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -87,27 +94,43 @@ struct FoodView: View {
         NavigationLink {
             MealDetailView(meal: meal)
         } label: {
-            HStack(spacing: 14) {
-                MealArtwork(meal: meal, size: 104)
+            VStack(alignment: .leading, spacing: 0) {
+                MealBannerArtwork(meal: meal)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 210)
+                    .clipped()
+
                 VStack(alignment: .leading, spacing: 7) {
-                    Text(meal.name).font(.headline).lineLimit(2)
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(meal.name)
+                            .font(AppTheme.brandFont(.title3, weight: .semibold))
+                            .foregroundStyle(AppTheme.ink)
+                            .lineLimit(2)
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(AppTheme.quiet)
+                    }
                     Text(meal.tags.prefix(3).joined(separator: " · "))
                         .font(.caption)
-                        .foregroundStyle(AppTheme.sage)
+                        .foregroundStyle(AppTheme.greenDeep)
                         .lineLimit(2)
                     Text("\(meal.time) min")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppTheme.muted)
                 }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.caption.bold())
-                    .foregroundStyle(.tertiary)
+                .padding(16)
             }
-            .contentShape(Rectangle())
+            .background(AppTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous)
+                    .stroke(AppTheme.line, lineWidth: 1)
+            }
+            .shadow(color: AppTheme.ink.opacity(0.09), radius: 18, y: 9)
+            .contentShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
         }
         .buttonStyle(.plain)
-        .lunaCard()
         .accessibilityIdentifier("food.meal.\(meal.id)")
     }
 
@@ -134,13 +157,15 @@ struct MealDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                MealArtwork(meal: meal, size: 220)
+                MealBannerArtwork(meal: meal)
                     .frame(maxWidth: .infinity)
+                    .frame(height: 280)
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 9) {
                     Text(meal.name)
-                        .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                        .foregroundStyle(AppTheme.plumText)
+                        .font(AppTheme.brandFont(.largeTitle, weight: .semibold))
+                        .foregroundStyle(AppTheme.ink)
                     Label("\(meal.time) min", systemImage: "clock")
                         .foregroundStyle(.secondary)
                     if let calories = meal.calories {
@@ -163,6 +188,7 @@ struct MealDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(AppTheme.primaryDeep)
                 .disabled(missingIngredients.isEmpty)
                 .accessibilityIdentifier("meal.addToGrocery")
                 detailSection(title: "meal.steps", values: meal.steps, numbered: true)
@@ -173,7 +199,7 @@ struct MealDetailView: View {
             .padding(.horizontal, AppTheme.pagePadding)
             .padding(.bottom, 28)
         }
-        .background(AppTheme.ivory.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
         .navigationTitle("meal.details")
         .navigationBarTitleDisplayMode(.inline)
         .alert("meal.grocery.added", isPresented: $isAddedAlertPresented) {
@@ -242,5 +268,47 @@ struct MealArtwork: View {
                     .font(.system(size: size * 0.30, weight: .light))
                     .foregroundStyle(AppTheme.berry.opacity(0.75))
             }
+    }
+}
+
+private struct MealBannerArtwork: View {
+    let meal: Meal
+
+    var body: some View {
+        Group {
+            if let imageURL = meal.image {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                    case .failure:
+                        fallback
+                    case .empty:
+                        ZStack {
+                            AppTheme.greenSoft
+                            ProgressView().tint(AppTheme.primaryDeep)
+                        }
+                    @unknown default:
+                        fallback
+                    }
+                }
+            } else {
+                fallback
+            }
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var fallback: some View {
+        LinearGradient(
+            colors: [AppTheme.greenSoft, AppTheme.primarySoft, AppTheme.surfaceSoft],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay {
+            Image(systemName: "fork.knife")
+                .font(.system(size: 52, weight: .light))
+                .foregroundStyle(AppTheme.primaryDeep.opacity(0.64))
+        }
     }
 }

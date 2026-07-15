@@ -32,8 +32,15 @@ struct MovementView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 18) {
                 Text("movement.title")
-                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                    .foregroundStyle(AppTheme.plumText)
+                    .font(AppTheme.brandFont(.largeTitle, weight: .semibold))
+                    .foregroundStyle(AppTheme.ink)
+
+                Text(activePhase.localizedName)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.greenDeep)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(AppTheme.greenSoft, in: Capsule())
 
                 if viewModel.isLoading {
                     ProgressView().frame(maxWidth: .infinity, minHeight: 180)
@@ -54,27 +61,37 @@ struct MovementView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 190)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.compactRadius, style: .continuous))
+                                    .accessibilityHidden(true)
                             } else {
-                                AsyncImage(url: APIClient.shared.assetURL(path: exercise.media.url)) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    AppTheme.sage.opacity(0.12)
-                                        .overlay { ProgressView() }
+                                AsyncImage(url: APIClient.shared.assetURL(path: exercise.media.url)) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image.resizable().scaledToFit()
+                                    case .failure:
+                                        movementPlaceholder(showProgress: false)
+                                    case .empty:
+                                        movementPlaceholder(showProgress: true)
+                                    @unknown default:
+                                        movementPlaceholder(showProgress: false)
+                                    }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 190)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .clipShape(RoundedRectangle(cornerRadius: AppTheme.compactRadius, style: .continuous))
+                                .accessibilityHidden(true)
                             }
 
                             HStack {
-                                Text(exercise.name).font(.headline)
+                                Text(exercise.name)
+                                    .font(AppTheme.brandFont(.title3, weight: .semibold))
+                                    .foregroundStyle(AppTheme.ink)
                                 Spacer()
                                 Label("\(exercise.duration) min", systemImage: "clock")
                                     .font(.caption)
                                     .foregroundStyle(AppTheme.berry)
                             }
-                            Text(exercise.summary).foregroundStyle(.secondary)
+                            Text(exercise.summary).foregroundStyle(AppTheme.muted)
                             DisclosureGroup("movement.instructions") {
                                 VStack(alignment: .leading, spacing: 9) {
                                     ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
@@ -101,7 +118,7 @@ struct MovementView: View {
             .padding(.horizontal, AppTheme.pagePadding)
             .padding(.bottom, 28)
         }
-        .background(AppTheme.ivory.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
         .navigationTitle("nav.movement")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: requestKey) { await viewModel.load(phase: activePhase, symptoms: todaySymptoms) }
@@ -116,6 +133,19 @@ struct MovementView: View {
             .padding(.vertical, 9)
             .background(AppTheme.sage.opacity(0.10), in: Capsule())
             .accessibilityIdentifier("movement.offlineNotice")
+    }
+
+    private func movementPlaceholder(showProgress: Bool) -> some View {
+        AppTheme.greenSoft
+            .overlay {
+                if showProgress {
+                    ProgressView().tint(AppTheme.green)
+                } else {
+                    Image(systemName: "figure.mind.and.body")
+                        .font(.system(size: 48, weight: .light))
+                        .foregroundStyle(AppTheme.green)
+                }
+            }
     }
 
     private var activePhase: CyclePhase {

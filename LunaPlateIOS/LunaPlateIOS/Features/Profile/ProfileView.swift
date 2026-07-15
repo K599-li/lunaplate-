@@ -69,6 +69,9 @@ struct ProfileView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.pageBackground.ignoresSafeArea())
+        .tint(AppTheme.primaryDeep)
         .navigationTitle("profile.title")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

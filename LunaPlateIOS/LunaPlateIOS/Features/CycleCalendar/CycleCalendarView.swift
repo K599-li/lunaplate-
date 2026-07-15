@@ -50,7 +50,8 @@ struct CycleCalendarView: View {
             }
             .padding(AppTheme.pagePadding)
         }
-        .background(AppTheme.ivory.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
+        .tint(AppTheme.primaryDeep)
         .navigationTitle("calendar.title")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isEditorPresented) {
@@ -279,6 +280,9 @@ private struct PeriodEditorView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.pageBackground.ignoresSafeArea())
+        .tint(AppTheme.primaryDeep)
         .navigationTitle(editorTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

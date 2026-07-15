@@ -104,6 +104,9 @@ struct DailyCheckInView: View {
                     .lineLimit(3...7)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.pageBackground.ignoresSafeArea())
+        .tint(AppTheme.primaryDeep)
         .navigationTitle("checkin.title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
