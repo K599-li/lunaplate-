@@ -56,6 +56,7 @@ jobs:
         run: |
           APP_PATH=$(find "$HOME/Library/Developer/Xcode/DerivedData" -path "*/Build/Products/Release-iphonesimulator/LunaPlate.app" -print -quit)
           test -n "$APP_PATH"
+          xcrun simctl boot "${{ steps.simulator.outputs.id }}" || true
           xcrun simctl bootstatus "${{ steps.simulator.outputs.id }}" -b
           xcrun simctl install "${{ steps.simulator.outputs.id }}" "$APP_PATH"
           xcrun simctl launch "${{ steps.simulator.outputs.id }}" com.k599.LunaPlate
