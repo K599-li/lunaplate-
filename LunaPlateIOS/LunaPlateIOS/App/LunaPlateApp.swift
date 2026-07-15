@@ -6,7 +6,8 @@ struct LunaPlateApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
-                .tint(AppTheme.berry)
+                .tint(AppTheme.primaryDeep)
+                .preferredColorScheme(.light)
         }
         .modelContainer(for: [
             CycleRecord.self,

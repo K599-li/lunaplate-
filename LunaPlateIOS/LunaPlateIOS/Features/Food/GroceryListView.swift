@@ -45,6 +45,9 @@ struct GroceryListView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.pageBackground.ignoresSafeArea())
+        .tint(AppTheme.primaryDeep)
         .navigationTitle("grocery.title")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

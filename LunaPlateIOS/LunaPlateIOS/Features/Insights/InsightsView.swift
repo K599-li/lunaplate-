@@ -23,8 +23,8 @@ struct InsightsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 Text("insights.title")
-                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                    .foregroundStyle(AppTheme.plumText)
+                    .font(AppTheme.brandFont(.largeTitle, weight: .semibold))
+                    .foregroundStyle(AppTheme.ink)
 
                 HStack(spacing: 14) {
                     metricCard(value: cycles.count, label: "insights.cycles", color: AppTheme.berry)
@@ -52,7 +52,7 @@ struct InsightsView: View {
             .padding(.horizontal, AppTheme.pagePadding)
             .padding(.bottom, 28)
         }
-        .background(AppTheme.ivory.ignoresSafeArea())
+        .background(AppTheme.pageBackground.ignoresSafeArea())
         .navigationTitle("nav.insights")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -134,7 +134,7 @@ struct InsightsView: View {
     private func metricCard(value: Int, label: LocalizedStringKey, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(value, format: .number)
-                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .font(AppTheme.brandFont(.largeTitle, weight: .semibold))
                 .foregroundStyle(color)
             Text(label)
                 .font(.caption)
